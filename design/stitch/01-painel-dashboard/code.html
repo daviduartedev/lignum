@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ALACRUZ ERP - Painel Industrial</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .sidebar-active-border {
+            box-shadow: inset 4px 0 0 0 #0f6fee;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9f9ff;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #dce2f3;
+            border-radius: 10px;
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-error": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "surface-container-highest": "#dce2f3",
+                    "tertiary-container": "#494949",
+                    "secondary-container": "#0f6fee",
+                    "surface-container": "#e7eefe",
+                    "on-secondary-fixed": "#001a43",
+                    "on-primary": "#ffffff",
+                    "surface-dim": "#d3daea",
+                    "on-error-container": "#93000a",
+                    "background": "#f9f9ff",
+                    "primary-fixed-dim": "#b9c3ff",
+                    "surface": "#f9f9ff",
+                    "on-background": "#151c27",
+                    "on-primary-fixed": "#001159",
+                    "on-tertiary-fixed": "#1b1b1b",
+                    "secondary-fixed-dim": "#aec6ff",
+                    "on-tertiary-fixed-variant": "#474747",
+                    "inverse-on-surface": "#ebf1ff",
+                    "tertiary-fixed": "#e2e2e2",
+                    "on-tertiary": "#ffffff",
+                    "tertiary": "#333333",
+                    "outline-variant": "#c4c5d7",
+                    "surface-container-high": "#e2e8f8",
+                    "inverse-primary": "#b9c3ff",
+                    "surface-variant": "#dce2f3",
+                    "on-surface": "#151c27",
+                    "on-secondary-fixed-variant": "#004397",
+                    "on-tertiary-container": "#b8b8b8",
+                    "tertiary-fixed-dim": "#c6c6c6",
+                    "surface-bright": "#f9f9ff",
+                    "secondary": "#0057c1",
+                    "primary-container": "#0234c9",
+                    "on-primary-container": "#a7b4ff",
+                    "primary-fixed": "#dee1ff",
+                    "primary": "#002392",
+                    "on-primary-fixed-variant": "#0032c4",
+                    "on-secondary-container": "#fefcff",
+                    "surface-tint": "#2c4ede",
+                    "inverse-surface": "#2a313d",
+                    "on-surface-variant": "#444655",
+                    "error": "#ba1a1a",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-low": "#f0f3ff",
+                    "secondary-fixed": "#d8e2ff",
+                    "outline": "#747686",
+                    "error-container": "#ffdad6"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-sm": "8px",
+                    "sidebar-width": "240px",
+                    "stack-md": "16px",
+                    "gutter": "16px",
+                    "stack-lg": "24px",
+                    "topbar-height": "64px",
+                    "container-padding": "32px"
+            },
+            "fontFamily": {
+                    "body-default": ["Inter"],
+                    "caption": ["Inter"],
+                    "section-title": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "tabular-nums": ["Inter"],
+                    "page-title": ["Inter"],
+                    "body-medium": ["Inter"]
+            },
+            "fontSize": {
+                    "body-default": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                    "section-title": ["18px", {"lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "label-sm": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+                    "tabular-nums": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "page-title": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "body-medium": ["14px", {"lineHeight": "20px", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+</head>
+<body class="bg-background text-on-surface flex min-h-screen">
+<!-- Predicted SideNavBar -->
+<aside class="fixed left-0 top-0 h-screen w-[240px] bg-tertiary dark:bg-black border-r border-outline-variant shadow-sm flex flex-col py-stack-lg z-50">
+<div class="px-gutter mb-stack-lg">
+<h1 class="font-page-title text-page-title font-bold text-white tracking-tight">ALACRUZ</h1>
+<p class="text-white/60 text-caption font-caption uppercase tracking-widest text-[10px]">ERP Industrial</p>
+</div>
+<nav class="flex-1 overflow-y-auto custom-scrollbar">
+<ul class="space-y-1">
+<!-- Painel Active -->
+<li class="bg-secondary-container text-on-secondary-container border-l-4 border-secondary cursor-pointer transition-colors px-gutter py-3 flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<span class="font-body-default text-body-default">Painel</span>
+</li>
+<!-- Orçamentos -->
+<li class="text-white/80 hover:bg-white/10 cursor-pointer transition-colors px-gutter py-3 flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px]">description</span>
+<span class="font-body-default text-body-default">Orçamentos</span>
+</li>
+<li class="text-white/80 hover:bg-white/10 cursor-pointer transition-colors px-gutter py-3 flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px]">view_in_ar</span>
+<span class="font-body-default text-body-default">Configurador 3D</span>
+</li>
+<li class="text-white/80 hover:bg-white/10 cursor-pointer transition-colors px-gutter py-3 flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px]">factory</span>
+<span class="font-body-default text-body-default">Produção/OS</span>
+</li>
+<li class="text-white/80 hover:bg-white/10 cursor-pointer transition-colors px-gutter py-3 flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px]">inventory_2</span>
+<span class="font-body-default text-body-default">Estoque</span>
+</li>
+<li class="text-white/80 hover:bg-white/10 cursor-pointer transition-colors px-gutter py-3 flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px]">local_shipping</span>
+<span class="font-body-default text-body-default">Carrocerias Usadas</span>
+</li>
+<li class="text-white/80 hover:bg-white/10 cursor-pointer transition-colors px-gutter py-3 flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px]">groups</span>
+<span class="font-body-default text-body-default">Clientes</span>
+</li>
+<li class="text-white/80 hover:bg-white/10 cursor-pointer transition-colors px-gutter py-3 flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px]">engineering</span>
+<span class="font-body-default text-body-default">Funcionários</span>
+</li>
+<li class="text-white/80 hover:bg-white/10 cursor-pointer transition-colors px-gutter py-3 flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px]">payments</span>
+<span class="font-body-default text-body-default">Financeiro</span>
+</li>
+<li class="text-white/80 hover:bg-white/10 cursor-pointer transition-colors px-gutter py-3 flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px]">receipt_long</span>
+<span class="font-body-default text-body-default">Notas Fiscais</span>
+</li>
+<li class="text-white/80 hover:bg-white/10 cursor-pointer transition-colors px-gutter py-3 flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px]">bar_chart</span>
+<span class="font-body-default text-body-default">Relatórios</span>
+</li>
+<li class="text-white/80 hover:bg-white/10 cursor-pointer transition-colors px-gutter py-3 flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px]">calendar_today</span>
+<span class="font-body-default text-body-default">Calendário</span>
+</li>
+<li class="text-white/80 hover:bg-white/10 cursor-pointer transition-colors px-gutter py-3 flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="font-body-default text-body-default">Configurações</span>
+</li>
+</ul>
+</nav>
+<div class="px-gutter pt-stack-lg border-t border-white/10">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of an industrial plant manager wearing a clean polo shirt, set against a blurred background of a modern manufacturing facility with warm ambient lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD0_qjVjp8dClBAGIYD3AgXvV0ZK7S9OL3MG-LrGJE9nrSRaxd_FRFHzp4H7HIb6cco5bGhkq9wgIGSKiuUCLOn-_QiTLp_UMmjV65iTZYjqc3oyHQUa3CnywNcAOKe0vbJ_pP_xL_yC3HZ6WYHoJSJb8d5dsiZGWxrhz5bNApgSKR0_Q0gIyCOZ3I3f5BIRcP0IVDKs0QF29U-mKU3rQ80slvhCj6znjqndNAOFXVTGMTTA6P9eq7lm1WarD5MAKh94Kdlnfaat4Iv"/>
+</div>
+<div class="flex flex-col">
+<span class="text-white font-label-sm text-label-sm leading-tight">Admin Alacruz</span>
+<span class="text-white/50 text-caption font-caption leading-tight">Gestor Geral</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Predicted TopAppBar -->
+<header class="fixed top-0 right-0 h-[64px] w-[calc(100%-240px)] bg-surface-container-lowest border-b border-outline-variant flex justify-between items-center px-gutter z-40">
+<div class="flex items-center gap-stack-md flex-1">
+<div class="relative w-full max-w-md focus-within:ring-2 focus-within:ring-secondary/20 rounded-lg transition-all">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-lg pl-10 pr-4 py-2 text-body-default focus:ring-0" placeholder="Pesquisar orçamentos, OS ou clientes..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-all text-on-surface-variant relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border-2 border-surface-container-lowest"></span>
+</button>
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-all text-on-surface-variant">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="h-8 w-[1px] bg-outline-variant mx-2"></div>
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Unidade Industrial #01</span>
+<span class="material-symbols-outlined text-on-surface-variant">expand_more</span>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[240px] mt-[64px] p-stack-lg w-full">
+<div class="max-w-7xl mx-auto space-y-stack-lg">
+<!-- Page Title & CTA -->
+<div class="flex justify-between items-end">
+<div>
+<h2 class="font-page-title text-page-title text-on-surface">Painel de Controle</h2>
+<p class="text-on-surface-variant text-body-default">Visão geral da produção e desempenho financeiro.</p>
+</div>
+<div class="flex gap-stack-sm">
+<button class="px-4 py-2 rounded-lg border border-outline-variant bg-white text-secondary font-label-sm hover:bg-surface-container-low transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                        Exportar
+                    </button>
+<button class="px-4 py-2 rounded-lg bg-primary-container text-white font-label-sm hover:bg-primary transition-colors flex items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                        Novo Orçamento
+                    </button>
+</div>
+</div>
+<!-- 4 KPI Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-stack-md">
+<!-- Faturamento -->
+<div class="bg-white p-5 rounded-xl border border-outline-variant shadow-[0px_1px_3px_rgba(0,0,0,0.05)] flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<span class="text-caption font-caption text-on-surface-variant uppercase tracking-wider">Faturamento do Mês</span>
+<div class="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" data-weight="fill">payments</span>
+</div>
+</div>
+<div class="mt-4">
+<span class="text-[28px] font-bold text-on-surface tabular-nums">R$ 482.900</span>
+<div class="flex items-center gap-1 mt-1 text-green-600 font-label-sm">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+<span>+12.4%</span>
+<span class="text-on-surface-variant text-caption font-caption ml-1 font-normal">vs. mês anterior</span>
+</div>
+</div>
+</div>
+<!-- Lucro -->
+<div class="bg-white p-5 rounded-xl border border-outline-variant shadow-[0px_1px_3px_rgba(0,0,0,0.05)] flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<span class="text-caption font-caption text-on-surface-variant uppercase tracking-wider">Lucro Estimado</span>
+<div class="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" data-weight="fill">account_balance_wallet</span>
+</div>
+</div>
+<div class="mt-4">
+<span class="text-[28px] font-bold text-on-surface tabular-nums">R$ 154.200</span>
+<div class="flex items-center gap-1 mt-1 text-green-600 font-label-sm">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+<span>+8.2%</span>
+<span class="text-on-surface-variant text-caption font-caption ml-1 font-normal">vs. mês anterior</span>
+</div>
+</div>
+</div>
+<!-- Produção -->
+<div class="bg-white p-5 rounded-xl border border-outline-variant shadow-[0px_1px_3px_rgba(0,0,0,0.05)] flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<span class="text-caption font-caption text-on-surface-variant uppercase tracking-wider">Em Produção</span>
+<div class="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" data-weight="fill">precision_manufacturing</span>
+</div>
+</div>
+<div class="mt-4">
+<span class="text-[28px] font-bold text-on-surface tabular-nums">42 Unid.</span>
+<div class="flex items-center gap-1 mt-1 text-on-secondary-fixed-variant font-label-sm">
+<span class="material-symbols-outlined text-[16px]">sync</span>
+<span>4 finalizadas hoje</span>
+</div>
+</div>
+</div>
+<!-- Orçamentos -->
+<div class="bg-white p-5 rounded-xl border border-outline-variant shadow-[0px_1px_3px_rgba(0,0,0,0.05)] flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<span class="text-caption font-caption text-on-surface-variant uppercase tracking-wider">Orçamentos Pendentes</span>
+<div class="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" data-weight="fill">pending_actions</span>
+</div>
+</div>
+<div class="mt-4">
+<span class="text-[28px] font-bold text-on-surface tabular-nums">18 ativos</span>
+<div class="flex items-center gap-1 mt-1 text-error font-label-sm">
+<span class="material-symbols-outlined text-[16px]">priority_high</span>
+<span>3 vencendo hoje</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Dashboard Charts & Alerts Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-stack-lg">
+<!-- Main Charts Column -->
+<div class="lg:col-span-2 space-y-stack-lg">
+<!-- Faturamento x Lucro Chart -->
+<div class="bg-white p-6 rounded-xl border border-outline-variant shadow-[0px_1px_3px_rgba(0,0,0,0.05)]">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-section-title text-section-title text-on-surface">Faturamento x Lucro (6 meses)</h3>
+<select class="bg-surface-container-low border-none rounded-lg text-caption font-caption focus:ring-0">
+<option>Semestre Atual</option>
+<option>Ano 2023</option>
+</select>
+</div>
+<div class="h-[300px] w-full relative">
+<!-- SVG Placeholder for Line Chart -->
+<svg class="w-full h-full" viewbox="0 0 800 300">
+<!-- Grid Lines -->
+<line stroke="#f0f3ff" stroke-width="1" x1="0" x2="800" y1="50" y2="50"></line>
+<line stroke="#f0f3ff" stroke-width="1" x1="0" x2="800" y1="125" y2="125"></line>
+<line stroke="#f0f3ff" stroke-width="1" x1="0" x2="800" y1="200" y2="200"></line>
+<line stroke="#f0f3ff" stroke-width="1" x1="0" x2="800" y1="275" y2="275"></line>
+<!-- Faturamento Line (Royal Blue) -->
+<path d="M 50 250 L 180 180 L 310 220 L 440 100 L 570 140 L 750 60" fill="none" stroke="#0234C9" stroke-linecap="round" stroke-width="3"></path>
+<!-- Lucro Line (Lighter Blue) -->
+<path d="M 50 280 L 180 240 L 310 260 L 440 200 L 570 220 L 750 180" fill="none" stroke="#aec6ff" stroke-dasharray="5,5" stroke-linecap="round" stroke-width="3"></path>
+<!-- Dots -->
+<circle cx="750" cy="60" fill="#0234C9" r="5"></circle>
+<circle cx="750" cy="180" fill="#aec6ff" r="5"></circle>
+</svg>
+<div class="flex justify-between mt-4 text-caption text-on-surface-variant font-caption">
+<span>Jan</span><span>Fev</span><span>Mar</span><span>Abr</span><span>Mai</span><span>Jun</span>
+</div>
+</div>
+<div class="flex gap-6 mt-6 pt-6 border-t border-outline-variant">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-primary-container"></span>
+<span class="text-caption font-label-sm">Faturamento Bruto</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-secondary-fixed-dim"></span>
+<span class="text-caption font-label-sm">Lucro Líquido</span>
+</div>
+</div>
+</div>
+<!-- Produção por Mês Bar Chart -->
+<div class="bg-white p-6 rounded-xl border border-outline-variant shadow-[0px_1px_3px_rgba(0,0,0,0.05)]">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-section-title text-section-title text-on-surface">Produção por Mês (Unidades)</h3>
+</div>
+<div class="flex items-end justify-between h-[200px] gap-4 px-4">
+<div class="flex flex-col items-center flex-1 gap-2">
+<div class="w-full bg-surface-container-high rounded-t-lg transition-all hover:bg-secondary" style="height: 60%;"></div>
+<span class="text-caption font-caption text-on-surface-variant">Jan</span>
+</div>
+<div class="flex flex-col items-center flex-1 gap-2">
+<div class="w-full bg-surface-container-high rounded-t-lg transition-all hover:bg-secondary" style="height: 75%;"></div>
+<span class="text-caption font-caption text-on-surface-variant">Fev</span>
+</div>
+<div class="flex flex-col items-center flex-1 gap-2">
+<div class="w-full bg-surface-container-high rounded-t-lg transition-all hover:bg-secondary" style="height: 45%;"></div>
+<span class="text-caption font-caption text-on-surface-variant">Mar</span>
+</div>
+<div class="flex flex-col items-center flex-1 gap-2">
+<div class="w-full bg-secondary rounded-t-lg transition-all" style="height: 90%;"></div>
+<span class="text-caption font-caption text-on-surface-variant">Abr</span>
+</div>
+<div class="flex flex-col items-center flex-1 gap-2">
+<div class="w-full bg-surface-container-high rounded-t-lg transition-all hover:bg-secondary" style="height: 65%;"></div>
+<span class="text-caption font-caption text-on-surface-variant">Mai</span>
+</div>
+<div class="flex flex-col items-center flex-1 gap-2">
+<div class="w-full bg-surface-container-high rounded-t-lg transition-all hover:bg-secondary" style="height: 80%;"></div>
+<span class="text-caption font-caption text-on-surface-variant">Jun</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Alerts Column -->
+<div class="space-y-stack-lg">
+<div class="bg-white p-6 rounded-xl border border-outline-variant shadow-[0px_1px_3px_rgba(0,0,0,0.05)] h-full">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-error">report</span>
+<h3 class="font-section-title text-section-title text-on-surface">Alertas do Sistema</h3>
+</div>
+<div class="space-y-4">
+<!-- Alert Item High -->
+<div class="p-3 bg-error-container/30 rounded-lg border-l-4 border-error flex gap-3">
+<div class="mt-1">
+<div class="w-2 h-2 rounded-full bg-error animate-pulse"></div>
+</div>
+<div class="flex flex-col">
+<span class="text-label-sm font-label-sm text-on-error-container">Estoque Mínimo Atingido</span>
+<p class="text-caption font-caption text-on-surface-variant mt-1">Viga U 4" - Unidade #01 resta apenas 12 metros.</p>
+<button class="text-error font-label-sm text-left mt-2 underline">Repor agora</button>
+</div>
+</div>
+<!-- Alert Item Medium -->
+<div class="p-3 bg-orange-100 rounded-lg border-l-4 border-orange-500 flex gap-3">
+<div class="mt-1">
+<div class="w-2 h-2 rounded-full bg-orange-500"></div>
+</div>
+<div class="flex flex-col">
+<span class="text-label-sm font-label-sm text-orange-800">Contas a Vencer</span>
+<p class="text-caption font-caption text-on-surface-variant mt-1">3 títulos vencem amanhã (Total: R$ 12.450).</p>
+<button class="text-orange-800 font-label-sm text-left mt-2 underline">Ver financeiro</button>
+</div>
+</div>
+<!-- Alert Item Low -->
+<div class="p-3 bg-surface-container rounded-lg border-l-4 border-secondary flex gap-3">
+<div class="mt-1">
+<div class="w-2 h-2 rounded-full bg-secondary"></div>
+</div>
+<div class="flex flex-col">
+<span class="text-label-sm font-label-sm text-on-secondary-fixed-variant">Orçamentos Aguardando</span>
+<p class="text-caption font-caption text-on-surface-variant mt-1">Orçamento #8822 (Transportes Silva) aguarda aprovação há 48h.</p>
+<button class="text-secondary font-label-sm text-left mt-2 underline">Contatar cliente</button>
+</div>
+</div>
+<!-- Maintenance Alert -->
+<div class="p-3 bg-surface-container-low rounded-lg border-l-4 border-outline-variant flex gap-3">
+<div class="mt-1">
+<div class="w-2 h-2 rounded-full bg-outline-variant"></div>
+</div>
+<div class="flex flex-col">
+<span class="text-label-sm font-label-sm text-on-surface-variant">Manutenção Preventiva</span>
+<p class="text-caption font-caption text-on-surface-variant mt-1">Prensa Hidráulica 02 agendada para 15/06.</p>
+</div>
+</div>
+</div>
+<div class="mt-8">
+<div class="relative rounded-xl overflow-hidden group">
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10"></div>
+<div class="h-40 bg-cover bg-center transition-transform duration-500 group-hover:scale-110" data-alt="A high-quality industrial interior photo of a woodworking and metalworking factory for truck bodies. Sunlight beams through high windows, illuminating dust particles and massive wooden planks. The style is professional, sharp, and clean, emphasizing modern industrial equipment." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA8zMKMb_oh-FdR53iVfIsOV3gEnBybWNGixM9QNSZJKA1naXcC-infMawfl11OjE2ajNfrSsqmwIF__THA-tKkhCLrkY-pTlIKUXKlqWoHGZ_bf4SGzR8EcjmSCaY5WqjVhqdA9DHuxrKJDzi57w_tC3czDWpkyg79CmUWIEWOIyYFHto5OcP1EEQBWi-awBg2HAmql5qYjxRstkgfFFjlKOkdS8ll583ugDBNo0RGF6ccDgW2-088KqQYR5syo90XBWSvmq4s1fIS')"></div>
+<div class="absolute bottom-3 left-3 z-20">
+<span class="text-white font-label-sm">Vista da Fábrica</span>
+<p class="text-white/70 text-caption">Operação Normal</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Table: Últimos Orçamentos -->
+<div class="bg-white rounded-xl border border-outline-variant shadow-[0px_1px_3px_rgba(0,0,0,0.05)] overflow-hidden">
+<div class="p-6 border-b border-outline-variant flex justify-between items-center">
+<h3 class="font-section-title text-section-title text-on-surface">Últimos Orçamentos</h3>
+<button class="text-secondary font-label-sm hover:underline">Ver todos</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface-container-low">
+<tr>
+<th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase">Cliente</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase">Modelo</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase">Valor</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase">Status</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase">Data</th>
+<th class="px-6 py-4 text-right"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr class="hover:bg-surface-container-lowest transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container flex items-center justify-center font-bold text-secondary text-caption">JS</div>
+<span class="font-body-medium text-body-medium">Joaquim Silva Transportes</span>
+</div>
+</td>
+<td class="px-6 py-4 font-body-default text-body-default">Carroceria Madeira Graneleiro</td>
+<td class="px-6 py-4 font-tabular-nums text-tabular-nums font-semibold">R$ 32.500,00</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 rounded-full bg-green-100 text-green-700 text-caption font-label-sm">Aprovado</span>
+</td>
+<td class="px-6 py-4 font-tabular-nums text-tabular-nums text-on-surface-variant">10/06/2024</td>
+<td class="px-6 py-4 text-right">
+<button class="p-1 rounded hover:bg-surface-container text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-lowest transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container flex items-center justify-center font-bold text-secondary text-caption">AL</div>
+<span class="font-body-medium text-body-medium">Agro Logística Nordeste</span>
+</div>
+</td>
+<td class="px-6 py-4 font-body-default text-body-default">Carroceria Metálica Baú</td>
+<td class="px-6 py-4 font-tabular-nums text-tabular-nums font-semibold">R$ 58.900,00</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 rounded-full bg-blue-100 text-blue-700 text-caption font-label-sm">Em Análise</span>
+</td>
+<td class="px-6 py-4 font-tabular-nums text-tabular-nums text-on-surface-variant">09/06/2024</td>
+<td class="px-6 py-4 text-right">
+<button class="p-1 rounded hover:bg-surface-container text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-lowest transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container flex items-center justify-center font-bold text-secondary text-caption">MC</div>
+<span class="font-body-medium text-body-medium">Marcos Caminhoneiro ME</span>
+</div>
+</td>
+<td class="px-6 py-4 font-body-default text-body-default">Reparo Estrutural Madeira</td>
+<td class="px-6 py-4 font-tabular-nums text-tabular-nums font-semibold">R$ 4.200,00</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 rounded-full bg-orange-100 text-orange-700 text-caption font-label-sm">Pendente</span>
+</td>
+<td class="px-6 py-4 font-tabular-nums text-tabular-nums text-on-surface-variant">08/06/2024</td>
+<td class="px-6 py-4 text-right">
+<button class="p-1 rounded hover:bg-surface-container text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-lowest transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container flex items-center justify-center font-bold text-secondary text-caption">EX</div>
+<span class="font-body-medium text-body-medium">Expresso Rápido Ltda</span>
+</div>
+</td>
+<td class="px-6 py-4 font-body-default text-body-default">Carroceria Carga Seca 7m</td>
+<td class="px-6 py-4 font-tabular-nums text-tabular-nums font-semibold">R$ 27.800,00</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 rounded-full bg-red-100 text-red-700 text-caption font-label-sm">Recusado</span>
+</td>
+<td class="px-6 py-4 font-tabular-nums text-tabular-nums text-on-surface-variant">07/06/2024</td>
+<td class="px-6 py-4 text-right">
+<button class="p-1 rounded hover:bg-surface-container text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</main>
+<!-- FAB Button - Add Contextual Action -->
+<button class="fixed bottom-8 right-8 w-14 h-14 bg-secondary-container text-white rounded-full shadow-lg flex items-center justify-center hover:scale-110 transition-transform active:scale-95 z-50 group">
+<span class="material-symbols-outlined text-[28px]">add</span>
+<span class="absolute right-16 bg-tertiary text-white px-3 py-1 rounded-lg text-caption whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">Nova Ordem de Serviço</span>
+</button>
+<script>
+        // Micro-interactions for KPI numbers counting up
+        document.addEventListener('DOMContentLoaded', () => {
+            const counters = document.querySelectorAll('.tabular-nums');
+            counters.forEach(counter => {
+                const text = counter.innerText;
+                if (text.includes('R$')) {
+                    // Simulating a simple pulse on mount
+                    counter.classList.add('transition-all');
+                    setTimeout(() => {
+                        counter.classList.add('scale-105');
+                        setTimeout(() => counter.classList.remove('scale-105'), 200);
+                    }, 500);
+                }
+            });
+        });
+
+        // Basic Tooltip or Menu Simulation logic
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                ripple.classList.add('absolute', 'inset-0', 'bg-white/20', 'rounded-full', 'animate-ping');
+                this.style.position = 'relative';
+                this.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 400);
+            });
+        });
+    </script>
+</body></html>

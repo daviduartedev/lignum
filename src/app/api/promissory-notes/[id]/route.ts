@@ -1,0 +1,73 @@
+import type { NextRequest } from "next/server";
+import { promissoryNoteUpdateSchema } from "@/lib/zodSchemas";
+import { staffRoles } from "@/lib/apiRoles";
+import { parseDateInput, parseOptionalDate } from "@/lib/dates";
+import { fail, ok } from "@/lib/jsonResponse";
+import { parseNumericId } from "@/lib/routeParams";
+import { zodErrorResponse } from "@/lib/routeUtils";
+import { stripUndefined } from "@/lib/stripUndefined";
+import type { RouteContext } from "@/lib/withRole";
+import { withRole } from "@/lib/withRole";
+import { prisma } from "@/lib/db";
+
+export const GET = withRole(staffRoles, async (_req: NextRequest, ctx: RouteContext) => {
+  const num = await parseNumericId(ctx);
+  if (num == null) {
+    return fail("BAD_REQUEST", 400, { message: "ID inválido." });
+  }
+  const row = await prisma.promissoryNote.findUnique({ where: { id: num } });
+  if (!row) {
+    return fail("NOT_FOUND", 404);
+  }
+  return ok(row);
+});
+
+export const PUT = withRole(staffRoles, async (req: NextRequest, ctx: RouteContext) => {
+  const num = await parseNumericId(ctx);
+  if (num == null) {
+    return fail("BAD_REQUEST", 400, { message: "ID inválido." });
+  }
+  const raw: unknown = await req.json();
+  const parsed = promissoryNoteUpdateSchema.safeParse(raw);
+  if (!parsed.success) {
+    return zodErrorResponse(parsed.error);
+  }
+  const d = parsed.data;
+  const { dueDate, paymentDate, ...rest } = d;
+  const data = stripUndefined({
+    ...rest,
+    ...(dueDate ? { dueDate: parseDateInput(dueDate) } : {}),
+    ...(paymentDate !== undefined ? { paymentDate: parseOptionalDate(paymentDate) } : {}),
+  } as Record<string, unknown>);
+  try {
+    const updated = await prisma.promissoryNote.update({
+      where: { id: num },
+      data,
+    });
+    await prisma.financeNotificationDispatch.updateMany({
+      where: {
+        eventType: "promissory_note_due",
+        eventId: num,
+        sentAt: null,
+        cancelledAt: null,
+      },
+      data: { cancelledAt: new Date() },
+    });
+    return ok(updated);
+  } catch {
+    return fail("NOT_FOUND", 404);
+  }
+});
+
+export const DELETE = withRole(staffRoles, async (_req: NextRequest, ctx: RouteContext) => {
+  const num = await parseNumericId(ctx);
+  if (num == null) {
+    return fail("BAD_REQUEST", 400, { message: "ID inválido." });
+  }
+  try {
+    await prisma.promissoryNote.delete({ where: { id: num } });
+    return ok({ id: num });
+  } catch {
+    return fail("NOT_FOUND", 404);
+  }
+});

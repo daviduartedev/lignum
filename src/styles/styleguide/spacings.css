@@ -1,0 +1,9 @@
+/* Escala semântica Lignum — prefixo lignum-space-* para não colidir com Tailwind (--spacing-md = max-w-md, etc.) */
+
+:root {
+  --lignum-space-xs: 0.25rem;
+  --lignum-space-sm: 0.5rem;
+  --lignum-space-md: 0.75rem;
+  --lignum-space-lg: 1rem;
+  --lignum-space-xl: 1.5rem;
+}

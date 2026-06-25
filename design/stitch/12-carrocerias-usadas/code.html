@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ALACRUZ ERP - Carrocerias Usadas</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c4c5d7;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #747686;
+        }
+        .status-pill-disponivel { background-color: #e8f5e9; color: #2e7d32; }
+        .status-pill-reservada { background-color: #fff3e0; color: #ef6c00; }
+        .status-pill-vendida { background-color: #ffebee; color: #c62828; }
+        .status-pill-reforma { background-color: #e3f2fd; color: #1565c0; }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "surface-container-highest": "#dce2f3",
+                        "tertiary-container": "#494949",
+                        "secondary-container": "#0f6fee",
+                        "surface-container": "#e7eefe",
+                        "on-secondary-fixed": "#001a43",
+                        "on-primary": "#ffffff",
+                        "surface-dim": "#d3daea",
+                        "on-error-container": "#93000a",
+                        "background": "#f9f9ff",
+                        "primary-fixed-dim": "#b9c3ff",
+                        "surface": "#f9f9ff",
+                        "on-background": "#151c27",
+                        "on-primary-fixed": "#001159",
+                        "on-tertiary-fixed": "#1b1b1b",
+                        "secondary-fixed-dim": "#aec6ff",
+                        "on-tertiary-fixed-variant": "#474747",
+                        "inverse-on-surface": "#ebf1ff",
+                        "tertiary-fixed": "#e2e2e2",
+                        "on-tertiary": "#ffffff",
+                        "tertiary": "#333333",
+                        "outline-variant": "#c4c5d7",
+                        "surface-container-high": "#e2e8f8",
+                        "inverse-primary": "#b9c3ff",
+                        "surface-variant": "#dce2f3",
+                        "on-surface": "#151c27",
+                        "on-secondary-fixed-variant": "#004397",
+                        "on-tertiary-container": "#b8b8b8",
+                        "tertiary-fixed-dim": "#c6c6c6",
+                        "surface-bright": "#f9f9ff",
+                        "secondary": "#0057c1",
+                        "primary-container": "#0234c9",
+                        "on-primary-container": "#a7b4ff",
+                        "primary-fixed": "#dee1ff",
+                        "primary": "#002392",
+                        "on-primary-fixed-variant": "#0032c4",
+                        "on-secondary-container": "#fefcff",
+                        "surface-tint": "#2c4ede",
+                        "inverse-surface": "#2a313d",
+                        "on-surface-variant": "#444655",
+                        "error": "#ba1a1a",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f0f3ff",
+                        "secondary-fixed": "#d8e2ff",
+                        "outline": "#747686",
+                        "error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "8px",
+                        "sidebar-width": "240px",
+                        "stack-md": "16px",
+                        "gutter": "16px",
+                        "stack-lg": "24px",
+                        "topbar-height": "64px",
+                        "container-padding": "32px"
+                    },
+                    "fontFamily": {
+                        "body-default": ["Inter"],
+                        "caption": ["Inter"],
+                        "section-title": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "tabular-nums": ["Inter"],
+                        "page-title": ["Inter"],
+                        "body-medium": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-default": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "section-title": ["18px", {"lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-sm": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+                        "tabular-nums": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "page-title": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "body-medium": ["14px", {"lineHeight": "20px", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background font-body-default text-on-background min-h-screen">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-screen w-[240px] bg-tertiary dark:bg-black border-r border-outline-variant shadow-sm flex flex-col py-stack-lg z-50">
+<div class="px-gutter mb-stack-lg">
+<h1 class="font-page-title text-page-title font-bold text-white">ALACRUZ</h1>
+<p class="text-caption text-white/60">ERP Industrial</p>
+</div>
+<nav class="flex-1 overflow-y-auto space-y-1">
+<!-- Nav items generated based on JSON -->
+<a class="flex items-center px-gutter py-2.5 text-white/80 hover:bg-white/10 transition-colors cursor-pointer" href="#">
+<span class="material-symbols-outlined mr-3">dashboard</span>
+<span class="font-body-default text-body-default">Painel</span>
+</a>
+<a class="flex items-center px-gutter py-2.5 text-white/80 hover:bg-white/10 transition-colors cursor-pointer" href="#">
+<span class="material-symbols-outlined mr-3">description</span>
+<span class="font-body-default text-body-default">Orçamentos</span>
+</a>
+<a class="flex items-center px-gutter py-2.5 text-white/80 hover:bg-white/10 transition-colors cursor-pointer" href="#">
+<span class="material-symbols-outlined mr-3">view_in_ar</span>
+<span class="font-body-default text-body-default">Configurador 3D</span>
+</a>
+<a class="flex items-center px-gutter py-2.5 text-white/80 hover:bg-white/10 transition-colors cursor-pointer" href="#">
+<span class="material-symbols-outlined mr-3">factory</span>
+<span class="font-body-default text-body-default">Produção/OS</span>
+</a>
+<a class="flex items-center px-gutter py-2.5 text-white/80 hover:bg-white/10 transition-colors cursor-pointer" href="#">
+<span class="material-symbols-outlined mr-3">inventory_2</span>
+<span class="font-body-default text-body-default">Estoque</span>
+</a>
+<!-- Active State: Carrocerias Usadas -->
+<a class="flex items-center px-gutter py-2.5 bg-secondary-container text-on-secondary-container border-l-4 border-secondary cursor-pointer" href="#">
+<span class="material-symbols-outlined mr-3">local_shipping</span>
+<span class="font-body-default text-body-default">Carrocerias Usadas</span>
+</a>
+<a class="flex items-center px-gutter py-2.5 text-white/80 hover:bg-white/10 transition-colors cursor-pointer" href="#">
+<span class="material-symbols-outlined mr-3">groups</span>
+<span class="font-body-default text-body-default">Clientes</span>
+</a>
+<a class="flex items-center px-gutter py-2.5 text-white/80 hover:bg-white/10 transition-colors cursor-pointer" href="#">
+<span class="material-symbols-outlined mr-3">engineering</span>
+<span class="font-body-default text-body-default">Funcionários</span>
+</a>
+<a class="flex items-center px-gutter py-2.5 text-white/80 hover:bg-white/10 transition-colors cursor-pointer" href="#">
+<span class="material-symbols-outlined mr-3">payments</span>
+<span class="font-body-default text-body-default">Financeiro</span>
+</a>
+<a class="flex items-center px-gutter py-2.5 text-white/80 hover:bg-white/10 transition-colors cursor-pointer" href="#">
+<span class="material-symbols-outlined mr-3">receipt_long</span>
+<span class="font-body-default text-body-default">Notas Fiscais</span>
+</a>
+<a class="flex items-center px-gutter py-2.5 text-white/80 hover:bg-white/10 transition-colors cursor-pointer" href="#">
+<span class="material-symbols-outlined mr-3">bar_chart</span>
+<span class="font-body-default text-body-default">Relatórios</span>
+</a>
+<a class="flex items-center px-gutter py-2.5 text-white/80 hover:bg-white/10 transition-colors cursor-pointer" href="#">
+<span class="material-symbols-outlined mr-3">calendar_today</span>
+<span class="font-body-default text-body-default">Calendário</span>
+</a>
+<a class="flex items-center px-gutter py-2.5 text-white/80 hover:bg-white/10 transition-colors cursor-pointer" href="#">
+<span class="material-symbols-outlined mr-3">settings</span>
+<span class="font-body-default text-body-default">Configurações</span>
+</a>
+</nav>
+</aside>
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 h-[64px] w-[calc(100%-240px)] bg-surface-container-lowest dark:bg-surface border-b border-outline-variant flex justify-between items-center px-gutter z-40">
+<div class="flex items-center gap-4">
+<div class="relative flex items-center bg-surface-container-low rounded-lg px-3 py-1.5 focus-within:ring-2 focus-within:ring-secondary/20 transition-all border border-outline-variant/30">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-default w-64 text-on-surface placeholder:text-on-surface-variant/60" placeholder="Buscar no estoque de usados..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-all text-on-surface-variant">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-all text-on-surface-variant">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="h-8 w-8 rounded-full overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="Close-up professional headshot of a warehouse manager wearing a blue polo shirt and a focused expression. The background shows a modern, organized industrial warehouse with wooden structures and soft morning lighting. The style is clean, corporate photography with high-end digital clarity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAr2TevRUDF1SCNCh10XYyilve-dFG7FfIdtOCdvlueS7uXFUVx30j1D3XEMjvdKguRP08_RiiiF5I73aeuGbHhB75fManQ0i7pnCb-c6Fq5Gc-9mHc_MQT9EV-Tf7JCEPVWO5fne8vW8GQaIiM4CGzMRBBvZiFK3ddNuyXFDHEAHc-RvR2dIzu80W-2nnqGMGFR9clXLEg6p7Kuwhh6Aoi2uYc3lrfxJW-lcC_XpyP9zYFAT3FwnTwLjxuUH3ogEF6ZeAQctGOFMhv"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[240px] pt-[64px] min-h-screen">
+<div class="p-container-padding max-w-[1400px] mx-auto">
+<!-- Page Header Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-gutter mb-stack-lg">
+<div>
+<h2 class="font-page-title text-page-title text-on-surface mb-1">Carrocerias Usadas</h2>
+<p class="text-body-default text-on-surface-variant">Gerencie o catálogo de carrocerias seminovas e usadas disponíveis em estoque.</p>
+</div>
+<button class="flex items-center gap-2 bg-secondary text-white px-gutter py-2.5 rounded-lg shadow-sm hover:opacity-90 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[20px]">add</span>
+<span class="font-body-medium text-body-medium">Nova carroceria usada</span>
+</button>
+</div>
+<!-- Filters Bar -->
+<div class="flex flex-wrap items-center gap-stack-md mb-stack-lg bg-white p-4 rounded-xl border border-outline-variant shadow-sm">
+<span class="text-label-sm text-on-surface-variant font-medium">Filtrar por Status:</span>
+<div class="flex gap-2">
+<button class="px-3 py-1.5 rounded-full border border-secondary bg-secondary-container/10 text-secondary text-caption font-medium hover:bg-secondary-container/20 transition-colors">Todos</button>
+<button class="px-3 py-1.5 rounded-full border border-outline-variant bg-transparent text-on-surface-variant text-caption font-medium hover:bg-surface-container-high transition-colors">Disponível</button>
+<button class="px-3 py-1.5 rounded-full border border-outline-variant bg-transparent text-on-surface-variant text-caption font-medium hover:bg-surface-container-high transition-colors">Reservada</button>
+<button class="px-3 py-1.5 rounded-full border border-outline-variant bg-transparent text-on-surface-variant text-caption font-medium hover:bg-surface-container-high transition-colors">Vendida</button>
+<button class="px-3 py-1.5 rounded-full border border-outline-variant bg-transparent text-on-surface-variant text-caption font-medium hover:bg-surface-container-high transition-colors">Em Reforma</button>
+</div>
+<div class="ml-auto flex gap-2">
+<button class="flex items-center gap-2 px-3 py-1.5 text-on-surface-variant hover:bg-surface-container-high rounded-lg border border-outline-variant text-caption">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+                        Filtros Avançados
+                    </button>
+<button class="flex items-center gap-2 px-3 py-1.5 text-on-surface-variant hover:bg-surface-container-high rounded-lg border border-outline-variant text-caption">
+<span class="material-symbols-outlined text-[18px]">sort</span>
+                        Ordenar
+                    </button>
+</div>
+</div>
+<!-- Card Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-gutter">
+<!-- Card 1 -->
+<div class="group bg-white rounded-xl border border-outline-variant overflow-hidden hover:shadow-lg transition-all flex flex-col">
+<div class="relative h-48 w-full overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A large, well-maintained wooden truck body for a semi-truck, featuring dark stained timber and polished steel reinforcements. The truck body is positioned diagonally in a bright, modern industrial showroom with large glass windows. The lighting is crisp, emphasizing the texture of the wood and the shine of the metal details. Corporate industrial photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAH2Q590XMKKcAEbZ0_tb3xFs3rKTbLXzUZZaSX4m46SdRZESH7f2hra2DYU4bgpOwCdy466lBhS0aTV7CA5VcnBwdSDWTh84pCQy-c9JzDwj5xLxR_2LAr8gNYgeA8BsmkOkSFKlCJSGq50v3cOvqk4Md9eKMgh5iteUthYhw5i2MxTrvbgeM2gq98VmhyH9IKsAG5CgDRG6oW-EdD8TNpjBIZJxDC5pP2GBB6BcmNvGnZ81mVYAA5CAKRs_WO4ql7uvJIzyp4Sf3l"/>
+<div class="absolute top-3 right-3">
+<span class="status-pill-disponivel px-2.5 py-1 rounded-full text-caption font-semibold shadow-sm">Disponível</span>
+</div>
+</div>
+<div class="p-4 flex-1 flex flex-col">
+<div class="flex justify-between items-start mb-2">
+<h3 class="text-body-medium font-bold text-on-surface">Graneleira Mercedes-Benz</h3>
+<span class="text-caption text-on-surface-variant font-medium">Cod: #7721</span>
+</div>
+<div class="grid grid-cols-2 gap-y-3 mb-4">
+<div>
+<p class="text-caption text-on-surface-variant">Medidas</p>
+<p class="text-body-default font-medium">8.50m x 2.45m</p>
+</div>
+<div>
+<p class="text-caption text-on-surface-variant">Estado</p>
+<div class="flex items-center gap-1">
+<span class="flex h-2 w-2 rounded-full bg-green-500"></span>
+<p class="text-body-default font-medium">Excelente</p>
+</div>
+</div>
+<div>
+<p class="text-caption text-on-surface-variant">Valor Entrada</p>
+<p class="text-body-default font-tabular-nums">R$ 4.200,00</p>
+</div>
+<div>
+<p class="text-caption text-on-surface-variant">Valor Venda</p>
+<p class="text-body-default font-bold text-secondary font-tabular-nums">R$ 18.500,00</p>
+</div>
+</div>
+<div class="mt-auto pt-4 border-t border-outline-variant flex gap-2">
+<button class="flex-1 py-2 text-caption font-bold text-secondary border border-secondary rounded hover:bg-secondary/5 transition-colors">Ver Detalhes</button>
+<button class="p-2 text-on-surface-variant hover:text-secondary hover:bg-secondary/5 rounded border border-outline-variant transition-colors">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="group bg-white rounded-xl border border-outline-variant overflow-hidden hover:shadow-lg transition-all flex flex-col opacity-90">
+<div class="relative h-48 w-full overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="An open-platform wooden truck body with a rugged, weathered finish, showing signs of industrial use but remaining structurally sound. It is captured in a clean, outdoor shipyard setting during golden hour, creating warm, professional lighting that highlights the wood grain and metal hardware. The aesthetic is realistic, commercial, and reliable." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCkMk6iBm-_7_1VkhPJpSiW6sbVi_SMWpiD6c6HNgyf1-9lChgBbLYsIsuWSpcbeZyyWnWulwrPX1nEMNPgMHH0qKoBY3TBW5dVR-mI_vTIKYPZq4WsDhfq-MTnQJ9G8e_IjXubI4s8DKFnU7ol_pLArxgKF4cbKh5Dr83qrpebs4AIhoGDdcarITrSKGCDjRkZfGWelk4AUSSvbKTan-GOtYJcdwa695r1yT7loo3NAULPDqbe8wwp6c0cQ0bQug-1CrLag6r_vphI"/>
+<div class="absolute top-3 right-3">
+<span class="status-pill-reservada px-2.5 py-1 rounded-full text-caption font-semibold shadow-sm">Reservada</span>
+</div>
+</div>
+<div class="p-4 flex-1 flex flex-col">
+<div class="flex justify-between items-start mb-2">
+<h3 class="text-body-medium font-bold text-on-surface">Carga Seca Scania R440</h3>
+<span class="text-caption text-on-surface-variant font-medium">Cod: #7805</span>
+</div>
+<div class="grid grid-cols-2 gap-y-3 mb-4">
+<div>
+<p class="text-caption text-on-surface-variant">Medidas</p>
+<p class="text-body-default font-medium">7.20m x 2.40m</p>
+</div>
+<div>
+<p class="text-caption text-on-surface-variant">Estado</p>
+<div class="flex items-center gap-1">
+<span class="flex h-2 w-2 rounded-full bg-yellow-500"></span>
+<p class="text-body-default font-medium">Bom</p>
+</div>
+</div>
+<div>
+<p class="text-caption text-on-surface-variant">Valor Entrada</p>
+<p class="text-body-default font-tabular-nums">R$ 3.500,00</p>
+</div>
+<div>
+<p class="text-caption text-on-surface-variant">Valor Venda</p>
+<p class="text-body-default font-bold text-secondary font-tabular-nums">R$ 15.200,00</p>
+</div>
+</div>
+<div class="mt-auto pt-4 border-t border-outline-variant flex gap-2">
+<button class="flex-1 py-2 text-caption font-bold text-secondary border border-secondary rounded hover:bg-secondary/5 transition-colors">Ver Detalhes</button>
+<button class="p-2 text-on-surface-variant hover:text-secondary hover:bg-secondary/5 rounded border border-outline-variant transition-colors">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="group bg-white rounded-xl border border-outline-variant overflow-hidden hover:shadow-lg transition-all flex flex-col">
+<div class="relative h-48 w-full overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A wooden truck body undergoing restoration in a high-tech workshop. Skilled craftsmen are visible in the background using modern tools. The scene is bright with cool-toned LED lighting, showcasing the raw wood and the precision of the manufacturing process. The style is crisp, documentary-style industrial photography with high detail." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC17_nnfgT0P7A1oRSVRsC3nfeT0Jno5y5YjZZtQ3Wabm6esCoaJHWwlNMPZMqKQR3Q_ezeTYf5DuHvzWDCQ7ATHWZJBnPizW5Dmr4ylnfyzBwjeXiS5qJiXpV-1ycIk8bi1HjN9OKVVr9Z_0QZ3TTwi6man_pWwAe3oNGlPJCCZi9yBKz5AsQhQN6eWs0jkz_xit9OzgKzt_lxiswYnWdHN5q2VV1Rseg01_H5rNMLAUiECa3pbhAQxIC1rUQQdfLD-K3tsk5TqKm8"/>
+<div class="absolute top-3 right-3">
+<span class="status-pill-reforma px-2.5 py-1 rounded-full text-caption font-semibold shadow-sm">Em Reforma</span>
+</div>
+</div>
+<div class="p-4 flex-1 flex flex-col">
+<div class="flex justify-between items-start mb-2">
+<h3 class="text-body-medium font-bold text-on-surface">Baú Lonado Sider</h3>
+<span class="text-caption text-on-surface-variant font-medium">Cod: #7912</span>
+</div>
+<div class="grid grid-cols-2 gap-y-3 mb-4">
+<div>
+<p class="text-caption text-on-surface-variant">Medidas</p>
+<p class="text-body-default font-medium">6.00m x 2.30m</p>
+</div>
+<div>
+<p class="text-caption text-on-surface-variant">Estado</p>
+<div class="flex items-center gap-1">
+<span class="flex h-2 w-2 rounded-full bg-blue-500"></span>
+<p class="text-body-default font-medium">Regular</p>
+</div>
+</div>
+<div>
+<p class="text-caption text-on-surface-variant">Valor Entrada</p>
+<p class="text-body-default font-tabular-nums">R$ 2.100,00</p>
+</div>
+<div>
+<p class="text-caption text-on-surface-variant">Valor Venda</p>
+<p class="text-body-default font-bold text-secondary font-tabular-nums">R$ 9.800,00</p>
+</div>
+</div>
+<div class="mt-auto pt-4 border-t border-outline-variant flex gap-2">
+<button class="flex-1 py-2 text-caption font-bold text-secondary border border-secondary rounded hover:bg-secondary/5 transition-colors">Ver Detalhes</button>
+<button class="p-2 text-on-surface-variant hover:text-secondary hover:bg-secondary/5 rounded border border-outline-variant transition-colors">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="group bg-white rounded-xl border border-outline-variant overflow-hidden hover:shadow-lg transition-all flex flex-col grayscale opacity-60">
+<div class="relative h-48 w-full overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A completed wooden truck body mounted on a transport trailer, ready for delivery. The wood has a premium polished finish. It's parked in a clean logistics yard under a clear blue sky. The photo is taken from a low angle to show the scale and craftsmanship. Professional, high-contrast industrial product photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBeywapm0IHCAomkOpc44rO8I51BAHT3x85AFg0eaBvFkV7cO5xmZsVlDsfmklNE9_yt5TGyzC4kro9uB68UMzH6vt886C3QYRuxkekE4RaOhTncZJ2fGrA_eRTIa_mkfo5SeFa6xN1CgzdFM3OqsnS-fnMQFMZxkPHcVBtrSpFu_ErIE29bpbtpOtVYRgdXx_f4mLNpIcxN5uJV_kPv6rf5NAV0WdRkgCyCuTzuRgXuNz-sWp5pu60V5wUyNKc4L_m1vKI19nymsf_"/>
+<div class="absolute top-3 right-3">
+<span class="status-pill-vendida px-2.5 py-1 rounded-full text-caption font-semibold shadow-sm">Vendida</span>
+</div>
+</div>
+<div class="p-4 flex-1 flex flex-col">
+<div class="flex justify-between items-start mb-2">
+<h3 class="text-body-medium font-bold text-on-surface">Graneleira Bitren 2020</h3>
+<span class="text-caption text-on-surface-variant font-medium">Cod: #7688</span>
+</div>
+<div class="grid grid-cols-2 gap-y-3 mb-4">
+<div>
+<p class="text-caption text-on-surface-variant">Medidas</p>
+<p class="text-body-default font-medium">9.50m x 2.60m</p>
+</div>
+<div>
+<p class="text-caption text-on-surface-variant">Estado</p>
+<div class="flex items-center gap-1">
+<span class="flex h-2 w-2 rounded-full bg-green-500"></span>
+<p class="text-body-default font-medium">Excelente</p>
+</div>
+</div>
+<div>
+<p class="text-caption text-on-surface-variant">Valor Entrada</p>
+<p class="text-body-default font-tabular-nums">R$ 5.800,00</p>
+</div>
+<div>
+<p class="text-caption text-on-surface-variant">Valor Venda</p>
+<p class="text-body-default font-bold text-secondary font-tabular-nums">R$ 22.400,00</p>
+</div>
+</div>
+<div class="mt-auto pt-4 border-t border-outline-variant flex gap-2">
+<button class="flex-1 py-2 text-caption font-bold text-on-surface-variant bg-surface-container-high rounded cursor-not-allowed">Venda Finalizada</button>
+</div>
+</div>
+</div>
+<!-- Add New Card Placeholder -->
+<div class="group bg-surface-container-low rounded-xl border-2 border-dashed border-outline-variant flex flex-col items-center justify-center p-8 hover:border-secondary transition-colors cursor-pointer min-h-[400px]">
+<div class="h-16 w-16 rounded-full bg-white flex items-center justify-center mb-4 shadow-sm group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-secondary text-[32px]">add</span>
+</div>
+<p class="text-body-medium font-bold text-on-surface">Adicionar Carroceria</p>
+<p class="text-caption text-on-surface-variant text-center max-w-[150px] mt-2">Clique para cadastrar uma nova unidade no estoque de usados.</p>
+</div>
+</div>
+<!-- Pagination/Footer Stats -->
+<div class="mt-stack-lg border-t border-outline-variant pt-stack-md flex justify-between items-center">
+<div class="text-caption text-on-surface-variant">
+                    Mostrando <span class="font-bold">4</span> de <span class="font-bold">42</span> carrocerias cadastradas.
+                </div>
+<div class="flex gap-2">
+<button class="h-10 w-10 flex items-center justify-center rounded-lg border border-outline-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="h-10 px-4 flex items-center justify-center rounded-lg border border-secondary bg-secondary text-white font-bold">1</button>
+<button class="h-10 px-4 flex items-center justify-center rounded-lg border border-outline-variant hover:bg-surface-container-high transition-colors">2</button>
+<button class="h-10 px-4 flex items-center justify-center rounded-lg border border-outline-variant hover:bg-surface-container-high transition-colors">3</button>
+<button class="h-10 w-10 flex items-center justify-center rounded-lg border border-outline-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Micro-interactions for buttons
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('mousedown', () => {
+                btn.style.transform = 'scale(0.98)';
+            });
+            btn.addEventListener('mouseup', () => {
+                btn.style.transform = 'scale(1)';
+            });
+        });
+
+        // Search Bar Focus Effect
+        const searchInput = document.querySelector('input[type="text"]');
+        const searchContainer = searchInput.parentElement;
+        searchInput.addEventListener('focus', () => {
+            searchContainer.classList.add('border-secondary');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchContainer.classList.remove('border-secondary');
+        });
+    </script>
+</body></html>

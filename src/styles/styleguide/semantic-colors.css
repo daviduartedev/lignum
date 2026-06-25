@@ -1,0 +1,21 @@
+/* Cores semânticas de feedback/status — ver spec/design-system.md */
+
+:root {
+  --success: #16a34a;
+  --success-emphasis: #22c55e;
+  --success-foreground: #ffffff;
+
+  --error: #b91c1c;
+  --error-emphasis: #ef4444;
+  --error-foreground: #ffffff;
+
+  --warning: #ca8a04;
+  --warning-emphasis: #eab308;
+  --warning-foreground: #ffffff;
+
+  --info: #2563eb;
+  --info-emphasis: #3b82f6;
+  --info-foreground: #ffffff;
+
+  --neutral: #717182;
+}

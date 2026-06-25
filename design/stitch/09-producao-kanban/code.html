@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ALACRUZ ERP - Produção/OS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-error": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "surface-container-highest": "#dce2f3",
+                    "tertiary-container": "#494949",
+                    "secondary-container": "#0f6fee",
+                    "surface-container": "#e7eefe",
+                    "on-secondary-fixed": "#001a43",
+                    "on-primary": "#ffffff",
+                    "surface-dim": "#d3daea",
+                    "on-error-container": "#93000a",
+                    "background": "#f9f9ff",
+                    "primary-fixed-dim": "#b9c3ff",
+                    "surface": "#f9f9ff",
+                    "on-background": "#151c27",
+                    "on-primary-fixed": "#001159",
+                    "on-tertiary-fixed": "#1b1b1b",
+                    "secondary-fixed-dim": "#aec6ff",
+                    "on-tertiary-fixed-variant": "#474747",
+                    "inverse-on-surface": "#ebf1ff",
+                    "tertiary-fixed": "#e2e2e2",
+                    "on-tertiary": "#ffffff",
+                    "tertiary": "#333333",
+                    "outline-variant": "#c4c5d7",
+                    "surface-container-high": "#e2e8f8",
+                    "inverse-primary": "#b9c3ff",
+                    "surface-variant": "#dce2f3",
+                    "on-surface": "#151c27",
+                    "on-secondary-fixed-variant": "#004397",
+                    "on-tertiary-container": "#b8b8b8",
+                    "tertiary-fixed-dim": "#c6c6c6",
+                    "surface-bright": "#f9f9ff",
+                    "secondary": "#0057c1",
+                    "primary-container": "#0234c9",
+                    "on-primary-container": "#a7b4ff",
+                    "primary-fixed": "#dee1ff",
+                    "primary": "#002392",
+                    "on-primary-fixed-variant": "#0032c4",
+                    "on-secondary-container": "#fefcff",
+                    "surface-tint": "#2c4ede",
+                    "inverse-surface": "#2a313d",
+                    "on-surface-variant": "#444655",
+                    "error": "#ba1a1a",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-low": "#f0f3ff",
+                    "secondary-fixed": "#d8e2ff",
+                    "outline": "#747686",
+                    "error-container": "#ffdad6"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-sm": "8px",
+                    "sidebar-width": "240px",
+                    "stack-md": "16px",
+                    "gutter": "16px",
+                    "stack-lg": "24px",
+                    "topbar-height": "64px",
+                    "container-padding": "32px"
+            },
+            "fontFamily": {
+                    "body-default": ["Inter"],
+                    "caption": ["Inter"],
+                    "section-title": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "tabular-nums": ["Inter"],
+                    "page-title": ["Inter"],
+                    "body-medium": ["Inter"]
+            },
+            "fontSize": {
+                    "body-default": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                    "section-title": ["18px", {"lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "label-sm": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+                    "tabular-nums": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "page-title": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "body-medium": ["14px", {"lineHeight": "20px", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .kanban-column {
+            min-width: 300px;
+            max-width: 320px;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #dce2f3;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #c4c5d7;
+        }
+        .os-card:hover {
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+        .os-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-default flex overflow-hidden h-screen">
+<!-- SIDEBAR -->
+<aside class="fixed left-0 top-0 h-screen w-[240px] bg-tertiary dark:bg-black border-r border-outline-variant shadow-sm flex flex-col py-stack-lg z-50">
+<div class="px-gutter mb-8">
+<h1 class="font-page-title text-page-title font-bold text-white tracking-tight">ALACRUZ</h1>
+<p class="text-white/60 text-caption font-caption">ERP Industrial</p>
+</div>
+<nav class="flex-1 overflow-y-auto px-3 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-white/80 hover:bg-white/10 transition-colors rounded-lg cursor-pointer" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-label-sm font-label-sm">Painel</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-white/80 hover:bg-white/10 transition-colors rounded-lg cursor-pointer" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="text-label-sm font-label-sm">Orçamentos</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-white/80 hover:bg-white/10 transition-colors rounded-lg cursor-pointer" href="#">
+<span class="material-symbols-outlined">view_in_ar</span>
+<span class="text-label-sm font-label-sm">Configurador 3D</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 bg-secondary-container text-on-secondary-container border-l-4 border-secondary transition-colors rounded-r-lg cursor-pointer" href="#">
+<span class="material-symbols-outlined">factory</span>
+<span class="text-label-sm font-label-sm">Produção/OS</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-white/80 hover:bg-white/10 transition-colors rounded-lg cursor-pointer" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="text-label-sm font-label-sm">Estoque</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-white/80 hover:bg-white/10 transition-colors rounded-lg cursor-pointer" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="text-label-sm font-label-sm">Carrocerias Usadas</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-white/80 hover:bg-white/10 transition-colors rounded-lg cursor-pointer" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="text-label-sm font-label-sm">Clientes</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-white/80 hover:bg-white/10 transition-colors rounded-lg cursor-pointer" href="#">
+<span class="material-symbols-outlined">engineering</span>
+<span class="text-label-sm font-label-sm">Funcionários</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-white/80 hover:bg-white/10 transition-colors rounded-lg cursor-pointer" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="text-label-sm font-label-sm">Financeiro</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-white/80 hover:bg-white/10 transition-colors rounded-lg cursor-pointer" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="text-label-sm font-label-sm">Notas Fiscais</span>
+</a>
+<div class="pt-4 mt-4 border-t border-white/10">
+<a class="flex items-center gap-3 px-3 py-2 text-white/80 hover:bg-white/10 transition-colors rounded-lg cursor-pointer" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-label-sm font-label-sm">Configurações</span>
+</a>
+</div>
+</nav>
+<div class="px-4 mt-auto">
+<div class="flex items-center gap-3 bg-white/5 p-2 rounded-lg">
+<img class="w-10 h-10 rounded-full border border-white/20" data-alt="A professional headshot of a mature industrial manager wearing a polo shirt in a bright office setting. The style is sharp, corporate photography with soft bokeh in the background, mirroring the high-performance B2B SaaS aesthetic. Cool blue tones and crisp white lighting reflect the brand colors." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAv4zdOskJEx89sMuLj2vgWLmMAFAduI1GTUUh1RdSum7fCzIKVn-yIZaw6HZHud4sD9TbKeDAM1ODrIEQqRxe4ltlWu9awwiiR93LWrY1T__sAjR_3Nen9rDecAiLiqpT7TTO6EseoD2r7KumKDwaDpRRVU53uW5ugd8LmFwmR0Qki9xLs94ycUD9-Px7HRXnJxIukjEi7L60LHldYjE7vnTXN3xOx_7mmBWSvQKiYEtu1BVN_KACZQNmejmqfGS3U2FYsJyQ-wCCT"/>
+<div class="flex-1 overflow-hidden">
+<p class="text-white text-caption font-bold truncate">Roberto Alacruz</p>
+<p class="text-white/60 text-caption truncate">Diretor de Ops</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- MAIN CONTENT WRAPPER -->
+<main class="flex-1 ml-[240px] flex flex-col h-screen overflow-hidden">
+<!-- TOP APP BAR -->
+<header class="h-[64px] bg-surface-container-lowest border-b border-outline-variant flex justify-between items-center px-gutter shrink-0">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md focus-within:ring-2 focus-within:ring-secondary/20 rounded-lg transition-all">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-lg pl-10 pr-4 py-2 text-body-default focus:ring-0" placeholder="Buscar OS, cliente ou funcionário..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2 p-1 bg-surface-container-low rounded-lg border border-outline-variant">
+<button class="flex items-center gap-2 px-3 py-1.5 bg-white shadow-sm text-secondary font-bold text-label-sm rounded-md">
+<span class="material-symbols-outlined text-[20px]">view_kanban</span>
+                        Kanban
+                    </button>
+<button class="flex items-center gap-2 px-3 py-1.5 text-on-surface-variant hover:bg-surface-container-high transition-all text-label-sm rounded-md">
+<span class="material-symbols-outlined text-[20px]">table_rows</span>
+                        Tabela
+                    </button>
+</div>
+<div class="h-6 w-px bg-outline-variant mx-2"></div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high text-on-surface-variant transition-all">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high text-on-surface-variant transition-all">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+</div>
+</header>
+<!-- KANBAN BOARD -->
+<section class="flex-1 overflow-x-auto p-gutter bg-background">
+<div class="flex h-full gap-gutter">
+<!-- COLUMN: AGUARDANDO -->
+<div class="kanban-column flex flex-col h-full bg-surface-container-low/50 rounded-xl p-3 border border-outline-variant">
+<div class="flex items-center justify-between mb-4 px-1">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-outline"></span>
+<h3 class="text-label-sm font-bold text-on-surface uppercase tracking-wider">Aguardando</h3>
+<span class="bg-surface-container-high text-on-surface-variant text-[11px] px-2 py-0.5 rounded-full">08</span>
+</div>
+<button class="text-on-surface-variant hover:text-primary"><span class="material-symbols-outlined">add</span></button>
+</div>
+<div class="flex-1 overflow-y-auto space-y-3 pr-1">
+<!-- CARD 1 -->
+<div class="os-card bg-white border border-outline-variant p-4 rounded-lg cursor-grab active:cursor-grabbing">
+<div class="flex justify-between items-start mb-2">
+<span class="text-caption font-bold text-secondary bg-secondary-fixed px-2 py-0.5 rounded">OS-4092</span>
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">more_horiz</span>
+</div>
+<h4 class="text-body-medium font-bold text-on-surface mb-1">Madeireira Santos Ltda</h4>
+<p class="text-caption text-on-surface-variant mb-4">Graneleiro 12.5m - Eucalipto</p>
+<div class="flex items-center justify-between mb-3">
+<div class="flex -space-x-2">
+<img class="w-7 h-7 rounded-full border-2 border-white" data-alt="Close up portrait of a skilled carpenter in an industrial woodworking shop, wearing safety glasses and a utility vest. Realistic corporate lighting, high detail, industrial manufacturing atmosphere. 4k resolution." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpKU2VwojmuZcTbffm2LtXLtRBl8036zDPmIQQtjo2LejGwmGaAtcaYejCz8QEJQ2YipUQgCxeWaAvUUD_bYLejnD7zV3Hpx9G38L39Bwb7UCwJ6wFk-4rc_9ZVccLPHlwGfM_ClQZAFf4kmhJYj6b95VozokYFilWb6AqPxYUabxzFI7LgwXNNRPoM6_Z1HQZTAk0bTL6l1X9Lm9OL2pz17Hkg0a7d3cKTgGMVsfINI-q4v1nxmlHjYz_i7dhyifPrS-Aq9eYrh8N"/>
+<div class="w-7 h-7 rounded-full bg-surface-container-highest border-2 border-white flex items-center justify-center text-[10px] font-bold">+2</div>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">calendar_today</span>
+<span class="text-caption">24 Out</span>
+</div>
+</div>
+<div class="w-full bg-surface-container-low h-1.5 rounded-full overflow-hidden">
+<div class="bg-outline w-[0%] h-full"></div>
+</div>
+</div>
+<!-- CARD 2 -->
+<div class="os-card bg-white border border-outline-variant p-4 rounded-lg cursor-grab active:cursor-grabbing">
+<div class="flex justify-between items-start mb-2">
+<span class="text-caption font-bold text-secondary bg-secondary-fixed px-2 py-0.5 rounded">OS-4095</span>
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">more_horiz</span>
+</div>
+<h4 class="text-body-medium font-bold text-on-surface mb-1">Transportes Veloz</h4>
+<p class="text-caption text-on-surface-variant mb-4">Baú de Carga Seca 9.0m</p>
+<div class="flex items-center justify-between mb-3">
+<div class="flex">
+<img class="w-7 h-7 rounded-full border-2 border-white" data-alt="Professional industrial worker with a hard hat, focused expression, standing in a large brightly lit timber factory. Cinematic lighting, soft shadows, modern corporate B2B style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDwoNVkmA4UhGfSfpL5rgIB5GGo9ZYVF7fdYtwXsG5zcsQdWRYDdaoGZvpcSahg4wJwuXNnCrYj5KZ15st2can_TdwM-Y39WQbvAXWEzIM1JIhmQ4PucNiDQgu0TSToPSp38TfmYA1dzvY0Qmd0MMcbBHEuJ9YgWmXRH9NBCZX_C4ADniCcAGWmFsa_ngW8v6R4P_HsQnfJ8pO40CaMC8rbRxOdE7oxq18SlxvFz73Bgs_Xd-78h9yskqD7wrTXKeh8wMRk7zjY-XEV"/>
+</div>
+<div class="flex items-center gap-1 text-error">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+<span class="text-caption font-bold">Atrasada</span>
+</div>
+</div>
+<div class="w-full bg-surface-container-low h-1.5 rounded-full overflow-hidden">
+<div class="bg-outline w-[5%] h-full"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- COLUMN: EM ANDAMENTO -->
+<div class="kanban-column flex flex-col h-full bg-surface-container-low/50 rounded-xl p-3 border border-outline-variant">
+<div class="flex items-center justify-between mb-4 px-1">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<h3 class="text-label-sm font-bold text-on-surface uppercase tracking-wider">Em andamento</h3>
+<span class="bg-surface-container-high text-on-surface-variant text-[11px] px-2 py-0.5 rounded-full">05</span>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto space-y-3 pr-1">
+<!-- CARD 3 -->
+<div class="os-card bg-white border-l-4 border-l-secondary border-y border-r border-outline-variant p-4 rounded-lg shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<span class="text-caption font-bold text-secondary bg-secondary-fixed px-2 py-0.5 rounded">OS-4088</span>
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">more_horiz</span>
+</div>
+<h4 class="text-body-medium font-bold text-on-surface mb-1">Agrícola Horizonte</h4>
+<p class="text-caption text-on-surface-variant mb-4">Carga Viva - Gado (Especial)</p>
+<div class="flex items-center justify-between mb-2">
+<div class="flex -space-x-1">
+<img class="w-7 h-7 rounded-full border-2 border-white" data-alt="Close up portrait of a factory worker in a high-visibility vest. Bright workshop lighting, professional photography, industrial background. High information density visual style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCx9AQ_DcklTXdFVAal_866tdv7OaNSEQF2zX3qnYvrgh0J3q4zDnSrIAc60ionGYfOachJoHLsvB2P20LiZv9gkUfOFeaeqbq4mTOkIaM-jUMeeF6n98GvF3-dmjcRNFQdQevQj4QsPOsCM84xrMazbG1QdmseBDz4X5EVVqS46a5TIlZQNFoon7obz1i6EOLFUZmcJ_qyP3MwYlkYv9MDsRLLgXxMccIc1vmqxMvwZyrrpKyPBRzIDvyWbV_x2QiqhnJTcskZ2yOM"/>
+<img class="w-7 h-7 rounded-full border-2 border-white" data-alt="Headshot of a middle-aged female industrial engineer in a modern factory setting. Soft blue tones, crisp lighting, high quality corporate aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBfIA0IDX8ed064k8pKCq0sWkPHbvqYCwhrxtpRCETqOC1N4G0qKqVkKOv5V67stVFuBci5cakaKv75Y5Pg7SDmL-wDKOl69-CjwLTBoHT7eOhttPmOe3oOyrmR2lcTjFMsIYfZc-fENI-fDuD84tdP5Dw6g0gJn7DAa8QYa8t2l11rvW-WgfVWlzqw1MZKn8z_ARAot-E0ovzb9lytZLBHguXYB0USSc5rzb0WYUvEhWmpoPznYIyV2HiJV6o4j_TuOR3RUBXSaRrp"/>
+</div>
+<span class="text-caption font-bold text-secondary">65%</span>
+</div>
+<div class="w-full bg-surface-container-low h-1.5 rounded-full overflow-hidden">
+<div class="bg-secondary w-[65%] h-full"></div>
+</div>
+</div>
+<!-- CARD 4 -->
+<div class="os-card bg-white border border-outline-variant p-4 rounded-lg">
+<div class="flex justify-between items-start mb-2">
+<span class="text-caption font-bold text-secondary bg-secondary-fixed px-2 py-0.5 rounded">OS-4102</span>
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">more_horiz</span>
+</div>
+<h4 class="text-body-medium font-bold text-on-surface mb-1">Frota Express S.A.</h4>
+<p class="text-caption text-on-surface-variant mb-4">Plataforma Auto-Socorro</p>
+<div class="flex items-center justify-between mb-2">
+<img class="w-7 h-7 rounded-full border-2 border-white" data-alt="An industrial production worker wearing a cap and safety gear, working with precision tools in a high-tech manufacturing environment. Soft focus on background, sharp focus on subject, cool blue and white lighting scheme." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVPM6ImoUK-yK8tOAuGzGZZZf8Qv4k-is4_RK4MET8gbjaB8ZD_BSvHnds5REyZuFzuTtRBqabZ7Frzom7QuvRJQkzOnstSzjzZxGYyEjgncy34eqJ5GXQ5drRGn3eF-1IZs_t_myGdhhTtgp4vdBNw3aPJ_fYnKCEjB8-nORXrtqmhmhDj-cdsXRx-Jje5RDDirB8wjjDdJUVQ3V30lLuhX3C2Jk6bQY2mFBZWoMGZluMBAi4RPi8bQdu1orOKLIR7hDwj_A4Gw84"/>
+<span class="text-caption font-bold text-secondary">22%</span>
+</div>
+<div class="w-full bg-surface-container-low h-1.5 rounded-full overflow-hidden">
+<div class="bg-secondary w-[22%] h-full"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- COLUMN: CONCLUÍDA -->
+<div class="kanban-column flex flex-col h-full bg-surface-container-low/50 rounded-xl p-3 border border-outline-variant">
+<div class="flex items-center justify-between mb-4 px-1">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+<h3 class="text-label-sm font-bold text-on-surface uppercase tracking-wider">Concluída</h3>
+<span class="bg-surface-container-high text-on-surface-variant text-[11px] px-2 py-0.5 rounded-full">12</span>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto space-y-3 pr-1 opacity-70 hover:opacity-100 transition-opacity">
+<!-- CARD 5 -->
+<div class="os-card bg-white border border-outline-variant p-4 rounded-lg">
+<div class="flex justify-between items-start mb-2">
+<span class="text-caption font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">OS-4080</span>
+<span class="material-symbols-outlined text-[18px] text-emerald-500" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<h4 class="text-body-medium font-bold text-on-surface mb-1">ConstruMais Inc</h4>
+<p class="text-caption text-on-surface-variant mb-4">Caçamba Basculante 10m³</p>
+<div class="w-full bg-emerald-500 h-1.5 rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- COLUMN: CANCELADA -->
+<div class="kanban-column flex flex-col h-full bg-surface-container-low/50 rounded-xl p-3 border border-outline-variant">
+<div class="flex items-center justify-between mb-4 px-1">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+<h3 class="text-label-sm font-bold text-on-surface uppercase tracking-wider">Cancelada</h3>
+<span class="bg-surface-container-high text-on-surface-variant text-[11px] px-2 py-0.5 rounded-full">02</span>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto space-y-3 pr-1">
+<!-- CARD 6 -->
+<div class="os-card bg-white border border-outline-variant p-4 rounded-lg grayscale opacity-60">
+<div class="flex justify-between items-start mb-2">
+<span class="text-caption font-bold text-error bg-error-container px-2 py-0.5 rounded">OS-3988</span>
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">cancel</span>
+</div>
+<h4 class="text-body-medium font-bold text-on-surface mb-1">Serraria do Vale</h4>
+<p class="text-caption text-on-surface-variant mb-2">Carroceria Padrão</p>
+<p class="text-[10px] italic text-error">Motivo: Cancelamento pelo cliente</p>
+</div>
+</div>
+</div>
+<!-- ADD COLUMN BUTTON -->
+<button class="kanban-column h-[120px] border-2 border-dashed border-outline-variant rounded-xl flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary hover:border-secondary transition-all shrink-0">
+<span class="material-symbols-outlined text-3xl mb-2">add_circle</span>
+<span class="text-label-sm font-bold">Nova Etapa</span>
+</button>
+</div>
+</section>
+<!-- FOOTER/STATUS BAR -->
+<footer class="h-8 bg-surface-container-lowest border-t border-outline-variant flex items-center px-gutter justify-between shrink-0">
+<div class="flex gap-4 items-center">
+<span class="text-[11px] text-on-surface-variant flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span> Sistema Online
+                </span>
+<span class="text-[11px] text-on-surface-variant">27 OS em processamento hoje</span>
+</div>
+<div class="text-[11px] text-on-surface-variant font-tabular-nums">
+                Ultima atualização: 14:32:05
+            </div>
+</footer>
+</main>
+<!-- FLOATING ACTION BUTTON -->
+<button class="fixed bottom-10 right-10 bg-secondary text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50 group">
+<span class="material-symbols-outlined text-3xl">add</span>
+<span class="absolute right-full mr-4 bg-tertiary text-white text-caption font-bold px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Nova Ordem de Serviço</span>
+</button>
+<script>
+        // Simple micro-interactions
+        document.querySelectorAll('.os-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                // Future hover logic or sound effects
+            });
+        });
+
+        // View toggle logic (visual only for this prototype)
+        const buttons = document.querySelectorAll('header button');
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // In a real app, this would switch between Kanban and Table layout
+                console.log('Layout switched');
+            });
+        });
+    </script>
+</body></html>

@@ -1,0 +1,25 @@
+/* Lignum: apenas tokens de cor/tamanho — layout vem do react-toastify */
+
+:root {
+  --toastify-toast-width: min(28rem, calc(100vw - 2rem));
+  --toastify-toast-min-height: 4.5rem;
+  --toastify-toast-bd-radius: 0.75rem;
+  --toastify-font-family: inherit;
+
+  --toastify-color-success: var(--success);
+  --toastify-color-error: var(--error);
+  --toastify-color-warning: var(--warning);
+  --toastify-color-info: var(--info);
+
+  --toastify-icon-color-success: var(--success);
+  --toastify-icon-color-error: var(--error);
+  --toastify-icon-color-warning: var(--warning);
+  --toastify-icon-color-info: var(--info);
+
+  --toastify-color-progress-success: var(--success-emphasis);
+  --toastify-color-progress-error: var(--error-emphasis);
+  --toastify-color-progress-warning: var(--warning-emphasis);
+  --toastify-color-progress-info: var(--info-emphasis);
+
+  --toastify-text-color-light: var(--foreground);
+}

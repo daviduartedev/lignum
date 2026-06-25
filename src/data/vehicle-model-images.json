@@ -1,0 +1,55 @@
+{
+  "entries": [
+    {
+      "key": "toyota/corolla",
+      "brand": "Toyota",
+      "model": "Corolla",
+      "images": [
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/b/b4/2022_Toyota_Corolla_L_e-CVT_%28Brazil%29_front_view.jpg",
+          "source": "Wikimedia Commons",
+          "licenseNote": "CC BY-SA 4.0 — Toyota Corolla (Brazil) front view"
+        },
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/6/6e/2019_Toyota_Corolla_Icon_Tech_VVT-i_1.8_Front.jpg",
+          "source": "Wikimedia Commons",
+          "licenseNote": "CC BY-SA 4.0 — Toyota Corolla front (referência modelo)"
+        },
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/f/f6/Toyota_Corolla_Hybrid_%28E210%29_IMG_4335.jpg",
+          "source": "Wikimedia Commons",
+          "licenseNote": "CC BY-SA 4.0 — Toyota Corolla Hybrid E210"
+        }
+      ]
+    },
+    {
+      "key": "honda/civic",
+      "brand": "Honda",
+      "model": "Civic",
+      "images": [
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/5/55/2018_Honda_Civic_EX_Turbo_1.5_Front.jpg",
+          "source": "Wikimedia Commons",
+          "licenseNote": "CC BY-SA 4.0 — Honda Civic front"
+        },
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/4/4a/2016_Honda_Civic_Ex-T_Sedan_in_Modern_Steel_Metallic%2C_front_left.jpg",
+          "source": "Wikimedia Commons",
+          "licenseNote": "CC BY-SA 4.0 — Honda Civic sedan"
+        }
+      ]
+    },
+    {
+      "key": "volkswagen/nivus",
+      "brand": "Volkswagen",
+      "model": "Nivus",
+      "images": [
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/8/8d/VW_Nivus_Highline_1.0_TSI_%28Brazil%29_front_view.jpg",
+          "source": "Wikimedia Commons",
+          "licenseNote": "CC BY-SA 4.0 — VW Nivus front (Brazil)"
+        }
+      ]
+    }
+  ]
+}

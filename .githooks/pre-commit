@@ -1,0 +1,8 @@
+#!/bin/sh
+set -eu
+
+if command -v gitleaks >/dev/null 2>&1; then
+  gitleaks protect --redact --staged
+else
+  echo "gitleaks nao encontrado; commit permitido (instale gitleaks para scan local)." >&2
+fi

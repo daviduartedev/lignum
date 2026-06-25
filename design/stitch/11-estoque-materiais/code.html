@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Estoque de Matérias-Primas | ALACRUZ ERP</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "surface-container-highest": "#dce2f3",
+                        "tertiary-container": "#494949",
+                        "secondary-container": "#0f6fee",
+                        "surface-container": "#e7eefe",
+                        "on-secondary-fixed": "#001a43",
+                        "on-primary": "#ffffff",
+                        "surface-dim": "#d3daea",
+                        "on-error-container": "#93000a",
+                        "background": "#f9f9ff",
+                        "primary-fixed-dim": "#b9c3ff",
+                        "surface": "#f9f9ff",
+                        "on-background": "#151c27",
+                        "on-primary-fixed": "#001159",
+                        "on-tertiary-fixed": "#1b1b1b",
+                        "secondary-fixed-dim": "#aec6ff",
+                        "on-tertiary-fixed-variant": "#474747",
+                        "inverse-on-surface": "#ebf1ff",
+                        "tertiary-fixed": "#e2e2e2",
+                        "on-tertiary": "#ffffff",
+                        "tertiary": "#333333",
+                        "outline-variant": "#c4c5d7",
+                        "surface-container-high": "#e2e8f8",
+                        "inverse-primary": "#b9c3ff",
+                        "surface-variant": "#dce2f3",
+                        "on-surface": "#151c27",
+                        "on-secondary-fixed-variant": "#004397",
+                        "on-tertiary-container": "#b8b8b8",
+                        "tertiary-fixed-dim": "#c6c6c6",
+                        "surface-bright": "#f9f9ff",
+                        "secondary": "#0057c1",
+                        "primary-container": "#0234c9",
+                        "on-primary-container": "#a7b4ff",
+                        "primary-fixed": "#dee1ff",
+                        "primary": "#002392",
+                        "on-primary-fixed-variant": "#0032c4",
+                        "on-secondary-container": "#fefcff",
+                        "surface-tint": "#2c4ede",
+                        "inverse-surface": "#2a313d",
+                        "on-surface-variant": "#444655",
+                        "error": "#ba1a1a",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f0f3ff",
+                        "secondary-fixed": "#d8e2ff",
+                        "outline": "#747686",
+                        "error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "8px",
+                        "sidebar-width": "240px",
+                        "stack-md": "16px",
+                        "gutter": "16px",
+                        "stack-lg": "24px",
+                        "topbar-height": "64px",
+                        "container-padding": "32px"
+                    },
+                    "fontFamily": {
+                        "body-default": ["Inter"],
+                        "caption": ["Inter"],
+                        "section-title": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "tabular-nums": ["Inter"],
+                        "page-title": ["Inter"],
+                        "body-medium": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-default": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "section-title": ["18px", {"lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-sm": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+                        "tabular-nums": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "page-title": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "body-medium": ["14px", {"lineHeight": "20px", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .sidebar-active-border {
+            border-left: 4px solid #0057c1;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-default">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-screen w-[240px] bg-tertiary dark:bg-black border-r border-outline-variant shadow-sm z-50 flex flex-col py-stack-lg">
+<div class="px-6 mb-8">
+<h1 class="font-page-title text-page-title font-bold text-white tracking-tight">ALACRUZ</h1>
+<p class="text-white/60 text-xs uppercase tracking-widest font-semibold mt-1">ERP Industrial</p>
+</div>
+<nav class="flex-1 overflow-y-auto px-3 space-y-1">
+<!-- Navigation Items Mapping -->
+<a class="flex items-center gap-3 px-3 py-2 text-white/80 hover:bg-white/10 transition-colors cursor-pointer active:opacity-90 rounded" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-sm text-label-sm">Painel</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-white/80 hover:bg-white/10 transition-colors cursor-pointer active:opacity-90 rounded" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="font-label-sm text-label-sm">Orçamentos</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-white/80 hover:bg-white/10 transition-colors cursor-pointer active:opacity-90 rounded" href="#">
+<span class="material-symbols-outlined">view_in_ar</span>
+<span class="font-label-sm text-label-sm">Configurador 3D</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-white/80 hover:bg-white/10 transition-colors cursor-pointer active:opacity-90 rounded" href="#">
+<span class="material-symbols-outlined">factory</span>
+<span class="font-label-sm text-label-sm">Produção/OS</span>
+</a>
+<!-- Active State for Estoque -->
+<a class="flex items-center gap-3 px-3 py-2 bg-secondary-container text-on-secondary-container border-l-4 border-secondary transition-colors cursor-pointer active:opacity-90" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+<span class="font-label-sm text-label-sm">Estoque</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-white/80 hover:bg-white/10 transition-colors cursor-pointer active:opacity-90 rounded" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-label-sm text-label-sm">Carrocerias Usadas</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-white/80 hover:bg-white/10 transition-colors cursor-pointer active:opacity-90 rounded" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="font-label-sm text-label-sm">Clientes</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-white/80 hover:bg-white/10 transition-colors cursor-pointer active:opacity-90 rounded" href="#">
+<span class="material-symbols-outlined">engineering</span>
+<span class="font-label-sm text-label-sm">Funcionários</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-white/80 hover:bg-white/10 transition-colors cursor-pointer active:opacity-90 rounded" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-sm text-label-sm">Financeiro</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-white/80 hover:bg-white/10 transition-colors cursor-pointer active:opacity-90 rounded" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-label-sm text-label-sm">Notas Fiscais</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-white/80 hover:bg-white/10 transition-colors cursor-pointer active:opacity-90 rounded" href="#">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="font-label-sm text-label-sm">Relatórios</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-white/80 hover:bg-white/10 transition-colors cursor-pointer active:opacity-90 rounded" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-label-sm text-label-sm">Calendário</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-white/80 hover:bg-white/10 transition-colors cursor-pointer active:opacity-90 rounded" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-sm text-label-sm">Configurações</span>
+</a>
+</nav>
+</aside>
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 h-[64px] w-[calc(100%-240px)] bg-surface-container-lowest border-b border-outline-variant flex justify-between items-center px-gutter z-40">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md focus-within:ring-2 focus-within:ring-secondary/20 rounded-lg">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container border-none rounded-lg pl-10 pr-4 py-2 text-body-default focus:ring-0" placeholder="Pesquisar estoque..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-all text-on-surface-variant">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-all text-on-surface-variant">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+</div>
+<div class="flex items-center gap-3 border-l pl-6 border-outline-variant">
+<div class="text-right">
+<p class="text-label-sm font-body-medium text-on-surface">Admin Alacruz</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-wider">Gestor de Fábrica</p>
+</div>
+<img class="w-10 h-10 rounded-full border-2 border-outline-variant object-cover" data-alt="Professional headshot of a mature industrial manager wearing a crisp white shirt in a modern high-tech office environment. The lighting is soft and natural, emphasizing a high-performance corporate aesthetic with a clean, light-mode background. The mood is confident, reliable, and professional, reflecting the efficiency of the ERP system." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_Mf6GnmnkSaB01Td8kTi-DUqfMUjf-iBNLQZtYqe97ZfDqoflOnIMVnP59sy3nkaPAWxMOBiKeP1jlXdqn07US0IbW-XzncMaXaIFdAjAvvLYF92GQtMx2iugdc1Bj2plzf1HeOy9chqK6wJASgmv0tb9E4TuBScfQLzbuP7BfNxJ7_nf7-M2RMCJcgwu1GYeM0IuNp9V3erW4ccZ4sUBcyMRg8opmgfpco2F1bQk8D2s8hTPpIrH6DmdSEb1dYXOWI5_seS9xm80"/>
+</div>
+</div>
+</header>
+<!-- Content Canvas -->
+<main class="ml-[240px] mt-[64px] p-container-padding min-h-[calc(100vh-64px)]">
+<!-- Header Actions -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-stack-md mb-stack-lg">
+<div>
+<h2 class="font-page-title text-page-title text-primary font-bold">Estoque de Matérias-Primas</h2>
+<p class="text-on-surface-variant font-body-default">Gestão e controle de insumos para produção de carrocerias.</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex items-center gap-2 px-4 py-2 bg-white border border-outline-variant text-secondary font-label-sm rounded-lg hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined text-sm">add_box</span>
+                    Novo material
+                </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-white border border-outline-variant text-secondary font-label-sm rounded-lg hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined text-sm">logout</span>
+                    Nova saída
+                </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-secondary text-white font-label-sm rounded-lg hover:opacity-90 transition-all shadow-sm">
+<span class="material-symbols-outlined text-sm">login</span>
+                    Nova entrada
+                </button>
+</div>
+</div>
+<!-- KPI Cards Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-stack-md mb-stack-lg">
+<div class="bg-white p-5 rounded-lg border border-outline-variant shadow-[0px_1px_3px_rgba(0,0,0,0.05)] flex items-center justify-between">
+<div>
+<p class="text-caption text-on-surface-variant font-body-default uppercase tracking-wider mb-1">Total de Itens</p>
+<p class="text-page-title font-bold text-on-surface">1,284 <span class="text-caption font-normal text-on-surface-variant">SKUs</span></p>
+</div>
+<div class="p-3 bg-secondary/5 rounded-lg text-secondary">
+<span class="material-symbols-outlined">inventory</span>
+</div>
+</div>
+<div class="bg-white p-5 rounded-lg border border-outline-variant shadow-[0px_1px_3px_rgba(0,0,0,0.05)] flex items-center justify-between ring-2 ring-error/5 border-error/20">
+<div>
+<p class="text-caption text-error font-semibold font-body-default uppercase tracking-wider mb-1">Itens abaixo do mínimo</p>
+<p class="text-page-title font-bold text-error">12</p>
+</div>
+<div class="p-3 bg-error/5 rounded-lg text-error">
+<span class="material-symbols-outlined">warning</span>
+</div>
+</div>
+<div class="bg-white p-5 rounded-lg border border-outline-variant shadow-[0px_1px_3px_rgba(0,0,0,0.05)] flex items-center justify-between">
+<div>
+<p class="text-caption text-on-surface-variant font-body-default uppercase tracking-wider mb-1">Valor Total em Estoque</p>
+<p class="text-page-title font-bold text-on-surface">R$ 452.840,00</p>
+</div>
+<div class="p-3 bg-secondary/5 rounded-lg text-secondary">
+<span class="material-symbols-outlined">payments</span>
+</div>
+</div>
+</div>
+<!-- Main Content Table Container -->
+<div class="bg-white rounded-lg border border-outline-variant shadow-sm overflow-hidden">
+<!-- Table Filters -->
+<div class="px-gutter py-4 border-b border-outline-variant flex flex-wrap items-center justify-between gap-4 bg-surface-container-low">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 bg-white border border-outline-variant rounded px-3 py-1.5 cursor-pointer hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-sm">filter_list</span>
+<span class="text-label-sm text-on-surface-variant">Filtrar por Status</span>
+</div>
+<div class="flex items-center gap-2 bg-white border border-outline-variant rounded px-3 py-1.5 cursor-pointer hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-sm">category</span>
+<span class="text-label-sm text-on-surface-variant">Categoria</span>
+</div>
+</div>
+<div class="text-caption text-on-surface-variant font-medium">
+                    Exibindo 50 de 1.284 materiais
+                </div>
+</div>
+<!-- Data Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant">
+<th class="px-gutter py-3 text-label-sm font-bold text-on-surface-variant uppercase">Material</th>
+<th class="px-4 py-3 text-label-sm font-bold text-on-surface-variant uppercase">Unidade</th>
+<th class="px-4 py-3 text-label-sm font-bold text-on-surface-variant uppercase text-right">Saldo</th>
+<th class="px-4 py-3 text-label-sm font-bold text-on-surface-variant uppercase text-right">Mínimo</th>
+<th class="px-4 py-3 text-label-sm font-bold text-on-surface-variant uppercase text-right">Custo Médio</th>
+<th class="px-4 py-3 text-label-sm font-bold text-on-surface-variant uppercase">Fornecedor</th>
+<th class="px-gutter py-3 text-label-sm font-bold text-on-surface-variant uppercase text-center">Status</th>
+<th class="px-gutter py-3"></th>
+</tr>
+</thead>
+<tbody class="font-tabular-nums">
+<!-- Table Row: Warning State -->
+<tr class="border-b border-outline-variant bg-error/5 hover:bg-error/10 transition-colors group">
+<td class="px-gutter py-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container-highest flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">architecture</span>
+</div>
+<div>
+<p class="font-body-medium text-on-surface">Viga U de Aço 6" - 6m</p>
+<p class="text-[11px] text-on-surface-variant">EST-ST-001</p>
+</div>
+</div>
+</td>
+<td class="px-4 py-3 text-on-surface-variant font-body-default">Peça</td>
+<td class="px-4 py-3 text-right font-bold text-error">15</td>
+<td class="px-4 py-3 text-right text-on-surface-variant">40</td>
+<td class="px-4 py-3 text-right text-on-surface-variant">R$ 285,00</td>
+<td class="px-4 py-3 text-on-surface-variant font-body-default">Gerdau S.A.</td>
+<td class="px-gutter py-3 text-center">
+<span class="px-2.5 py-0.5 rounded-full bg-error-container text-on-error-container text-[11px] font-bold uppercase">Reposição</span>
+</td>
+<td class="px-gutter py-3 text-right">
+<button class="p-1 hover:bg-surface-container-highest rounded text-secondary opacity-0 group-hover:opacity-100 transition-all">
+<span class="material-symbols-outlined">edit</span>
+</button>
+</td>
+</tr>
+<!-- Table Row: OK State -->
+<tr class="border-b border-outline-variant hover:bg-surface-container-low transition-colors group">
+<td class="px-gutter py-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container-highest flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">forest</span>
+</div>
+<div>
+<p class="font-body-medium text-on-surface">Madeira Angelim Vermelho - Tábua</p>
+<p class="text-[11px] text-on-surface-variant">EST-WD-042</p>
+</div>
+</div>
+</td>
+<td class="px-4 py-3 text-on-surface-variant font-body-default">m³</td>
+<td class="px-4 py-3 text-right text-on-surface">84.5</td>
+<td class="px-4 py-3 text-right text-on-surface-variant">25.0</td>
+<td class="px-4 py-3 text-right text-on-surface-variant">R$ 4.200,00</td>
+<td class="px-4 py-3 text-on-surface-variant font-body-default">Madeireira Sol</td>
+<td class="px-gutter py-3 text-center">
+<span class="px-2.5 py-0.5 rounded-full bg-green-100 text-green-700 text-[11px] font-bold uppercase">Disponível</span>
+</td>
+<td class="px-gutter py-3 text-right">
+<button class="p-1 hover:bg-surface-container-highest rounded text-secondary opacity-0 group-hover:opacity-100 transition-all">
+<span class="material-symbols-outlined">edit</span>
+</button>
+</td>
+</tr>
+<!-- Repeat Rows for Density -->
+<tr class="border-b border-outline-variant hover:bg-surface-container-low transition-colors group">
+<td class="px-gutter py-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container-highest flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">hardware</span>
+</div>
+<div>
+<p class="font-body-medium text-on-surface">Parafuso Sextavado 3/4" x 5"</p>
+<p class="text-[11px] text-on-surface-variant">EST-HW-209</p>
+</div>
+</div>
+</td>
+<td class="px-4 py-3 text-on-surface-variant font-body-default">Cento</td>
+<td class="px-4 py-3 text-right text-on-surface">12.0</td>
+<td class="px-4 py-3 text-right text-on-surface-variant">5.0</td>
+<td class="px-4 py-3 text-right text-on-surface-variant">R$ 142,50</td>
+<td class="px-4 py-3 text-on-surface-variant font-body-default">Fixatudo Ind.</td>
+<td class="px-gutter py-3 text-center">
+<span class="px-2.5 py-0.5 rounded-full bg-green-100 text-green-700 text-[11px] font-bold uppercase">Disponível</span>
+</td>
+<td class="px-gutter py-3 text-right">
+<button class="p-1 hover:bg-surface-container-highest rounded text-secondary opacity-0 group-hover:opacity-100 transition-all">
+<span class="material-symbols-outlined">edit</span>
+</button>
+</td>
+</tr>
+<tr class="border-b border-outline-variant bg-error/5 hover:bg-error/10 transition-colors group">
+<td class="px-gutter py-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container-highest flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">format_paint</span>
+</div>
+<div>
+<p class="font-body-medium text-on-surface">Esmalte Sintético Preto Chassi</p>
+<p class="text-[11px] text-on-surface-variant">EST-PT-012</p>
+</div>
+</div>
+</td>
+<td class="px-4 py-3 text-on-surface-variant font-body-default">Galao (18L)</td>
+<td class="px-4 py-3 text-right font-bold text-error">4</td>
+<td class="px-4 py-3 text-right text-on-surface-variant">10</td>
+<td class="px-4 py-3 text-right text-on-surface-variant">R$ 518,00</td>
+<td class="px-4 py-3 text-on-surface-variant font-body-default">Tintas Renner</td>
+<td class="px-gutter py-3 text-center">
+<span class="px-2.5 py-0.5 rounded-full bg-error-container text-on-error-container text-[11px] font-bold uppercase">Crítico</span>
+</td>
+<td class="px-gutter py-3 text-right">
+<button class="p-1 hover:bg-surface-container-highest rounded text-secondary opacity-0 group-hover:opacity-100 transition-all">
+<span class="material-symbols-outlined">edit</span>
+</button>
+</td>
+</tr>
+<tr class="border-b border-outline-variant hover:bg-surface-container-low transition-colors group">
+<td class="px-gutter py-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container-highest flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">link</span>
+</div>
+<div>
+<p class="font-body-medium text-on-surface">Corrente de Grau 8 - 10mm</p>
+<p class="text-[11px] text-on-surface-variant">EST-CH-055</p>
+</div>
+</div>
+</td>
+<td class="px-4 py-3 text-on-surface-variant font-body-default">Metro</td>
+<td class="px-4 py-3 text-right text-on-surface">120.0</td>
+<td class="px-4 py-3 text-right text-on-surface-variant">50.0</td>
+<td class="px-4 py-3 text-right text-on-surface-variant">R$ 88,40</td>
+<td class="px-4 py-3 text-on-surface-variant font-body-default">Cabofer Comércio</td>
+<td class="px-gutter py-3 text-center">
+<span class="px-2.5 py-0.5 rounded-full bg-green-100 text-green-700 text-[11px] font-bold uppercase">Disponível</span>
+</td>
+<td class="px-gutter py-3 text-right">
+<button class="p-1 hover:bg-surface-container-highest rounded text-secondary opacity-0 group-hover:opacity-100 transition-all">
+<span class="material-symbols-outlined">edit</span>
+</button>
+</td>
+</tr>
+<tr class="border-b border-outline-variant hover:bg-surface-container-low transition-colors group">
+<td class="px-gutter py-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container-highest flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">electric_bolt</span>
+</div>
+<div>
+<p class="font-body-medium text-on-surface">Lanterna LED Traseira Bivolt</p>
+<p class="text-[11px] text-on-surface-variant">EST-EL-302</p>
+</div>
+</div>
+</td>
+<td class="px-4 py-3 text-on-surface-variant font-body-default">Unid</td>
+<td class="px-4 py-3 text-right text-on-surface">24</td>
+<td class="px-4 py-3 text-right text-on-surface-variant">20</td>
+<td class="px-4 py-3 text-right text-on-surface-variant">R$ 115,00</td>
+<td class="px-4 py-3 text-on-surface-variant font-body-default">Flash Autoparts</td>
+<td class="px-gutter py-3 text-center">
+<span class="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-700 text-[11px] font-bold uppercase">Atenção</span>
+</td>
+<td class="px-gutter py-3 text-right">
+<button class="p-1 hover:bg-surface-container-highest rounded text-secondary opacity-0 group-hover:opacity-100 transition-all">
+<span class="material-symbols-outlined">edit</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-gutter py-4 border-t border-outline-variant flex items-center justify-between bg-surface-container-lowest">
+<div class="text-caption text-on-surface-variant">
+                    Mostrando 1-6 de 50 resultados
+                </div>
+<div class="flex items-center gap-1">
+<button class="p-1.5 rounded hover:bg-surface-container-high text-on-surface-variant disabled:opacity-30" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded bg-secondary text-white text-caption font-bold">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-surface-container-high text-on-surface-variant text-caption">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-surface-container-high text-on-surface-variant text-caption">3</button>
+<button class="p-1.5 rounded hover:bg-surface-container-high text-on-surface-variant">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Floating Action Suggestion (Contextual) -->
+<div class="mt-stack-lg p-stack-md bg-secondary/5 border border-secondary/20 rounded-lg flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">lightbulb</span>
+</div>
+<div class="flex-1">
+<h4 class="text-body-medium text-secondary">Sugestão de Reposição Automática</h4>
+<p class="text-caption text-on-surface-variant">Existem 12 materiais abaixo do estoque mínimo. Deseja gerar uma solicitação de compra para os fornecedores homologados?</p>
+</div>
+<button class="px-4 py-2 bg-secondary text-white rounded font-label-sm hover:opacity-90">Gerar Pedidos</button>
+</div>
+</main>
+<script>
+        // Micro-interactions
+        document.querySelectorAll('tr').forEach(row => {
+            row.addEventListener('mouseenter', () => {
+                row.classList.add('shadow-sm');
+            });
+            row.addEventListener('mouseleave', () => {
+                row.classList.remove('shadow-sm');
+            });
+        });
+
+        // Search highlight mock
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('input', (e) => {
+            const val = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(val) ? '' : 'none';
+            });
+        });
+    </script>
+</body></html>

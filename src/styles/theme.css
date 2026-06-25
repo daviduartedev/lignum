@@ -1,0 +1,196 @@
+@custom-variant dark (&:is(.dark *));
+
+@import "./styleguide/index.css";
+
+/*
+ * Lignum Gestão — design tokens.
+ * Identidade da marca (ID VISUAL - ALACRUZ):
+ *   Azul Royal #0234C9 (primary) · Azul Claro #046CEB (accent/links) ·
+ *   Preto #000000 (sidebar) · Branco #FFFFFF (background).
+ * O produto é tematizado 100% por tokens: trocar estas variáveis re-tematiza todas as telas.
+ */
+:root {
+  /* Surfaces alinhadas ao Stitch (STITCH-DESIGN.md): fundo levemente azulado */
+  --background: #f9f9ff;
+  --foreground: #151c27; /* on-surface */
+  --card: #ffffff;
+  --card-foreground: #151c27;
+  --popover: #ffffff;
+  --popover-foreground: #151c27;
+  /* Azul Royal #0234C9 — ação principal da marca */
+  --primary: #0234c9;
+  --primary-foreground: #ffffff;
+  --secondary: #e7eefe; /* surface-container do Stitch */
+  --secondary-foreground: #0234c9;
+  --muted: #f0f3ff; /* surface-container-low */
+  --muted-foreground: #444655; /* on-surface-variant */
+  /* Azul Claro #046CEB (hover/links/realces secundários) */
+  --accent: #046ceb;
+  --accent-foreground: #ffffff;
+  --destructive: #ba1a1a; /* error do Stitch */
+  --destructive-foreground: #ffffff;
+  --border: #c4c5d7; /* outline-variant */
+  --input: transparent;
+  --input-background: #f0f3ff;
+  --switch-background: #c4c5d7;
+  /* Foco/ring na cor de interação da marca */
+  --ring: #046ceb;
+  /* Paleta de gráficos derivada da marca (azuis) + apoio semântico */
+  --chart-1: #0234c9;
+  --chart-2: #046ceb;
+  --chart-3: #0057c1;
+  --chart-4: #16a34a;
+  --chart-5: #d97706;
+  --radius: 0.75rem;
+  /* Sidebar escura (Preto #000000) com item ativo em Azul Royal */
+  --sidebar: #000000;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #0234c9;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #111827;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-ring: #046ceb;
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.145 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.145 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.985 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.396 0.141 25.723);
+  --destructive-foreground: oklch(0.637 0.237 25.331);
+  --border: oklch(0.269 0 0);
+  --input: oklch(0.269 0 0);
+  --ring: oklch(0.439 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(0.269 0 0);
+  --sidebar-ring: oklch(0.439 0 0);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-background: var(--input-background);
+  --color-switch-background: var(--switch-background);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-success: var(--success);
+  --color-success-emphasis: var(--success-emphasis);
+  --color-success-foreground: var(--success-foreground);
+  --color-error: var(--error);
+  --color-error-emphasis: var(--error-emphasis);
+  --color-error-foreground: var(--error-foreground);
+  --color-warning: var(--warning);
+  --color-warning-emphasis: var(--warning-emphasis);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-emphasis: var(--info-emphasis);
+  --color-info-foreground: var(--info-foreground);
+  --color-neutral: var(--neutral);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  /* Documento = viewport: sem “segundo” scroll; páginas com scroll têm o seu próprio overflow-y. */
+  html {
+    @apply m-0 h-svh min-h-0 w-full max-w-full overflow-x-hidden overflow-y-hidden;
+    font-size: var(--font-size);
+  }
+
+  body {
+    @apply m-0 h-full min-h-0 w-full max-w-full overflow-x-hidden overflow-y-hidden bg-background text-foreground;
+  }
+
+  h1 {
+    @apply text-2xl font-medium leading-normal;
+  }
+
+  h2 {
+    @apply text-xl font-medium leading-normal;
+  }
+
+  h3 {
+    @apply text-lg font-medium leading-normal;
+  }
+
+  h4 {
+    @apply text-base font-medium leading-normal;
+  }
+
+  label {
+    @apply text-base font-medium leading-normal;
+  }
+
+  button {
+    @apply text-base font-medium leading-normal;
+  }
+
+  input {
+    @apply text-base font-normal leading-normal;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}

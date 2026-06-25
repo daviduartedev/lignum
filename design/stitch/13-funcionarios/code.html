@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ALACRUZ ERP - Gestão de Funcionários</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-error": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "surface-container-highest": "#dce2f3",
+                    "tertiary-container": "#494949",
+                    "secondary-container": "#0f6fee",
+                    "surface-container": "#e7eefe",
+                    "on-secondary-fixed": "#001a43",
+                    "on-primary": "#ffffff",
+                    "surface-dim": "#d3daea",
+                    "on-error-container": "#93000a",
+                    "background": "#f9f9ff",
+                    "primary-fixed-dim": "#b9c3ff",
+                    "surface": "#f9f9ff",
+                    "on-background": "#151c27",
+                    "on-primary-fixed": "#001159",
+                    "on-tertiary-fixed": "#1b1b1b",
+                    "secondary-fixed-dim": "#aec6ff",
+                    "on-tertiary-fixed-variant": "#474747",
+                    "inverse-on-surface": "#ebf1ff",
+                    "tertiary-fixed": "#e2e2e2",
+                    "on-tertiary": "#ffffff",
+                    "tertiary": "#333333",
+                    "outline-variant": "#c4c5d7",
+                    "surface-container-high": "#e2e8f8",
+                    "inverse-primary": "#b9c3ff",
+                    "surface-variant": "#dce2f3",
+                    "on-surface": "#151c27",
+                    "on-secondary-fixed-variant": "#004397",
+                    "on-tertiary-container": "#b8b8b8",
+                    "tertiary-fixed-dim": "#c6c6c6",
+                    "surface-bright": "#f9f9ff",
+                    "secondary": "#0057c1",
+                    "primary-container": "#0234c9",
+                    "on-primary-container": "#a7b4ff",
+                    "primary-fixed": "#dee1ff",
+                    "primary": "#002392",
+                    "on-primary-fixed-variant": "#0032c4",
+                    "on-secondary-container": "#fefcff",
+                    "surface-tint": "#2c4ede",
+                    "inverse-surface": "#2a313d",
+                    "on-surface-variant": "#444655",
+                    "error": "#ba1a1a",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-low": "#f0f3ff",
+                    "secondary-fixed": "#d8e2ff",
+                    "outline": "#747686",
+                    "error-container": "#ffdad6"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-sm": "8px",
+                    "sidebar-width": "240px",
+                    "stack-md": "16px",
+                    "gutter": "16px",
+                    "stack-lg": "24px",
+                    "topbar-height": "64px",
+                    "container-padding": "32px"
+            },
+            "fontFamily": {
+                    "body-default": ["Inter"],
+                    "caption": ["Inter"],
+                    "section-title": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "tabular-nums": ["Inter"],
+                    "page-title": ["Inter"],
+                    "body-medium": ["Inter"]
+            },
+            "fontSize": {
+                    "body-default": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                    "section-title": ["18px", {"lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "label-sm": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+                    "tabular-nums": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "page-title": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "body-medium": ["14px", {"lineHeight": "20px", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .sidebar-active-indicator { position: absolute; left: 0; width: 4px; height: 100%; background-color: #0057c1; }
+        .table-row-hover:hover { background-color: #f9fafb; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #dce2f3; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #747686; }
+    </style>
+</head>
+<body class="bg-background text-on-surface">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-screen w-[240px] bg-tertiary dark:bg-black border-r border-outline-variant shadow-sm flex flex-col py-stack-lg z-50">
+<div class="px-gutter mb-8">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-secondary rounded flex items-center justify-center shadow-lg">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">factory</span>
+</div>
+<div>
+<h1 class="font-page-title text-body-medium font-bold text-white leading-tight">ALACRUZ</h1>
+<p class="text-[10px] text-white/50 uppercase tracking-widest font-bold">ERP Industrial</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 px-3 space-y-1 overflow-y-auto">
+<!-- Nav Items Mapping -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded text-white/80 hover:bg-white/10 transition-colors group" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-default text-body-default">Painel</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded text-white/80 hover:bg-white/10 transition-colors group" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="font-body-default text-body-default">Orçamentos</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded text-white/80 hover:bg-white/10 transition-colors group" href="#">
+<span class="material-symbols-outlined">view_in_ar</span>
+<span class="font-body-default text-body-default">Configurador 3D</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded text-white/80 hover:bg-white/10 transition-colors group" href="#">
+<span class="material-symbols-outlined">factory</span>
+<span class="font-body-default text-body-default">Produção/OS</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded text-white/80 hover:bg-white/10 transition-colors group" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-body-default text-body-default">Estoque</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded text-white/80 hover:bg-white/10 transition-colors group" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-body-default text-body-default">Carrocerias Usadas</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded text-white/80 hover:bg-white/10 transition-colors group" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="font-body-default text-body-default">Clientes</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded bg-secondary-container text-on-secondary-container relative group" href="#">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-white rounded-r-full"></div>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">engineering</span>
+<span class="font-body-default text-body-default font-medium">Funcionários</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded text-white/80 hover:bg-white/10 transition-colors group" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-body-default text-body-default">Financeiro</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded text-white/80 hover:bg-white/10 transition-colors group" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-body-default text-body-default">Notas Fiscais</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded text-white/80 hover:bg-white/10 transition-colors group" href="#">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="font-body-default text-body-default">Relatórios</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded text-white/80 hover:bg-white/10 transition-colors group" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-body-default text-body-default">Calendário</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded text-white/80 hover:bg-white/10 transition-colors group" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-default text-body-default">Configurações</span>
+</a>
+</nav>
+</aside>
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 h-[64px] w-[calc(100%-240px)] bg-surface-container-lowest border-b border-outline-variant flex justify-between items-center px-gutter z-40">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">search</span>
+<input class="w-full h-10 pl-10 pr-4 bg-surface-container-low border-none rounded-lg text-body-default focus:ring-2 focus:ring-secondary/20 placeholder:text-on-surface-variant/60" placeholder="Buscar funcionários ou equipes..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-high transition-all relative">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border-2 border-white"></span>
+</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined text-on-surface-variant">help_outline</span>
+</button>
+<div class="h-8 w-px bg-outline-variant mx-2"></div>
+<div class="flex items-center gap-3 cursor-pointer group">
+<div class="text-right">
+<p class="font-body-medium text-body-medium text-on-surface">Admin Alacruz</p>
+<p class="font-caption text-caption text-on-surface-variant">Gerente Geral</p>
+</div>
+<div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional business headshot of a mature male manager in an industrial office setting. He is wearing a neat polo shirt with a subtle industrial logo. The background is a slightly blurred wood workshop with warm natural lighting and high-end modern office furniture. The aesthetic is professional, reliable, and clean-cut." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUQHCOUOUW351OBQOeLJBXdaGpkw7KKaFc8J8CmpBqpRLUcDHf80udVHiaW6aLXT79djQicG9Y5Et9KEA9TCiHott5JlUz0j4eVdF4X43kY6mYjrLQbdBSDJTk8dHTyxcuMV7UAJf-Ry0Aa6KEp1t9IoZpu_x-T4i49rTIpKJMfCZ9CjFgm7MU8oMS0pWzGlbMGYLSYhQONXRyICxsxf-zbhSwZmb91tgFOQMzwiVfXrQH3Yw5FOWIlcONNK4NUZlcO1uZaXy96Zmo"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="pt-[64px] pl-[240px] min-h-screen">
+<div class="p-container-padding max-w-[1400px] mx-auto">
+<!-- Page Header -->
+<div class="flex justify-between items-end mb-8">
+<div>
+<nav class="flex gap-2 text-caption font-caption text-on-surface-variant mb-2">
+<span>Painel</span>
+<span>/</span>
+<span class="text-secondary font-medium">Funcionários</span>
+</nav>
+<h2 class="font-page-title text-page-title text-on-surface">Gestão de Equipe</h2>
+<p class="text-body-default text-on-surface-variant mt-1">Gerencie colaboradores, produtividade e permissões de acesso.</p>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 px-4 py-2 bg-white border border-outline-variant rounded-lg text-secondary font-body-medium hover:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined text-[20px]">file_download</span>
+                        Exportar CSV
+                    </button>
+<button class="flex items-center gap-2 px-6 py-2 bg-secondary text-white rounded-lg font-body-medium shadow-md shadow-secondary/20 hover:opacity-90 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[20px]">person_add</span>
+                        Novo Funcionário
+                    </button>
+</div>
+</div>
+<!-- Bento Grid Stats -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter mb-8">
+<div class="bg-white p-5 rounded-xl border border-outline-variant shadow-sm">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-secondary/10 rounded-lg">
+<span class="material-symbols-outlined text-secondary">groups</span>
+</div>
+<span class="text-success text-caption font-medium bg-green-100 px-2 py-0.5 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+                            +2
+                        </span>
+</div>
+<p class="text-caption font-caption text-on-surface-variant uppercase tracking-wider">Total Ativos</p>
+<h3 class="font-section-title text-page-title mt-1 tabular-nums">48</h3>
+</div>
+<div class="bg-white p-5 rounded-xl border border-outline-variant shadow-sm">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined text-primary">engineering</span>
+</div>
+<span class="text-on-surface-variant text-caption font-medium bg-surface-container-high px-2 py-0.5 rounded-full">Equipe</span>
+</div>
+<p class="text-caption font-caption text-on-surface-variant uppercase tracking-wider">Em Produção</p>
+<h3 class="font-section-title text-page-title mt-1 tabular-nums">32</h3>
+</div>
+<div class="bg-white p-5 rounded-xl border border-outline-variant shadow-sm">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-error/10 rounded-lg">
+<span class="material-symbols-outlined text-error">assignment_late</span>
+</div>
+<span class="text-error text-caption font-medium bg-red-100 px-2 py-0.5 rounded-full">Alerta</span>
+</div>
+<p class="text-caption font-caption text-on-surface-variant uppercase tracking-wider">Metas Pendentes</p>
+<h3 class="font-section-title text-page-title mt-1 tabular-nums">05</h3>
+</div>
+<div class="bg-white p-5 rounded-xl border border-outline-variant shadow-sm">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-amber-100 rounded-lg text-amber-600">
+<span class="material-symbols-outlined">payments</span>
+</div>
+</div>
+<p class="text-caption font-caption text-on-surface-variant uppercase tracking-wider">Comissões Mês</p>
+<h3 class="font-section-title text-page-title mt-1 tabular-nums">R$ 14.2k</h3>
+</div>
+</div>
+<!-- Main Table Container -->
+<div class="bg-white rounded-xl border border-outline-variant shadow-sm overflow-hidden">
+<div class="px-6 py-4 border-b border-outline-variant flex justify-between items-center bg-surface-container-lowest">
+<h3 class="font-section-title text-body-medium font-bold">Listagem de Colaboradores</h3>
+<div class="flex gap-2">
+<select class="text-caption border-outline-variant rounded-lg focus:ring-secondary/20">
+<option>Todos Status</option>
+<option>Ativos</option>
+<option>Afastados</option>
+</select>
+<select class="text-caption border-outline-variant rounded-lg focus:ring-secondary/20">
+<option>Todos Cargos</option>
+<option>Marceneiro</option>
+<option>Pintor</option>
+<option>Vendedor</option>
+</select>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low/50">
+<th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Funcionário</th>
+<th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Cargo</th>
+<th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Nível de Acesso</th>
+<th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Serviços Executados</th>
+<th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Comissão %</th>
+<th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Status</th>
+<th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider text-right">Ações</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Row 1 -->
+<tr class="table-row-hover transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary/10 flex items-center justify-center text-secondary font-bold text-xs">RS</div>
+<div>
+<p class="font-body-medium text-body-default text-on-surface">Ricardo Santos</p>
+<p class="text-caption font-caption text-on-surface-variant">ricardo.santos@alacruz.com.br</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 font-body-default text-on-surface">Vendedor Master</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-caption font-medium border border-blue-200">Vendedor</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="flex-1 bg-surface-container-high h-1.5 rounded-full max-w-[80px]">
+<div class="bg-secondary h-full rounded-full w-[75%]"></div>
+</div>
+<span class="text-tabular-nums text-caption">128 un.</span>
+</div>
+</td>
+<td class="px-6 py-4 font-tabular-nums text-body-default">3.5%</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 text-success font-medium">
+<span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                                        Ativo
+                                    </span>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-2">
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-secondary transition-all" title="Ver Produtividade">
+<span class="material-symbols-outlined text-[20px]">analytics</span>
+</button>
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-on-surface-variant transition-all">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="table-row-hover transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-tertiary text-white flex items-center justify-center font-bold text-xs">MA</div>
+<div>
+<p class="font-body-medium text-body-default text-on-surface">Marcos Andrade</p>
+<p class="text-caption font-caption text-on-surface-variant">marcos.os@alacruz.com.br</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 font-body-default text-on-surface">Líder de Produção</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-caption font-medium border border-amber-200">Produção</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="flex-1 bg-surface-container-high h-1.5 rounded-full max-w-[80px]">
+<div class="bg-primary h-full rounded-full w-[92%]"></div>
+</div>
+<span class="text-tabular-nums text-caption">342 un.</span>
+</div>
+</td>
+<td class="px-6 py-4 font-tabular-nums text-body-default">-</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 text-success font-medium">
+<span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                        Ativo
+                                    </span>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-2">
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-secondary transition-all" onclick="openDrawer('Marcos Andrade')" title="Ver Produtividade">
+<span class="material-symbols-outlined text-[20px]">analytics</span>
+</button>
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-on-surface-variant transition-all">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="table-row-hover transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary-container text-white flex items-center justify-center font-bold text-xs">AF</div>
+<div>
+<p class="font-body-medium text-body-default text-on-surface">Ana Ferreira</p>
+<p class="text-caption font-caption text-on-surface-variant">ana.financeiro@alacruz.com.br</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 font-body-default text-on-surface">Analista Financeiro</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-caption font-medium border border-purple-200">Financeiro</span>
+</td>
+<td class="px-6 py-4 text-on-surface-variant italic text-caption">Administrativo</td>
+<td class="px-6 py-4 font-tabular-nums text-body-default">-</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 text-success font-medium">
+<span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                        Ativo
+                                    </span>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-2">
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-secondary transition-all" title="Ver Produtividade">
+<span class="material-symbols-outlined text-[20px]">analytics</span>
+</button>
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-on-surface-variant transition-all">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="table-row-hover transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-inverse-surface text-white flex items-center justify-center font-bold text-xs">JP</div>
+<div>
+<p class="font-body-medium text-body-default text-on-surface">João Paulo</p>
+<p class="text-caption font-caption text-on-surface-variant">diretoria@alacruz.com.br</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 font-body-default text-on-surface">Diretor Industrial</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 bg-red-100 text-red-700 rounded-full text-caption font-medium border border-red-200 font-bold">Admin</span>
+</td>
+<td class="px-6 py-4 text-on-surface-variant italic text-caption">Total Gestão</td>
+<td class="px-6 py-4 font-tabular-nums text-body-default">-</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 text-success font-medium">
+<span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                        Ativo
+                                    </span>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-2">
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-secondary transition-all" title="Ver Produtividade">
+<span class="material-symbols-outlined text-[20px]">analytics</span>
+</button>
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-on-surface-variant transition-all">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-6 py-4 border-t border-outline-variant flex justify-between items-center bg-surface-container-lowest">
+<p class="text-caption text-on-surface-variant">Mostrando 1-10 de 48 funcionários</p>
+<div class="flex gap-1">
+<button class="px-3 py-1.5 rounded border border-outline-variant hover:bg-surface-container-high disabled:opacity-50">Anterior</button>
+<button class="px-3 py-1.5 rounded bg-secondary text-white">1</button>
+<button class="px-3 py-1.5 rounded border border-outline-variant hover:bg-surface-container-high">2</button>
+<button class="px-3 py-1.5 rounded border border-outline-variant hover:bg-surface-container-high">3</button>
+<button class="px-3 py-1.5 rounded border border-outline-variant hover:bg-surface-container-high">Próximo</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Productivity Metrics Detail View (Right Drawer) -->
+<div class="fixed inset-y-0 right-0 w-full md:w-[480px] bg-white shadow-2xl z-[60] translate-x-full transition-transform duration-300 border-l border-outline-variant overflow-y-auto" id="detailDrawer">
+<div class="p-6 border-b border-outline-variant flex justify-between items-center sticky top-0 bg-white z-10">
+<div>
+<h3 class="font-section-title text-section-title text-on-surface" id="drawerName">Métricas de Produtividade</h3>
+<p class="text-caption text-on-surface-variant uppercase tracking-wider">Histórico de Produção</p>
+</div>
+<button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-high text-on-surface-variant" onclick="closeDrawer()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="p-6 space-y-8">
+<!-- Header Summary -->
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-container-low p-4 rounded-xl border border-outline-variant">
+<p class="text-caption font-medium text-on-surface-variant mb-1">Entregas no Mês</p>
+<div class="flex items-baseline gap-2">
+<span class="text-page-title font-bold text-secondary tabular-nums">24</span>
+<span class="text-success text-caption font-medium">+12%</span>
+</div>
+</div>
+<div class="bg-surface-container-low p-4 rounded-xl border border-outline-variant">
+<p class="text-caption font-medium text-on-surface-variant mb-1">Qualidade (QA)</p>
+<div class="flex items-baseline gap-2">
+<span class="text-page-title font-bold text-on-surface tabular-nums">98%</span>
+<span class="text-success text-caption font-medium">Excel.</span>
+</div>
+</div>
+</div>
+<!-- Productivity Chart Placeholder -->
+<section>
+<h4 class="font-body-medium text-body-medium mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">show_chart</span>
+                    Produtividade Semanal (Carrocerias)
+                </h4>
+<div class="h-48 w-full bg-surface-container-lowest border border-outline-variant rounded-xl flex items-end justify-between px-4 pb-4 gap-2 relative overflow-hidden">
+<div class="absolute inset-0 opacity-10 pointer-events-none">
+<div class="w-full h-full" style="background-image: radial-gradient(#0057c1 1px, transparent 1px); background-size: 20px 20px;"></div>
+</div>
+<div class="w-full bg-secondary/20 rounded-t-sm h-[40%] transition-all hover:bg-secondary"></div>
+<div class="w-full bg-secondary/20 rounded-t-sm h-[65%] transition-all hover:bg-secondary"></div>
+<div class="w-full bg-secondary/20 rounded-t-sm h-[50%] transition-all hover:bg-secondary"></div>
+<div class="w-full bg-secondary/40 rounded-t-sm h-[85%] transition-all hover:bg-secondary"></div>
+<div class="w-full bg-secondary/20 rounded-t-sm h-[30%] transition-all hover:bg-secondary"></div>
+<div class="w-full bg-secondary/20 rounded-t-sm h-[60%] transition-all hover:bg-secondary"></div>
+<div class="w-full bg-secondary/20 rounded-t-sm h-[55%] transition-all hover:bg-secondary"></div>
+</div>
+<div class="flex justify-between mt-2 text-[10px] text-on-surface-variant px-1 font-medium">
+<span>SEG</span><span>TER</span><span>QUA</span><span>QUI</span><span>SEX</span><span>SÁB</span><span>DOM</span>
+</div>
+</section>
+<!-- Specific Jobs List -->
+<section>
+<h4 class="font-body-medium text-body-medium mb-4">Carrocerias Recentes</h4>
+<div class="space-y-3">
+<div class="flex items-center justify-between p-3 border border-outline-variant rounded-lg bg-white hover:border-secondary transition-all cursor-pointer">
+<div class="flex items-center gap-3">
+<div class="p-2 bg-surface-container-high rounded text-on-surface-variant">
+<span class="material-symbols-outlined">local_shipping</span>
+</div>
+<div>
+<p class="text-body-default font-medium">OS #4829 - Graneleira</p>
+<p class="text-caption text-on-surface-variant">Concluído em 14/10/2023</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</div>
+<div class="flex items-center justify-between p-3 border border-outline-variant rounded-lg bg-white hover:border-secondary transition-all cursor-pointer">
+<div class="flex items-center gap-3">
+<div class="p-2 bg-surface-container-high rounded text-on-surface-variant">
+<span class="material-symbols-outlined">local_shipping</span>
+</div>
+<div>
+<p class="text-body-default font-medium">OS #4815 - Carga Seca</p>
+<p class="text-caption text-on-surface-variant">Concluído em 10/10/2023</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</div>
+<div class="flex items-center justify-between p-3 border border-outline-variant rounded-lg bg-white hover:border-secondary transition-all cursor-pointer">
+<div class="flex items-center gap-3">
+<div class="p-2 bg-surface-container-high rounded text-on-surface-variant">
+<span class="material-symbols-outlined">local_shipping</span>
+</div>
+<div>
+<p class="text-body-default font-medium">OS #4790 - Metálica</p>
+<p class="text-caption text-on-surface-variant">Concluído em 05/10/2023</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</div>
+</div>
+<button class="w-full mt-4 py-2 border border-secondary text-secondary rounded-lg text-body-medium hover:bg-secondary/5 transition-all">
+                    Ver Histórico Completo
+                </button>
+</section>
+<!-- Skill Set / Badges -->
+<section>
+<h4 class="font-body-medium text-body-medium mb-3">Especialidades</h4>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-surface-container-high rounded-full text-caption font-medium">Montagem Estrutural</span>
+<span class="px-3 py-1 bg-surface-container-high rounded-full text-caption font-medium">Pintura PU</span>
+<span class="px-3 py-1 bg-surface-container-high rounded-full text-caption font-medium">Solda MIG</span>
+<span class="px-3 py-1 bg-surface-container-high rounded-full text-caption font-medium">Acabamento Fino</span>
+</div>
+</section>
+</div>
+<div class="p-6 mt-auto border-t border-outline-variant bg-surface-container-low">
+<button class="w-full py-3 bg-secondary text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-secondary/20 hover:scale-[1.02] transition-all">
+<span class="material-symbols-outlined">edit_square</span>
+                Editar Colaborador
+            </button>
+</div>
+</div>
+<!-- Overlay for Drawer -->
+<div class="fixed inset-0 bg-black/50 z-50 hidden backdrop-blur-sm opacity-0 transition-opacity duration-300" id="drawerOverlay" onclick="closeDrawer()"></div>
+<script>
+        const drawer = document.getElementById('detailDrawer');
+        const overlay = document.getElementById('drawerOverlay');
+        const drawerName = document.getElementById('drawerName');
+
+        function openDrawer(name) {
+            drawerName.innerText = name;
+            drawer.classList.remove('translate-x-full');
+            overlay.classList.remove('hidden');
+            setTimeout(() => {
+                overlay.classList.add('opacity-100');
+            }, 10);
+        }
+
+        function closeDrawer() {
+            drawer.classList.add('translate-x-full');
+            overlay.classList.remove('opacity-100');
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+            }, 300);
+        }
+
+        // Search highlight micro-interaction
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('ring-2', 'ring-secondary/20');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('ring-2', 'ring-secondary/20');
+        });
+    </script>
+</body></html>

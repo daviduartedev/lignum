@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Clientes | ALACRUZ ERP</title>
+<!-- Google Fonts: Inter for Corporate/Modern feel -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols for Industrial Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        /* Custom scrollbar for data-heavy density */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c4c5d7;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #747686;
+        }
+        /* Layout Fixes */
+        .main-content {
+            margin-left: 240px;
+            margin-top: 64px;
+            min-height: calc(100vh - 64px);
+        }
+        @media (max-width: 767px) {
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "surface-container-highest": "#dce2f3",
+                        "tertiary-container": "#494949",
+                        "secondary-container": "#0f6fee",
+                        "surface-container": "#e7eefe",
+                        "on-secondary-fixed": "#001a43",
+                        "on-primary": "#ffffff",
+                        "surface-dim": "#d3daea",
+                        "on-error-container": "#93000a",
+                        "background": "#f9f9ff",
+                        "primary-fixed-dim": "#b9c3ff",
+                        "surface": "#f9f9ff",
+                        "on-background": "#151c27",
+                        "on-primary-fixed": "#001159",
+                        "on-tertiary-fixed": "#1b1b1b",
+                        "secondary-fixed-dim": "#aec6ff",
+                        "on-tertiary-fixed-variant": "#474747",
+                        "inverse-on-surface": "#ebf1ff",
+                        "tertiary-fixed": "#e2e2e2",
+                        "on-tertiary": "#ffffff",
+                        "tertiary": "#333333",
+                        "outline-variant": "#c4c5d7",
+                        "surface-container-high": "#e2e8f8",
+                        "inverse-primary": "#b9c3ff",
+                        "surface-variant": "#dce2f3",
+                        "on-surface": "#151c27",
+                        "on-secondary-fixed-variant": "#004397",
+                        "on-tertiary-container": "#b8b8b8",
+                        "tertiary-fixed-dim": "#c6c6c6",
+                        "surface-bright": "#f9f9ff",
+                        "secondary": "#0057c1",
+                        "primary-container": "#0234c9",
+                        "on-primary-container": "#a7b4ff",
+                        "primary-fixed": "#dee1ff",
+                        "primary": "#002392",
+                        "on-primary-fixed-variant": "#0032c4",
+                        "on-secondary-container": "#fefcff",
+                        "surface-tint": "#2c4ede",
+                        "inverse-surface": "#2a313d",
+                        "on-surface-variant": "#444655",
+                        "error": "#ba1a1a",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f0f3ff",
+                        "secondary-fixed": "#d8e2ff",
+                        "outline": "#747686",
+                        "error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "8px",
+                        "sidebar-width": "240px",
+                        "stack-md": "16px",
+                        "gutter": "16px",
+                        "stack-lg": "24px",
+                        "topbar-height": "64px",
+                        "container-padding": "32px"
+                    },
+                    "fontFamily": {
+                        "body-default": ["Inter"],
+                        "caption": ["Inter"],
+                        "section-title": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "tabular-nums": ["Inter"],
+                        "page-title": ["Inter"],
+                        "body-medium": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-default": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "section-title": ["18px", {"lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-sm": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+                        "tabular-nums": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "page-title": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "body-medium": ["14px", {"lineHeight": "20px", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background font-body-default text-on-background antialiased overflow-x-hidden">
+<!-- Sidebar Navigation Shell -->
+<aside class="fixed left-0 top-0 h-screen w-[240px] bg-tertiary dark:bg-black border-r border-outline-variant shadow-sm flex flex-col py-stack-lg z-50" id="SideNavBar">
+<div class="px-gutter mb-stack-lg">
+<h1 class="font-page-title text-page-title font-bold text-white tracking-tight">ALACRUZ</h1>
+<p class="text-caption text-white/60 -mt-1">ERP Industrial</p>
+</div>
+<nav class="flex-1 overflow-y-auto px-3 space-y-1">
+<!-- Navigation Items Mapping -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/80 hover:bg-white/10 transition-colors cursor-pointer group" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-body-default">Painel</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/80 hover:bg-white/10 transition-colors cursor-pointer group" href="#">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span class="text-body-default">Orçamentos</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/80 hover:bg-white/10 transition-colors cursor-pointer group" href="#">
+<span class="material-symbols-outlined" data-icon="view_in_ar">view_in_ar</span>
+<span class="text-body-default">Configurador 3D</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/80 hover:bg-white/10 transition-colors cursor-pointer group" href="#">
+<span class="material-symbols-outlined" data-icon="factory">factory</span>
+<span class="text-body-default">Produção/OS</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/80 hover:bg-white/10 transition-colors cursor-pointer group" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="text-body-default">Estoque</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-secondary-container text-on-secondary-container border-l-4 border-secondary cursor-pointer shadow-md" href="#">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span class="text-body-default font-medium">Clientes</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/80 hover:bg-white/10 transition-colors cursor-pointer group" href="#">
+<span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
+<span class="text-body-default">Carrocerias Usadas</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/80 hover:bg-white/10 transition-colors cursor-pointer group" href="#">
+<span class="material-symbols-outlined" data-icon="engineering">engineering</span>
+<span class="text-body-default">Funcionários</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/80 hover:bg-white/10 transition-colors cursor-pointer group" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="text-body-default">Financeiro</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/80 hover:bg-white/10 transition-colors cursor-pointer group" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span class="text-body-default">Notas Fiscais</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/80 hover:bg-white/10 transition-colors cursor-pointer group" href="#">
+<span class="material-symbols-outlined" data-icon="bar_chart">bar_chart</span>
+<span class="text-body-default">Relatórios</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/80 hover:bg-white/10 transition-colors cursor-pointer group" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+<span class="text-body-default">Calendário</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/80 hover:bg-white/10 transition-colors cursor-pointer group mt-4" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="text-body-default">Configurações</span>
+</a>
+</nav>
+<div class="mt-auto px-4 py-4 border-t border-white/10">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-white font-bold text-xs">AC</div>
+<div class="flex-1 overflow-hidden">
+<p class="text-xs font-semibold text-white truncate">Alacruz Admin</p>
+<p class="text-[10px] text-white/50 truncate">Unidade Industrial 01</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Top App Bar Shell -->
+<header class="fixed top-0 right-0 h-[64px] w-[calc(100%-240px)] bg-surface-container-lowest dark:bg-surface border-b border-outline-variant flex justify-between items-center px-gutter z-40" id="TopAppBar">
+<div class="flex items-center gap-gutter w-full max-w-xl">
+<div class="relative w-full group focus-within:ring-2 focus-within:ring-secondary/20 rounded-lg">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none" data-icon="search">search</span>
+<input class="w-full h-10 pl-10 pr-4 bg-surface-container-low border border-outline-variant rounded-lg text-body-default focus:border-secondary focus:ring-0 transition-all" placeholder="Buscar clientes por nome, CNPJ ou cidade..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-stack-md">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-all relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-all">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+<div class="h-8 w-[1px] bg-outline-variant mx-2"></div>
+<div class="flex items-center gap-2">
+<div class="text-right hidden sm:block">
+<p class="text-caption font-bold text-on-surface">Gestão Alacruz</p>
+<p class="text-[10px] text-on-surface-variant">Industrial Admin</p>
+</div>
+<div class="w-10 h-10 rounded-lg bg-surface-container-high overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional business avatar of a male warehouse manager in a clean factory environment, realistic portrait, high resolution, industrial aesthetic, soft lighting, wearing a navy blue company polo." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQ-trsfF3-OtgotYpmW9--mzTYTqZOMOuDEA907z3ePQKjGouk_O18saE0phxM5W7MKe1oHHsJJunqMKydX2uk9jKGuqCOOHq9uD6k7AV3CixbN8cVpe0-XorVZjzpMoA-tSMq4IObe0nHJ8mmKSkUJQJzUxxQXMeHubAH5sWX6o3mHBT_eUGzdtMEJsXogQGf9aP3KDC2G6QX29U5Iz48UMPdva_a6oVklBry_ibOzyCfvD8gLK_PMGGEZM9T1wJr70zJfLtuLiP6"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="main-content p-gutter lg:p-container-padding">
+<!-- Header Actions Row -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-gutter mb-stack-lg">
+<div>
+<h2 class="font-page-title text-page-title text-on-surface font-semibold">Base de Clientes &amp; Fornecedores</h2>
+<p class="text-body-default text-on-surface-variant">Gerencie relacionamentos comerciais, consulte créditos e dados cadastrais.</p>
+</div>
+<div class="flex flex-wrap items-center gap-3">
+<button class="flex items-center gap-2 px-4 py-2 bg-white border border-outline-variant text-secondary font-medium rounded-lg hover:bg-surface-container-low transition-all shadow-sm">
+<span class="material-symbols-outlined" data-icon="search_check" data-weight="fill">search_check</span>
+<span>Consultar CPF/CNPJ</span>
+</button>
+<button class="flex items-center gap-2 px-6 py-2 bg-secondary text-white font-medium rounded-lg hover:opacity-90 active:scale-95 transition-all shadow-md">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+<span>Novo cliente</span>
+</button>
+</div>
+</div>
+<!-- KPI Quick View -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter mb-stack-lg">
+<div class="bg-white p-gutter rounded-xl border border-outline-variant shadow-sm flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<span class="text-caption text-on-surface-variant font-medium">Total de Clientes</span>
+<span class="material-symbols-outlined text-secondary text-section-title opacity-20" data-icon="groups">groups</span>
+</div>
+<p class="font-section-title text-page-title text-on-surface">1,284</p>
+<span class="text-caption text-emerald-600 font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="trending_up">trending_up</span> +12% este mês
+                </span>
+</div>
+<div class="bg-white p-gutter rounded-xl border border-outline-variant shadow-sm flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<span class="text-caption text-on-surface-variant font-medium">Fornecedores Ativos</span>
+<span class="material-symbols-outlined text-secondary text-section-title opacity-20" data-icon="local_shipping">local_shipping</span>
+</div>
+<p class="font-section-title text-page-title text-on-surface">142</p>
+<span class="text-caption text-on-surface-variant font-medium">Estável</span>
+</div>
+<div class="bg-white p-gutter rounded-xl border border-outline-variant shadow-sm flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<span class="text-caption text-on-surface-variant font-medium">Ticket Médio (Industrial)</span>
+<span class="material-symbols-outlined text-secondary text-section-title opacity-20" data-icon="payments">payments</span>
+</div>
+<p class="font-section-title text-page-title text-on-surface">R$ 18.4k</p>
+<span class="text-caption text-emerald-600 font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="trending_up">trending_up</span> +5.4%
+                </span>
+</div>
+<div class="bg-white p-gutter rounded-xl border border-outline-variant shadow-sm flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<span class="text-caption text-on-surface-variant font-medium">Inadimplência</span>
+<span class="material-symbols-outlined text-secondary text-section-title opacity-20" data-icon="report_problem">report_problem</span>
+</div>
+<p class="font-section-title text-page-title text-on-surface">2.1%</p>
+<span class="text-caption text-error font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="trending_down">trending_down</span> -0.3%
+                </span>
+</div>
+</div>
+<!-- Table Controls -->
+<div class="bg-white border border-outline-variant rounded-xl shadow-sm overflow-hidden">
+<div class="p-gutter border-b border-outline-variant flex flex-col sm:flex-row justify-between items-center gap-4">
+<div class="flex items-center gap-2">
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-high text-on-surface font-medium text-label-sm border border-outline-variant">Tudo</button>
+<button class="px-3 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-all font-medium text-label-sm">Clientes</button>
+<button class="px-3 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-all font-medium text-label-sm">Fornecedores</button>
+</div>
+<div class="flex items-center gap-2 w-full sm:w-auto">
+<button class="flex items-center gap-2 px-3 py-1.5 text-on-surface-variant border border-outline-variant rounded-lg hover:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined text-[20px]" data-icon="filter_list">filter_list</span>
+<span class="text-label-sm">Filtros</span>
+</button>
+<button class="flex items-center gap-2 px-3 py-1.5 text-on-surface-variant border border-outline-variant rounded-lg hover:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined text-[20px]" data-icon="download">download</span>
+<span class="text-label-sm">Exportar</span>
+</button>
+</div>
+</div>
+<!-- Data Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant">
+<th class="px-6 py-3 text-label-sm text-on-surface-variant font-bold uppercase tracking-wider">Nome / Razão Social</th>
+<th class="px-6 py-3 text-label-sm text-on-surface-variant font-bold uppercase tracking-wider">CPF / CNPJ</th>
+<th class="px-6 py-3 text-label-sm text-on-surface-variant font-bold uppercase tracking-wider">Telefone</th>
+<th class="px-6 py-3 text-label-sm text-on-surface-variant font-bold uppercase tracking-wider">Cidade</th>
+<th class="px-6 py-3 text-label-sm text-on-surface-variant font-bold uppercase tracking-wider">Tipo</th>
+<th class="px-6 py-3 text-label-sm text-on-surface-variant font-bold uppercase tracking-wider">Última Compra</th>
+<th class="px-6 py-3 text-label-sm text-on-surface-variant font-bold uppercase tracking-wider text-right">Ações</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors cursor-pointer group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">TR</div>
+<span class="text-body-medium text-on-surface">Transportadora Rápida Sul Ltda</span>
+</div>
+</td>
+<td class="px-6 py-4 font-tabular-nums text-on-surface-variant">12.345.678/0001-90</td>
+<td class="px-6 py-4 font-tabular-nums text-on-surface-variant">(54) 3456-1234</td>
+<td class="px-6 py-4 text-on-surface-variant">Caxias do Sul, RS</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-100 text-blue-700">CLIENTE</span>
+</td>
+<td class="px-6 py-4 font-tabular-nums text-on-surface-variant">12/05/2024</td>
+<td class="px-6 py-4 text-right">
+<button class="p-1 hover:bg-surface-container-high rounded transition-all text-secondary">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors cursor-pointer group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-secondary/10 flex items-center justify-center text-secondary font-bold text-xs">AM</div>
+<span class="text-body-medium text-on-surface">Madeiras Alvorada S.A.</span>
+</div>
+</td>
+<td class="px-6 py-4 font-tabular-nums text-on-surface-variant">45.987.321/0001-22</td>
+<td class="px-6 py-4 font-tabular-nums text-on-surface-variant">(47) 3322-8800</td>
+<td class="px-6 py-4 text-on-surface-variant">Blumenau, SC</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-700">FORNECEDOR</span>
+</td>
+<td class="px-6 py-4 font-tabular-nums text-on-surface-variant">08/05/2024</td>
+<td class="px-6 py-4 text-right">
+<button class="p-1 hover:bg-surface-container-high rounded transition-all text-secondary">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors cursor-pointer group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-tertiary/10 flex items-center justify-center text-tertiary font-bold text-xs">JM</div>
+<span class="text-body-medium text-on-surface">João Marcilio de Oliveira</span>
+</div>
+</td>
+<td class="px-6 py-4 font-tabular-nums text-on-surface-variant">123.456.789-01</td>
+<td class="px-6 py-4 font-tabular-nums text-on-surface-variant">(51) 99876-5432</td>
+<td class="px-6 py-4 text-on-surface-variant">Porto Alegre, RS</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-100 text-blue-700">CLIENTE</span>
+</td>
+<td class="px-6 py-4 font-tabular-nums text-on-surface-variant">30/04/2024</td>
+<td class="px-6 py-4 text-right">
+<button class="p-1 hover:bg-surface-container-high rounded transition-all text-secondary">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors cursor-pointer group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">FT</div>
+<span class="text-body-medium text-on-surface">Fazenda Três Corações</span>
+</div>
+</td>
+<td class="px-6 py-4 font-tabular-nums text-on-surface-variant">09.876.543/0001-11</td>
+<td class="px-6 py-4 font-tabular-nums text-on-surface-variant">(67) 3044-5566</td>
+<td class="px-6 py-4 text-on-surface-variant">Campo Grande, MS</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-100 text-blue-700">CLIENTE</span>
+</td>
+<td class="px-6 py-4 font-tabular-nums text-on-surface-variant">15/04/2024</td>
+<td class="px-6 py-4 text-right">
+<button class="p-1 hover:bg-surface-container-high rounded transition-all text-secondary">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors cursor-pointer group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-secondary/10 flex items-center justify-center text-secondary font-bold text-xs">SC</div>
+<span class="text-body-medium text-on-surface">Steel Corp Aços Industriais</span>
+</div>
+</td>
+<td class="px-6 py-4 font-tabular-nums text-on-surface-variant">55.444.333/0001-00</td>
+<td class="px-6 py-4 font-tabular-nums text-on-surface-variant">(11) 4004-9000</td>
+<td class="px-6 py-4 text-on-surface-variant">São Paulo, SP</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-700">FORNECEDOR</span>
+</td>
+<td class="px-6 py-4 font-tabular-nums text-on-surface-variant">02/05/2024</td>
+<td class="px-6 py-4 text-right">
+<button class="p-1 hover:bg-surface-container-high rounded transition-all text-secondary">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-6 py-4 bg-surface-container-lowest border-t border-outline-variant flex items-center justify-between">
+<p class="text-caption text-on-surface-variant">Exibindo 1-5 de 1,284 registros</p>
+<div class="flex items-center gap-1">
+<button class="p-1 text-on-surface-variant hover:bg-surface-container-low rounded-lg transition-all disabled:opacity-30" disabled="">
+<span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-secondary text-white rounded-lg font-medium text-label-sm">1</button>
+<button class="w-8 h-8 flex items-center justify-center hover:bg-surface-container-low rounded-lg font-medium text-label-sm">2</button>
+<button class="w-8 h-8 flex items-center justify-center hover:bg-surface-container-low rounded-lg font-medium text-label-sm">3</button>
+<span class="px-1">...</span>
+<button class="w-8 h-8 flex items-center justify-center hover:bg-surface-container-low rounded-lg font-medium text-label-sm">257</button>
+<button class="p-1 text-on-surface-variant hover:bg-surface-container-low rounded-lg transition-all">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Simple Micro-interaction: Row Selection Highlight
+        document.querySelectorAll('tbody tr').forEach(row => {
+            row.addEventListener('click', (e) => {
+                // Prevent action if clicking the action button itself
+                if (e.target.closest('button')) return;
+                
+                // Toggle active style
+                const isSelected = row.classList.contains('bg-secondary-container/10');
+                
+                // Reset others (optional for single select)
+                // document.querySelectorAll('tbody tr').forEach(r => r.classList.remove('bg-secondary-container/10'));
+                
+                if (isSelected) {
+                    row.classList.remove('bg-secondary-container/10', 'border-l-4', 'border-secondary');
+                } else {
+                    row.classList.add('bg-secondary-container/10', 'border-l-4', 'border-secondary');
+                }
+            });
+        });
+
+        // Search highlight simulation
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('input', (e) => {
+            console.log("Filtrando clientes por: " + e.target.value);
+            // Industrial density: Real-time filtering logic would go here
+        });
+    </script>
+</body></html>

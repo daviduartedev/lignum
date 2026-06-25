@@ -1,0 +1,61 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# secrets — nunca versionar
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+
+# prisma local db
+*.db
+*.db-journal
+
+# test artifacts
+coverage/
+/playwright-report/
+/test-results/
+/blob-report/
+/playwright/.auth/
+/test-reports/
+
+# npm one-off artifacts
+npx/
+
+# SDD harness / cycles (local only — não publicar)
+/cycles/
+/.cursor/
+/docs/
+/templates/
+
+# harness docs (spec de produto permanece)
+/spec/harness.md
+/spec/development-workflow.md

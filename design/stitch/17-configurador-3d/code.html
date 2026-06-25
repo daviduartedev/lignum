@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ALACRUZ ERP - Configurador 3D</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "surface-container-highest": "#dce2f3",
+                        "tertiary-container": "#494949",
+                        "secondary-container": "#0f6fee",
+                        "surface-container": "#e7eefe",
+                        "on-secondary-fixed": "#001a43",
+                        "on-primary": "#ffffff",
+                        "surface-dim": "#d3daea",
+                        "on-error-container": "#93000a",
+                        "background": "#f9f9ff",
+                        "primary-fixed-dim": "#b9c3ff",
+                        "surface": "#f9f9ff",
+                        "on-background": "#151c27",
+                        "on-primary-fixed": "#001159",
+                        "on-tertiary-fixed": "#1b1b1b",
+                        "secondary-fixed-dim": "#aec6ff",
+                        "on-tertiary-fixed-variant": "#474747",
+                        "inverse-on-surface": "#ebf1ff",
+                        "tertiary-fixed": "#e2e2e2",
+                        "on-tertiary": "#ffffff",
+                        "tertiary": "#333333",
+                        "outline-variant": "#c4c5d7",
+                        "surface-container-high": "#e2e8f8",
+                        "inverse-primary": "#b9c3ff",
+                        "surface-variant": "#dce2f3",
+                        "on-surface": "#151c27",
+                        "on-secondary-fixed-variant": "#004397",
+                        "on-tertiary-container": "#b8b8b8",
+                        "tertiary-fixed-dim": "#c6c6c6",
+                        "surface-bright": "#f9f9ff",
+                        "secondary": "#0057c1",
+                        "primary-container": "#0234c9",
+                        "on-primary-container": "#a7b4ff",
+                        "primary-fixed": "#dee1ff",
+                        "primary": "#002392",
+                        "on-primary-fixed-variant": "#0032c4",
+                        "on-secondary-container": "#fefcff",
+                        "surface-tint": "#2c4ede",
+                        "inverse-surface": "#2a313d",
+                        "on-surface-variant": "#444655",
+                        "error": "#ba1a1a",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f0f3ff",
+                        "secondary-fixed": "#d8e2ff",
+                        "outline": "#747686",
+                        "error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "8px",
+                        "sidebar-width": "240px",
+                        "stack-md": "16px",
+                        "gutter": "16px",
+                        "stack-lg": "24px",
+                        "topbar-height": "64px",
+                        "container-padding": "32px"
+                    },
+                    "fontFamily": {
+                        "body-default": ["Inter"],
+                        "caption": ["Inter"],
+                        "section-title": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "tabular-nums": ["Inter"],
+                        "page-title": ["Inter"],
+                        "body-medium": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-default": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "section-title": ["18px", {"lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-sm": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+                        "tabular-nums": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "page-title": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "body-medium": ["14px", {"lineHeight": "20px", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .viewport-grid {
+            background-image: 
+                linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            transform: perspective(1000px) rotateX(60deg) translateY(100px);
+            transform-origin: center bottom;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .wood-swatch-active {
+            box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #0057c1;
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #999; }
+    </style>
+</head>
+<body class="bg-background font-body-default text-on-background overflow-hidden">
+<!-- Sidebar Navigation -->
+<aside class="fixed left-0 top-0 h-screen w-[240px] bg-tertiary dark:bg-black border-r border-outline-variant flex flex-col py-stack-lg z-50">
+<div class="px-gutter mb-stack-lg">
+<h1 class="font-page-title text-page-title font-bold text-white tracking-tight">ALACRUZ</h1>
+<p class="text-white/60 text-caption font-caption">ERP Industrial</p>
+</div>
+<nav class="flex-1 overflow-y-auto px-stack-sm space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-white/80 hover:bg-white/10 transition-colors cursor-pointer active:opacity-90" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-sm text-label-sm">Painel</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-white/80 hover:bg-white/10 transition-colors cursor-pointer active:opacity-90" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="font-label-sm text-label-sm">Orçamentos</span>
+</a>
+<!-- Active Tab: Configurador 3D -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-secondary-container text-on-secondary-container border-l-4 border-secondary cursor-pointer active:opacity-90" href="#">
+<span class="material-symbols-outlined">view_in_ar</span>
+<span class="font-label-sm text-label-sm">Configurador 3D</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-white/80 hover:bg-white/10 transition-colors cursor-pointer active:opacity-90" href="#">
+<span class="material-symbols-outlined">factory</span>
+<span class="font-label-sm text-label-sm">Produção/OS</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-white/80 hover:bg-white/10 transition-colors cursor-pointer active:opacity-90" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-sm text-label-sm">Estoque</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-white/80 hover:bg-white/10 transition-colors cursor-pointer active:opacity-90" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-label-sm text-label-sm">Carrocerias Usadas</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-white/80 hover:bg-white/10 transition-colors cursor-pointer active:opacity-90" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="font-label-sm text-label-sm">Clientes</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-white/80 hover:bg-white/10 transition-colors cursor-pointer active:opacity-90" href="#">
+<span class="material-symbols-outlined">engineering</span>
+<span class="font-label-sm text-label-sm">Funcionários</span>
+</a>
+<div class="pt-4 mt-4 border-t border-white/10">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-white/80 hover:bg-white/10 transition-colors cursor-pointer active:opacity-90" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-sm text-label-sm">Configurações</span>
+</a>
+</div>
+</nav>
+</aside>
+<!-- Top App Bar -->
+<header class="fixed top-0 right-0 h-[64px] w-[calc(100%-240px)] bg-surface-container-lowest border-b border-outline-variant flex justify-between items-center px-gutter z-40">
+<div class="flex items-center gap-4">
+<h2 class="font-page-title text-page-title text-on-surface font-semibold">Configurador 3D</h2>
+<div class="h-6 w-[1px] bg-outline-variant"></div>
+<span class="text-on-surface-variant font-label-sm text-label-sm">Projeto: Carroceria Graneleira 2024</span>
+</div>
+<div class="flex items-center gap-gutter">
+<div class="relative group">
+<input class="bg-surface-container-low border border-outline-variant rounded-full px-4 py-2 text-label-sm w-[280px] focus:ring-2 focus:ring-secondary/20 transition-all outline-none" placeholder="Buscar modelos..." type="text"/>
+<span class="material-symbols-outlined absolute right-3 top-2 text-on-surface-variant">search</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-all">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-all">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="h-8 w-8 rounded-full bg-secondary-fixed flex items-center justify-center ml-2 border border-outline-variant overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="User avatar profile picture for a system operator in a industrial ERP dashboard environment, high quality photographic style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBj-eosGB94jlyg-OMsrHTOlZlhwpMb9Tjw4gqpJOzWMRrpyNivFvNk4Uk-r3FGTMQuQkjiFTeDIJA7LD3lYgc_NxwjS7MGmRJeU6snC6_Knbsv4V-d2o5zbec_5Fciy_zrEqSpzWinXNCHETGDcP1q5MSPvg05nDem2a1bIxOgRv2At97ybD3ulZUSS-U6FC56Ql4vz1taWUD3VxZjristMe-_vRYKSkErPagcvLRHvIMAwJMY2-tULWPQAmxNxp8HNvbAjkElNX8J"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[240px] mt-[64px] h-[calc(100vh-64px)] flex overflow-hidden">
+<!-- LEFT: 3D Viewport (60%) -->
+<section class="w-[60%] relative bg-gradient-to-b from-[#eef2f8] to-[#d9e4f1] overflow-hidden flex items-center justify-center">
+<!-- Grid Floor Visualization -->
+<div class="viewport-grid absolute inset-0 w-[200%] h-[200%] -left-1/2"></div>
+<!-- 3D Render Placeholder -->
+<div class="relative z-10 w-full h-full flex items-center justify-center p-stack-lg">
+<div class="w-full h-[500px] flex items-center justify-center group">
+<!-- This would be the Canvas element for Three.js in a real app -->
+<img class="max-w-full max-h-full drop-shadow-2xl transform hover:scale-105 transition-transform duration-700" data-alt="A highly detailed 3D photorealistic rendering of a heavy-duty wooden truck body, featuring polished hardwood planks, sturdy steel reinforcements in navy blue, and intricate industrial joints. The truck body is positioned on a subtle perspective grid floor within a clean, minimalist studio environment with soft cinematic lighting from above, showcasing craftsmanship and industrial precision." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7W6S9xahns7QqJmgbhhuABI5RJAm3C-a9X6ufgjvup9XBP4pCNhnJlwPHzbHcbc1mha_37GeKk8a-SsNX9HBc4WWh_9d3kqiBIqXesmVGmBl0k1oTT5vmUCGim4XSGZTO81hvsQdIO5fvv4la7aonORwqdw_J-R3vyXHrrrtUvfagROfvwHnTlfuOoeTyghejJFq0KAdCp8sxrh9pxYq569YkDdsY-1Szja4dYhlPlLKiA8YHgxueoPApx5_XZbPzjheWC5an0kbu"/>
+</div>
+</div>
+<!-- Viewport Controls -->
+<div class="absolute bottom-stack-lg left-1/2 -translate-x-1/2 flex items-center gap-stack-sm bg-white/80 backdrop-blur-md p-2 rounded-xl shadow-lg border border-white/50 z-20">
+<button class="p-3 text-secondary hover:bg-secondary/10 rounded-lg transition-colors flex flex-col items-center gap-1" title="Girar">
+<span class="material-symbols-outlined">rotate_90_degrees_ccw</span>
+<span class="text-[10px] font-bold uppercase tracking-wider">Girar</span>
+</button>
+<div class="w-[1px] h-8 bg-outline-variant"></div>
+<button class="p-3 text-secondary hover:bg-secondary/10 rounded-lg transition-colors flex flex-col items-center gap-1" title="Zoom In">
+<span class="material-symbols-outlined">zoom_in</span>
+<span class="text-[10px] font-bold uppercase tracking-wider">Zoom</span>
+</button>
+<div class="w-[1px] h-8 bg-outline-variant"></div>
+<button class="p-3 text-secondary hover:bg-secondary/10 rounded-lg transition-colors flex flex-col items-center gap-1" title="Resetar">
+<span class="material-symbols-outlined">restart_alt</span>
+<span class="text-[10px] font-bold uppercase tracking-wider">Resetar</span>
+</button>
+<div class="w-[1px] h-8 bg-outline-variant"></div>
+<button class="p-3 text-secondary hover:bg-secondary/10 rounded-lg transition-colors flex flex-col items-center gap-1" title="Full Screen">
+<span class="material-symbols-outlined">fullscreen</span>
+<span class="text-[10px] font-bold uppercase tracking-wider">Tela Cheia</span>
+</button>
+</div>
+</section>
+<!-- RIGHT: Configurator Panel (40%) -->
+<section class="w-[40%] bg-white border-l border-outline-variant flex flex-col relative h-full">
+<div class="flex-1 overflow-y-auto p-gutter pb-40">
+<header class="mb-stack-lg">
+<h3 class="font-section-title text-section-title text-on-surface">Configurações de Medidas</h3>
+<p class="text-caption text-on-surface-variant">Ajuste as dimensões base da carroceria</p>
+</header>
+<!-- Measure Sliders -->
+<div class="space-y-stack-lg mb-10">
+<div class="space-y-2">
+<div class="flex justify-between items-center">
+<label class="font-label-sm text-label-sm text-on-surface">Comprimento Total (m)</label>
+<span class="font-tabular-nums text-body-medium text-secondary">8.50m</span>
+</div>
+<input class="w-full h-2 bg-surface-container-high rounded-full appearance-none accent-secondary cursor-pointer" max="12" min="4" step="0.5" type="range" value="8.5"/>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between items-center">
+<label class="font-label-sm text-label-sm text-on-surface">Largura (m)</label>
+<span class="font-tabular-nums text-body-medium text-secondary">2.60m</span>
+</div>
+<input class="w-full h-2 bg-surface-container-high rounded-full appearance-none accent-secondary cursor-pointer" max="3" min="2" step="0.05" type="range" value="2.6"/>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between items-center">
+<label class="font-label-sm text-label-sm text-on-surface">Altura das Tampas (cm)</label>
+<span class="font-tabular-nums text-body-medium text-secondary">80cm</span>
+</div>
+<input class="w-full h-2 bg-surface-container-high rounded-full appearance-none accent-secondary cursor-pointer" max="120" min="40" step="5" type="range" value="80"/>
+</div>
+</div>
+<!-- Material Swatches -->
+<div class="mb-10">
+<h4 class="font-label-sm text-label-sm text-on-surface mb-stack-sm">Acabamento da Madeira</h4>
+<div class="flex gap-4">
+<div class="flex flex-col items-center gap-2 group cursor-pointer">
+<div class="w-12 h-12 rounded-full wood-swatch-active overflow-hidden border border-outline">
+<div class="w-full h-full bg-cover" data-alt="Macro texture of polished brazilian hardwood, cherry wood finish with rich reddish grains and a subtle satin sheen, perfect for industrial product rendering." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAxbRAvmlVpp2itAwSlKnZKVThPiGqXXWKZ6SGudFs31on2ngZkg2hHMwVKEOJTmlCIVC5CmuOjiMEA8YPAs_J4tVsdKx-6-VIBdQy1gty9Zbwd5T_6uVnpBJ_bMWeZLtH-4SXYS7IRYNBMrwrZ7C_SAYVQDe96cwvCQ0MYHgAS4dUyPGO9sL-OMMlKzvyprbXQfrU3VCItO2gxK0nQMPBl3fX67r2KHOOWPdrxd-hkdPZ31Bqv4P_Kr9mHGwjbebLWMYVHAKIH_uOe')"></div>
+</div>
+<span class="text-[11px] font-medium text-on-surface">Cerejeira</span>
+</div>
+<div class="flex flex-col items-center gap-2 group cursor-pointer">
+<div class="w-12 h-12 rounded-full hover:ring-2 ring-secondary/40 overflow-hidden border border-outline">
+<div class="w-full h-full bg-cover" data-alt="Macro texture of dark walnut wood, deep brown tones with elegant dark streaks and a matte industrial finish for heavy duty applications." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAXpE953g6PVzpKBCgI1i15CV1H3heZGw8OKAGMJQfvtKeY6Ey3-O5NQvGcfoOle6RGTzwqXOzFSLWK9_HzimZ4cXnGGSrYItcLfr2cLpTSx7FuqGzwd_Mm2m9zdbmBlmS6EU1cskASWkfXq0su4PIl1mJy462WaxJBUHwu8Q3mMyYz8JR3s3UOReVzUOud8pybEmi9dDBGwC5TXdqH5W-C8y629OfZyrFJM39iCwOuuIgbanPyXXwinbDCUC4ZV7lTsgGO9Gu6iHcX')"></div>
+</div>
+<span class="text-[11px] font-medium text-on-surface-variant">Nogueira</span>
+</div>
+<div class="flex flex-col items-center gap-2 group cursor-pointer">
+<div class="w-12 h-12 rounded-full hover:ring-2 ring-secondary/40 overflow-hidden border border-outline">
+<div class="w-full h-full bg-cover" data-alt="Texture of natural oak wood, light sandy beige color with clean straight grains and a raw industrial timber feel." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDu0BPQV9AdnrPIkNeszaiw7CCJTwA_X_uCPMczV5AKHmueYA1x198hAldsCEjFetKlu-OKD2ky7zMKUo2B5noMljKtFXtDOubntQQSM_P4TWNQEfynsuroamiJnQ-m1Mn49zm98PTouzphvW12969YlJl7IvX6rT6b2xdSLXaMd-FVa087kfFeOy0NpgQ6OsPgmCGTpDabIAhMAZSWg0A1wHs5PG2mS-IjDcWD_RdgOg_S1ENhSslY0q9oaYcWYc8iVsEfY2wX8-CA')"></div>
+</div>
+<span class="text-[11px] font-medium text-on-surface-variant">Carvalho</span>
+</div>
+<div class="flex flex-col items-center gap-2 group cursor-pointer">
+<div class="w-12 h-12 rounded-full hover:ring-2 ring-secondary/40 overflow-hidden border border-outline">
+<div class="w-full h-full bg-cover" data-alt="Intense black stained wood texture, showing subtle organic grain through a dark ebony finish, modern and premium look." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDx5IPtAmulifyJPrPCvY3KDMG1rdbBTg5gzqmjDHNuw_BC9d28HKHkQBi-2Bu4LPq74oh7q4Ehjn9dGDNHlobgVPV3Rq6g6KrCj2TOMFrUPr8UyDQIrJ3CNbYoJ4yIwBPjCqSFZMx4pgIJSREblBhT_rb7EfuPvqg-sqmLex-YcAcKS6TJxbWTnPAy_dBKYbGWaci5JcevaejFl6mE3FPm3QDYy4hkV2zqIwm2dsCEN0FrP1i55Rgz9tnKvd4H75vGnZLgw4kXJ21O')"></div>
+</div>
+<span class="text-[11px] font-medium text-on-surface-variant">Ébano</span>
+</div>
+</div>
+</div>
+<!-- Visual Option Cards -->
+<div class="mb-10">
+<h4 class="font-label-sm text-label-sm text-on-surface mb-stack-sm">Tipo de Tampa</h4>
+<div class="grid grid-cols-2 gap-3">
+<div class="border-2 border-secondary bg-secondary/5 p-3 rounded-xl cursor-pointer">
+<div class="h-16 bg-surface-container-high rounded-lg mb-2 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Technical illustration of a standard truck body side panel, smooth wooden planks with vertical steel braces, clean technical drawing style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9s8O7I59WvhBxaFedQpP8i5FCMg_XRvDyfTrv7aJnW6lXmBbFiGlX3O7-WNlM_zEGlVPKUyvZfelkC4XqTXvKDgX6La3YEHdvYa05ndt1tX_dHDX46JsOzwpLMwX6Mslb-EgVIQRkm3s3KN7za8GWfSRJKCH9NjkjnJrcE8Uah7cdMURdX_97c983Ii987gQGp-r3z3nvN0gooVW-QEzfBDVR7iDr7nIQlxlwlukxzBIuRKI13MG_gtdLG5n9Z7mffY6QmVzU5Q8e"/>
+</div>
+<p class="text-[12px] font-bold text-secondary text-center">Tampa Padrão</p>
+</div>
+<div class="border border-outline-variant hover:border-secondary/50 p-3 rounded-xl cursor-pointer transition-colors">
+<div class="h-16 bg-surface-container-high rounded-lg mb-2 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Technical illustration of a slatted truck body side panel, spaced wooden slats for ventilation, graneleiro style, detailed technical design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDw6m__GYDUEw4wceOZMWnp1v01Nb0IiQAT2c4H378zbdKYD7mLpLl1OStBxB5ECiP5zTkcBPu73BeLPhkTb-c1gJevnfLKvEcXwwRhJ7eH0CEz79d9OIRofsvoDAnwjFGeIGFMXurvEyTvZLJl0fY5u8OfJ1h0UVk68jrXmUCNN2fPUWkf5Qj3A3vHnnuBVM_YiuokgeGj71NVxcGhQci42ff2JrZ7dFwRgiEOGh7Khfd0ZGLg7rmFoV-TTuWaw6cgbiOL8s8JAK-R"/>
+</div>
+<p class="text-[12px] font-medium text-on-surface text-center">Tampa Graneleira</p>
+</div>
+</div>
+</div>
+<!-- Optionals Toggles -->
+<div>
+<h4 class="font-label-sm text-label-sm text-on-surface mb-stack-sm">Opcionais Adicionais</h4>
+<div class="space-y-3">
+<label class="flex items-center justify-between p-3 border border-outline-variant rounded-xl cursor-pointer hover:bg-surface-container-low transition-all">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary">architecture</span>
+<span class="text-body-default">Arcos de Cobertura</span>
+</div>
+<input checked="" class="w-5 h-5 text-secondary border-outline-variant rounded focus:ring-secondary/20" type="checkbox"/>
+</label>
+<label class="flex items-center justify-between p-3 border border-outline-variant rounded-xl cursor-pointer hover:bg-surface-container-low transition-all">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary">grid_view</span>
+<span class="text-body-default">Caixa de Ferramentas</span>
+</div>
+<input class="w-5 h-5 text-secondary border-outline-variant rounded focus:ring-secondary/20" type="checkbox"/>
+</label>
+<label class="flex items-center justify-between p-3 border border-outline-variant rounded-xl cursor-pointer hover:bg-surface-container-low transition-all">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary">water_drop</span>
+<span class="text-body-default">Corote de Água</span>
+</div>
+<input checked="" class="w-5 h-5 text-secondary border-outline-variant rounded focus:ring-secondary/20" type="checkbox"/>
+</label>
+</div>
+</div>
+</div>
+<!-- Sticky Bottom Pricing Card -->
+<div class="absolute bottom-0 left-0 right-0 bg-white border-t border-outline-variant p-gutter shadow-[0_-10px_20px_rgba(0,0,0,0.05)] z-30">
+<div class="flex items-center justify-between mb-4">
+<div>
+<p class="text-caption text-on-surface-variant font-caption">Orçamento estimado</p>
+<h4 class="text-2xl font-bold text-secondary tracking-tight">R$ 42.850,00</h4>
+</div>
+<div class="text-right">
+<span class="inline-flex items-center px-2 py-1 bg-green-100 text-green-700 text-[11px] font-bold rounded-full">
+                            PREÇO BASE: R$ 38.000
+                        </span>
+<p class="text-[10px] text-on-surface-variant mt-1">+ R$ 4.850 em opcionais</p>
+</div>
+</div>
+<button class="w-full bg-secondary text-white py-3 px-6 rounded-xl font-body-medium text-body-medium flex items-center justify-center gap-2 hover:bg-secondary/90 active:scale-[0.98] transition-all shadow-md">
+<span class="material-symbols-outlined">receipt_long</span>
+                    Gerar orçamento deste modelo
+                </button>
+</div>
+</section>
+</main>
+<script>
+        // Micro-interactions for Sliders
+        const sliders = document.querySelectorAll('input[type="range"]');
+        sliders.forEach(slider => {
+            slider.addEventListener('input', (e) => {
+                const span = e.target.parentElement.querySelector('span');
+                if(span) {
+                    const unit = span.textContent.includes('m') ? 'm' : 'cm';
+                    span.textContent = e.target.value + unit;
+                }
+            });
+        });
+
+        // Simple swatch selection interaction
+        const swatches = document.querySelectorAll('.flex-col.items-center.group');
+        swatches.forEach(swatch => {
+            swatch.addEventListener('click', () => {
+                swatches.forEach(s => {
+                    const inner = s.querySelector('.w-12.h-12');
+                    inner.classList.remove('wood-swatch-active');
+                    s.querySelector('span').classList.remove('text-on-surface');
+                    s.querySelector('span').classList.add('text-on-surface-variant');
+                });
+                swatch.querySelector('.w-12.h-12').classList.add('wood-swatch-active');
+                swatch.querySelector('span').classList.add('text-on-surface');
+                swatch.querySelector('span').classList.remove('text-on-surface-variant');
+            });
+        });
+
+        // Simple tab selection for option cards
+        const optionCards = document.querySelectorAll('.grid-cols-2 > div');
+        optionCards.forEach(card => {
+            card.addEventListener('click', () => {
+                optionCards.forEach(c => {
+                    c.classList.remove('border-secondary', 'bg-secondary/5');
+                    c.classList.add('border-outline-variant');
+                    const text = c.querySelector('p');
+                    text.classList.remove('text-secondary', 'font-bold');
+                    text.classList.add('text-on-surface', 'font-medium');
+                });
+                card.classList.add('border-secondary', 'bg-secondary/5');
+                card.classList.remove('border-outline-variant');
+                const text = card.querySelector('p');
+                text.classList.add('text-secondary', 'font-bold');
+                text.classList.remove('text-on-surface', 'font-medium');
+            });
+        });
+    </script>
+</body></html>
