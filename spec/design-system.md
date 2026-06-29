@@ -39,8 +39,8 @@ Cores de **feedback e status**. Derivadas do uso actual no app (toasts, greens/r
 
 | Token | Valor | Uso |
 |-------|-------|-----|
-| `--success` | `#16a34a` | Toast sucesso, badge/alert positivo, progress bar |
-| `--success-emphasis` | `#22c55e` | Gradiente progress bar success |
+| `--success` | `#16a34a` | Badge/alert positivo (status de domínio — ex. margem, concluído) |
+| `--success-emphasis` | `#22c55e` | Realce em badges/charts |
 | `--success-foreground` | `#ffffff` | Texto sobre fundo success |
 | `--error` | `#b91c1c` | Toast erro, feedback de falha |
 | `--error-emphasis` | `#ef4444` | Gradiente progress bar error |
@@ -80,9 +80,19 @@ API: `import { toast } from "@/lib/toast"` — `success`, `error`, `warning`, `i
 | Posição | `top-right` |
 | Duração | `4800ms` (default) |
 | Tema | `light` |
-| Cores | vars `--toastify-color-*` mapeadas para tokens Movix (`--success`, `--error`, …) |
-| Progress bar | `--toastify-color-progress-*` → `--*-emphasis` |
-| Tipos | success → verde; error → vermelho; warning → âmbar; info → azul |
+| Cores | vars `--toastify-color-*`; **success** → `--primary` / `--accent` (Azul Royal) |
+| Progress bar | success → gradiente `--primary` → `--accent`; demais tipos → `--*-emphasis` |
+| Tipos | success → **azul marca**; error → vermelho; warning → âmbar; info → azul info |
+
+## Carregamento (loading)
+
+| Elemento | Padrão |
+|----------|--------|
+| Barra global (topo) | `GlobalSpinner` — `bg-primary` |
+| Spinners de página | `Loader2` com `text-primary`, ou `LoadingSpinner` em `src/components/ui/LoadingSpinner.tsx` |
+| Spinners em botão | herdam `currentColor` do botão (sem classe extra) |
+
+**Evitar:** `text-green-500`, `text-emerald-*`, `bg-emerald-*` em indicadores de carregamento (legado Movix).
 
 ### O que evitar
 

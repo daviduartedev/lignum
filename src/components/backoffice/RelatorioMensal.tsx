@@ -241,7 +241,7 @@ export function RelatorioMensal() {
   if (loadingS || loadingV) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
-        <Loader2 className="mb-4 h-10 w-10 animate-spin text-emerald-600" />
+        <Loader2 className="mb-4 h-10 w-10 animate-spin text-primary" />
         <p className="text-sm font-medium">Calculando indicadores…</p>
       </div>
     );

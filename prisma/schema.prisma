@@ -195,6 +195,7 @@ model User {
 
   notifications              UserNotification[]
   senatranLookupAudits       SenatranLookupAudit[]
+  documentLookupAudits       DocumentLookupAudit[]
   auditLogs                  AuditLog[]
   stockAttentionPreferences  UserStockAttentionPreference[]
   financeNotificationDispatches FinanceNotificationDispatch[]
@@ -322,6 +323,7 @@ model Client {
   streetNumber       String?     @map("street_number")
   addressComplement  String?     @map("address_complement")
   birthDate          DateTime?   @map("birth_date") @db.Date
+  registrationStatus String?     @map("registration_status")
   createdAt          DateTime    @default(now()) @map("created_at")
   updatedAt          DateTime    @updatedAt @map("updated_at")
 
@@ -521,6 +523,7 @@ model Supplier {
   city                String?
   streetNumber        String?   @map("street_number")
   addressComplement   String?   @map("address_complement")
+  registrationStatus  String?   @map("registration_status")
   createdAt           DateTime  @default(now()) @map("created_at")
   updatedAt           DateTime  @updatedAt @map("updated_at")
 
@@ -641,6 +644,26 @@ model SenatranLookupAudit {
   @@index([userId, createdAt])
   @@index([createdAt])
   @@map("senatran_lookup_audits")
+}
+
+/// Auditoria de consultas CNPJ cadastrais (snapshot completo; acesso administrativo).
+model DocumentLookupAudit {
+  id                 Int      @id @default(autoincrement())
+  userId             Int      @map("user_id")
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  documentNormalized String   @map("document_normalized")
+  documentKind       String   @map("document_kind")
+  provider           String
+  cost               Decimal  @db.Decimal(14, 4)
+  success            Boolean
+  errorCode          String?  @map("error_code")
+  cachedResponse     Boolean  @default(false) @map("cached_response")
+  snapshotJson       Json     @map("snapshot_json")
+  createdAt          DateTime @default(now()) @map("created_at")
+
+  @@index([userId, createdAt])
+  @@index([createdAt])
+  @@map("document_lookup_audits")
 }
 
 /// Lead CRM (single-tenant).

@@ -33,7 +33,9 @@ Este diretorio e o **hub de especificacao** do repositorio: descreve o comportam
 | Financeiro (A pagar / A receber) | [features/financeiro](features/financeiro/readme.md) | Hub `/financeiro` com recebiveis, despesas e notificacoes. |
 | Giro / Marketing | [features/giro-marketing](features/giro-marketing/readme.md) | **Removido da nav (0623)**; rota `/giro` deletada. Spec histórica. |
 | Estoque (lista, tabs e deep links) | [features/estoque](features/estoque/readme.md) | Tabs por status; filtro `diasMin`; atalhos de detalhe e venda. |
-| Clientes e fornecedores | [features/clients](features/clients/readme.md) | Hub `/clientes`; cadastro e navegacao coerente com fornecedores. |
+| Clientes e fornecedores | [features/clients](features/clients/readme.md) | Hub `/clientes`; cadastro PJ/PF; consulta CNPJ; documentos anexos. |
+| Fornecedores | [features/suppliers](features/suppliers/readme.md) | Aba em `/clientes`; consulta CNPJ; `registrationStatus`. |
+| Consulta cadastral CNPJ | [features/document-lookup](features/document-lookup/readme.md) | Autofill clientes/fornecedores; cache; audit; rate limit. |
 | Ciberseguranca (transversal) | [features/security](features/security/readme.md) | RBAC Lignum, rate limits, revogacao de sessao, audit log. |
 | Auth (login, papéis, utilizadores) | [features/auth](features/auth/readme.md) | NextAuth, 5 papéis, gestão admin, `/configuracoes/usuarios`. |
 | Audit log (acções sensíveis) | [features/audit](features/audit/readme.md) | Registo persistido; consulta admin; distinto de SENATRAN. |
@@ -69,7 +71,7 @@ Este diretorio e o **hub de especificacao** do repositorio: descreve o comportam
 | Observabilidade de seguranca | [security/observability.md](security/observability.md) | Sinais minimos, alertas iniciais e politica de evidencia sem PII/secrets. |
 | Dependencias e CVEs | [security/dependencies.md](security/dependencies.md) | Gate de merge, prazo para moderates e processo de excecao. |
 | Matriz de autorizacao | [security/authorization-matrix.md](security/authorization-matrix.md) | RBAC Lignum por grupo e rota (cycle 0629). |
-| Auditoria SENATRAN (veículo) | [audit/readme.md](audit/readme.md) | Consultas externas; custo; snapshot. |
+| Auditoria consultas externas | [audit/readme.md](audit/readme.md) | SENATRAN (veículo) + CNPJ cadastral; custo; snapshot admin-only. |
 | Audit log ERP (acções sensíveis) | [features/audit/readme.md](features/audit/readme.md) | Auth, utilizadores, config; admin-only. |
 
 ## Testes E2E e seguranca

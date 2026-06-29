@@ -60,6 +60,7 @@ export const POST = withRole(commercialWriteRoles, async (req: NextRequest) => {
       city: d.city,
       streetNumber: d.streetNumber,
       addressComplement: d.addressComplement,
+      registrationStatus: d.registrationStatus,
     },
   });
   return ok(created, { status: 201 });

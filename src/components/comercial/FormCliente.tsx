@@ -15,6 +15,8 @@ import {
   EMPTY_CLIENT_FORM,
   type ClientFormValues,
 } from "@/components/comercial/ClientFormFields";
+import { ClientDocumentsSection } from "@/components/comercial/ClientDocumentsSection";
+import { useDocumentLookupClient } from "@/hooks/useDocumentLookup";
 
 export function FormCliente() {
   const router = useRouter();
@@ -28,6 +30,7 @@ export function FormCliente() {
   const isMutating = createMutation.isPending || updateMutation.isPending;
 
   const [values, setValues] = useState<ClientFormValues>(EMPTY_CLIENT_FORM);
+  const lookupMutation = useDocumentLookupClient((patch) => setValues((prev) => ({ ...prev, ...patch })));
 
   useEffect(() => {
     if (clientData) {
@@ -66,7 +69,7 @@ export function FormCliente() {
   if (isEditing && loadingClient) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-gray-400">
-        <Loader2 className="w-10 h-10 mb-4 animate-spin text-green-500" />
+        <Loader2 className="w-10 h-10 mb-4 animate-spin text-primary" />
         <p className="text-sm font-medium">Carregando dados do cliente…</p>
       </div>
     );
@@ -93,7 +96,17 @@ export function FormCliente() {
       <form onSubmit={(e) => void handleSubmit(e)}>
         <Card className="p-8 border border-[#E5E7EB] shadow-sm max-w-2xl">
           <div className="space-y-6">
-            <ClientFormFields values={values} onChange={handleChange} idPrefix="form-cliente" />
+            <ClientFormFields
+              values={values}
+              onChange={handleChange}
+              idPrefix="form-cliente"
+              onLookupCnpj={() => lookupMutation.mutate(values)}
+              lookupPending={lookupMutation.isPending}
+            />
+
+            {isEditing && clientData?.id ? (
+              <ClientDocumentsSection clientId={clientData.id} />
+            ) : null}
 
             <div className="flex justify-end gap-3 pt-4 border-t border-[#E5E7EB]">
               <Button type="button" variant="outline" onClick={() => router.back()} disabled={isMutating}>

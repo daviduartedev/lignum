@@ -26,6 +26,7 @@ export function mapApiRowToSupplier(row: Record<string, unknown>): Supplier {
       city: row.city != null ? String(row.city) : undefined,
       street_number: row.streetNumber != null ? String(row.streetNumber) : undefined,
       address_complement: row.addressComplement != null ? String(row.addressComplement) : undefined,
+      registration_status: row.registrationStatus != null ? String(row.registrationStatus) : undefined,
       createdAt,
       updatedAt,
     },

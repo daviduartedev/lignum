@@ -193,4 +193,9 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
+  /* Spinners de carregamento (Loader2) — Azul Royal, padrão Lignum */
+  svg.lucide-loader-2.animate-spin:not([class*="text-"]) {
+    color: var(--primary);
+  }
 }

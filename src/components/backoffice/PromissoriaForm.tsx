@@ -248,7 +248,7 @@ export function PromissoriaForm({ routeId }: Props) {
 
       {loadingData ? (
         <div className="flex justify-center py-20 text-gray-400">
-          <Loader2 className="w-10 h-10 animate-spin text-green-500" />
+          <Loader2 className="w-10 h-10 animate-spin text-primary" />
         </div>
       ) : (
         <form onSubmit={(e) => void handleSubmit(e)}>

@@ -154,6 +154,7 @@ export interface ClientAttributes {
   street_number?: string;
   address_complement?: string;
   birth_date?: string;
+  registration_status?: string;
   // Relacionamentos híbridos v4/v5 mapeados (usados para cálculos nos KPIs)
   sales?: { data?: { id: number; attributes: SaleAttributes }[] } | Partial<SaleAttributes>[];
   bought_vehicle?: { data?: { id: number; attributes: VehicleAttributes } } | Partial<VehicleAttributes>;
@@ -187,6 +188,7 @@ export interface SupplierAttributes {
   city?: string;
   street_number?: string;
   address_complement?: string;
+  registration_status?: string;
   createdAt: string;
   updatedAt: string;
 }

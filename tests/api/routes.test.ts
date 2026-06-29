@@ -37,6 +37,9 @@ import { GET as getUserNotifications } from "@/app/api/user-notifications/route"
 import { GET as getUserNotificationsSummary } from "@/app/api/user-notifications/summary/route";
 import { POST as postSenatranLookup } from "@/app/api/senatran/lookup/route";
 import { GET as getSenatranUsage } from "@/app/api/senatran/usage/route";
+import { POST as postDocumentLookup } from "@/app/api/document-lookup/route";
+import { GET as getDocumentLookupUsage } from "@/app/api/document-lookup/usage/route";
+import { POST as postClientDocument } from "@/app/api/client-documents/route";
 import { POST as postUpload } from "@/app/api/upload/route";
 import { POST as postRegister } from "@/app/api/auth/register/route";
 
@@ -254,6 +257,53 @@ describeDb("API REST (contratos com base seedada)", () => {
   it("SENATRAN usage", async () => {
     const res = await getSenatranUsage(new Request(apiUrl("/api/senatran/usage")) as never);
     expect(res.status).toBe(200);
+  });
+
+  it("document lookup mock por CNPJ", async () => {
+    const res = await postDocumentLookup(
+      jsonRequest("POST", "/api/document-lookup", { document: "11.222.333/0001-81" }) as never,
+    );
+    expect(res.status).toBe(200);
+    const body = await parseEnvelope(res);
+    expect(body.success).toBe(true);
+    expect(body.data?.fullName).toBeTruthy();
+  });
+
+  it("document lookup rejeita CPF", async () => {
+    const res = await postDocumentLookup(
+      jsonRequest("POST", "/api/document-lookup", { document: "123.456.789-09" }) as never,
+    );
+    expect(res.status).toBe(400);
+    const body = await parseEnvelope(res);
+    expect(body.error?.details?.code).toBe("DOCUMENT_LOOKUP_CPF_NOT_SUPPORTED");
+  });
+
+  it("document lookup usage admin", async () => {
+    const res = await getDocumentLookupUsage(new Request(apiUrl("/api/document-lookup/usage")) as never);
+    expect(res.status).toBe(200);
+  });
+
+  it("client-documents POST exige ficheiro ou URL", async () => {
+    const res = await postClientDocument(
+      jsonRequest("POST", "/api/client-documents", {
+        title: "Teste",
+        clientId: testClientId,
+      }) as never,
+    );
+    expect(res.status).toBe(400);
+  });
+
+  it("client-documents POST com URL externa", async () => {
+    const res = await postClientDocument(
+      jsonRequest("POST", "/api/client-documents", {
+        title: "Contrato teste",
+        clientId: testClientId,
+        externalUrl: "https://example.com/doc.pdf",
+      }) as never,
+    );
+    expect(res.status).toBe(201);
+    const body = await parseEnvelope(res);
+    expect(body.success).toBe(true);
   });
 
   it("upload permanece desativado", async () => {

@@ -147,7 +147,7 @@ export function Venda() {
   if (loadingData) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-gray-400">
-        <Loader2 className="w-10 h-10 mb-4 animate-spin text-green-500" />
+        <Loader2 className="w-10 h-10 mb-4 animate-spin text-primary" />
         <p className="text-sm font-medium">Carregando veículo e clientes…</p>
       </div>
     );

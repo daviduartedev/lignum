@@ -230,7 +230,7 @@ export function Avaliacao({ routeId: routeIdProp }: Props) {
   if (loadingVehicle) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
-        <Loader2 className="w-10 h-10 mb-4 animate-spin text-emerald-600" aria-hidden />
+        <Loader2 className="w-10 h-10 mb-4 animate-spin text-primary" aria-hidden />
         <p className="text-sm font-medium text-foreground">Carregando dados do veículo…</p>
       </div>
     );
@@ -444,7 +444,7 @@ export function Avaliacao({ routeId: routeIdProp }: Props) {
         <h2 className="text-lg font-semibold text-[#111827] mb-4">Histórico de avaliações deste veículo</h2>
         {loadingEvaluations ? (
           <div className="flex items-center justify-center gap-2 py-12 text-sm text-muted-foreground">
-            <Loader2 className="h-5 w-5 animate-spin text-emerald-600" aria-hidden />
+            <Loader2 className="h-5 w-5 animate-spin text-primary" aria-hidden />
             Carregando histórico…
           </div>
         ) : evaluationHistoryRows.length === 0 ? (

@@ -39,6 +39,8 @@ Single-tenant (ADR-0006). **Sem tenant isolation.** Escopo por **papel** + `owne
 | `/api/erp-setting` | allStaffRead | PUT admin | singleton id=1 | 403 | audit PUT |
 | `/api/senatran/lookup` POST | — | commercialWrite | — | — | |
 | `/api/senatran/usage` | admin | — | — | 403 | |
+| `/api/document-lookup` POST | — | commercialWrite | — | — | CNPJ only |
+| `/api/document-lookup/usage` | admin | — | — | 403 | |
 | `/api/user-notifications/**` | allStaffRead | staffPreferencesWrite / admin | ownerUserId | 404 | |
 | `/api/user/inbox-preferences` | allStaffRead | staffPreferencesWrite | session.user.id | 401 | |
 | `/api/upload` POST | — | commercialWrite | — | — | backend desactivado |

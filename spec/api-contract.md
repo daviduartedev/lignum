@@ -80,6 +80,55 @@ Todas as rotas em `src/app/api/**/route.ts` seguem este contrato.
 
 `POST /api/upload` permanece desativado por backend ate cumprir o checklist de seguranca da reativacao. Nenhuma flag apenas client-side e suficiente para considerar esse endpoint bloqueado.
 
+## Contratos — consulta cadastral CNPJ (cycle 0706)
+
+Detalhe de feature: [document-lookup](features/document-lookup/readme.md).
+
+### `POST /api/document-lookup`
+
+- Auth: `commercialWrite` (`admin`, `vendedor`).
+- Body:
+
+```ts
+{
+  document: string;       // CPF ou CNPJ (máscara aceite)
+  context?: "client" | "supplier"; // default "client"
+}
+```
+
+- **CPF (11 dígitos):** `400 BAD_REQUEST`, `details.code: DOCUMENT_LOOKUP_CPF_NOT_SUPPORTED` — sem chamada externa.
+- **CNPJ inválido:** `400`, `details.code: DOCUMENT_INVALID`.
+- Cache hit em memória → `200`, `data.cached: true`, sem novo custo.
+- Miss → adapter (`DOCUMENT_LOOKUP_PROVIDER`: `mock` | `brasilapi` | `http`); persiste `DocumentLookupAudit`; telemetria `document_lookup_*` (sem CNPJ em claro).
+- Rate limit: 5/min por utilizador, 1/min por documento (`429 RATE_LIMITED`).
+
+**Response (200) — DTO normalizado para autofill (sem snapshot bruto):**
+
+```ts
+{
+  cached: boolean;
+  personType: "PJ";
+  fullName: string;
+  tradeName?: string;
+  registrationStatus?: string;
+  email?: string;
+  phone?: string;
+  street?: string;
+  streetNumber?: string;
+  addressComplement?: string;
+  neighborhood?: string;
+  city?: string;
+  zipCode?: string;
+  state?: string;
+  address?: string;
+}
+```
+
+### `GET /api/document-lookup/usage`
+
+- Auth: **`admin`** apenas.
+- Agregação de custo (`DocumentLookupAudit.cost`) no **mês civil** (fuso `America/Sao_Paulo`).
+
 ## Contratos — PDF preenchido (cycle 0614)
 
 ### `GET /api/contracts/[id]/pdf`

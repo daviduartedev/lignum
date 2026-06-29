@@ -120,7 +120,7 @@ export function ContratosLista() {
 
         {isLoading ? (
           <div className="flex justify-center py-16 text-gray-400">
-            <Loader2 className="w-8 h-8 animate-spin text-green-500" />
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
         ) : (
           <div className="overflow-x-auto -mx-1 px-1">

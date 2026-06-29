@@ -117,10 +117,11 @@ export const clientCreateSchema = z.object({
   streetNumber: z.string().optional(),
   addressComplement: z.string().optional(),
   birthDate: z.string().optional().nullable(),
+  registrationStatus: z.string().optional(),
 });
 export const clientUpdateSchema = clientCreateSchema.partial();
 
-export const clientDocumentCreateSchema = z.object({
+const clientDocumentBaseSchema = z.object({
   documentId: z.string().optional(),
   title: zTitleNoHtml(500),
   notes: zTextNoHtmlOptional(16_000),
@@ -128,7 +129,19 @@ export const clientDocumentCreateSchema = z.object({
   documentFileUrl: zSafeHttpUrlOrEmpty().optional(),
   clientId: z.number().int().positive(),
 });
-export const clientDocumentUpdateSchema = clientDocumentCreateSchema.partial();
+
+export const clientDocumentCreateSchema = clientDocumentBaseSchema.superRefine((data, ctx) => {
+  const hasExternal = !!data.externalUrl?.trim();
+  const hasFile = !!data.documentFileUrl?.trim();
+  if (!hasExternal && !hasFile) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Informe um ficheiro ou URL externa do documento.",
+      path: ["documentFileUrl"],
+    });
+  }
+});
+export const clientDocumentUpdateSchema = clientDocumentBaseSchema.partial();
 
 export const promissoryPlanSchema = z.object({
   totalInstallments: z.number().int().min(1).max(120),
@@ -303,6 +316,7 @@ export const supplierCreateSchema = z.object({
   city: z.string().optional(),
   streetNumber: z.string().optional(),
   addressComplement: z.string().optional(),
+  registrationStatus: z.string().optional(),
 });
 export const supplierUpdateSchema = supplierCreateSchema.partial();
 

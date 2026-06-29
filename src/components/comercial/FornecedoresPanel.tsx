@@ -24,13 +24,14 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Plus, Pencil, Trash2, Loader2, AlertCircle, RefreshCw } from "lucide-react";
+import { Plus, Pencil, Trash2, Loader2, AlertCircle, RefreshCw, Search } from "lucide-react";
 import {
   useSuppliersPage,
   useCreateSupplier,
   useUpdateSupplier,
   useDeleteSupplier,
 } from "@/hooks/useSuppliers";
+import { useDocumentLookupSupplier } from "@/hooks/useDocumentLookup";
 import { Pagination } from "@/components/ui/pagination";
 import { listingTdActions, listingTdText, listingThActions, listingThText } from "@/components/ui/ListingStatCell";
 import type { Supplier } from "@/types";
@@ -68,6 +69,29 @@ export function FornecedoresPanel() {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [notes, setNotes] = useState("");
+  const [registrationStatus, setRegistrationStatus] = useState("");
+
+  const supplierLookupFields = () => ({
+    companyName,
+    document,
+    phone,
+    email,
+    notes,
+    zipCode: "",
+    street: "",
+    streetNumber: "",
+    addressComplement: "",
+    neighborhood: "",
+    city: "",
+    registrationStatus,
+  });
+
+  const lookupMutation = useDocumentLookupSupplier((patch) => {
+    if (patch.companyName) setCompanyName(patch.companyName);
+    if (patch.phone) setPhone(patch.phone);
+    if (patch.email) setEmail(patch.email);
+    if (patch.registrationStatus) setRegistrationStatus(patch.registrationStatus);
+  });
 
   const rows = useMemo(() => {
     const list = Array.isArray(rawList) ? rawList : [];
@@ -91,6 +115,7 @@ export function FornecedoresPanel() {
     setPhone("");
     setEmail("");
     setNotes("");
+    setRegistrationStatus("");
     setDialogOpen(true);
   };
 
@@ -102,6 +127,7 @@ export function FornecedoresPanel() {
     setPhone(a.phone ? maskPhoneBR(String(a.phone)) : "");
     setEmail(a.email || "");
     setNotes(a.notes || "");
+    setRegistrationStatus(a.registration_status || "");
     setDialogOpen(true);
   };
 
@@ -114,6 +140,7 @@ export function FornecedoresPanel() {
       phone: phone.trim() || undefined,
       email: email.trim() || undefined,
       notes: notes.trim() || undefined,
+      registrationStatus: registrationStatus.trim() || undefined,
     };
     if (editing) {
       const routeId = String(editing.documentId ?? editing.id);
@@ -135,7 +162,7 @@ export function FornecedoresPanel() {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
-        <Loader2 className="w-8 h-8 mb-3 animate-spin text-emerald-600" aria-hidden />
+        <Loader2 className="w-8 h-8 mb-3 animate-spin text-primary" aria-hidden />
         <p className="text-sm">Carregando fornecedores…</p>
       </div>
     );
@@ -248,14 +275,36 @@ export function FornecedoresPanel() {
             </div>
             <div>
               <Label htmlFor="sup-doc">CNPJ / documento</Label>
-              <MaskedInput
-                id="sup-doc"
-                mask="cpf_cnpj"
-                value={document}
-                onChange={(e) => setDocument(e.target.value)}
-                className="mt-1"
-              />
+              <div className="flex gap-2 mt-1">
+                <MaskedInput
+                  id="sup-doc"
+                  mask="cpf_cnpj"
+                  value={document}
+                  onChange={(e) => setDocument(e.target.value)}
+                  className="flex-1"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="shrink-0"
+                  disabled={lookupMutation.isPending || !document.trim()}
+                  onClick={() => lookupMutation.mutate(supplierLookupFields())}
+                >
+                  {lookupMutation.isPending ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Search className="w-4 h-4" />
+                  )}
+                </Button>
+              </div>
             </div>
+            {registrationStatus ? (
+              <div>
+                <Label htmlFor="sup-reg">Situação cadastral</Label>
+                <Input id="sup-reg" value={registrationStatus} readOnly className="mt-1 bg-muted/40" />
+              </div>
+            ) : null}
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <Label htmlFor="sup-phone">Telefone</Label>

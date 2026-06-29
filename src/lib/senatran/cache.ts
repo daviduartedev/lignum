@@ -1,24 +1,17 @@
+import { createLookupMemoryCache } from "@/lib/lookupMemoryCache";
 import type { SenatranNormalizedVehicle } from "@/lib/senatran/types";
 
-type Entry = { expiresAt: number; value: SenatranNormalizedVehicle };
-
-const store = new Map<string, Entry>();
+const cache = createLookupMemoryCache<SenatranNormalizedVehicle>();
 
 export function senatranCacheGet(key: string): SenatranNormalizedVehicle | null {
-  const e = store.get(key);
-  if (!e) return null;
-  if (Date.now() > e.expiresAt) {
-    store.delete(key);
-    return null;
-  }
-  return e.value;
+  return cache.get(key);
 }
 
 export function senatranCacheSet(key: string, value: SenatranNormalizedVehicle, ttlSeconds: number): void {
-  store.set(key, { expiresAt: Date.now() + ttlSeconds * 1000, value });
+  cache.set(key, value, ttlSeconds);
 }
 
 /** Testes */
 export function __clearSenatranCacheForTests(): void {
-  store.clear();
+  cache.clear();
 }

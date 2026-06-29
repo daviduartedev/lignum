@@ -7,9 +7,13 @@ import { SlidingWindowMemory } from "@/lib/slidingWindowMemory";
 
 const memSenatranUser = new SlidingWindowMemory(60 * 1000);
 const memSenatranResource = new SlidingWindowMemory(60 * 1000);
+const memDocumentLookupUser = new SlidingWindowMemory(60 * 1000);
+const memDocumentLookupResource = new SlidingWindowMemory(60 * 1000);
 
 let rlSenatranUser: Ratelimit | null | undefined;
 let rlSenatranResource: Ratelimit | null | undefined;
+let rlDocumentLookupUser: Ratelimit | null | undefined;
+let rlDocumentLookupResource: Ratelimit | null | undefined;
 
 function senatranUserLimiter(): Ratelimit | null {
   if (rlSenatranUser !== undefined) return rlSenatranUser;
@@ -184,8 +188,11 @@ export function __resetRateLimitStateForTests(): void {
   memGetAll.clear();
   memSenatranUser.clear();
   memSenatranResource.clear();
+  memDocumentLookupUser.clear();
+  memDocumentLookupResource.clear();
   rlRegister = rlPost = rlGetAll = undefined;
   rlSenatranUser = rlSenatranResource = undefined;
+  rlDocumentLookupUser = rlDocumentLookupResource = undefined;
 }
 
 /**
@@ -212,6 +219,64 @@ export async function assertSenatranLookupRateLimit(
     const { success } = await rLim.limit(resKey);
     if (!success) return rateLimitedResponse();
   } else if (!memSenatranResource.hit(`senatran:res:${resKey}`, 1).allowed) {
+    return rateLimitedResponse();
+  }
+
+  return null;
+}
+
+function documentLookupUserLimiter(): Ratelimit | null {
+  if (rlDocumentLookupUser !== undefined) return rlDocumentLookupUser;
+  const redis = getOptionalRedis();
+  if (!redis) {
+    rlDocumentLookupUser = null;
+    return null;
+  }
+  rlDocumentLookupUser = new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(5, "1 m"),
+    prefix: "rl:doclookup:user",
+  });
+  return rlDocumentLookupUser;
+}
+
+function documentLookupResourceLimiter(): Ratelimit | null {
+  if (rlDocumentLookupResource !== undefined) return rlDocumentLookupResource;
+  const redis = getOptionalRedis();
+  if (!redis) {
+    rlDocumentLookupResource = null;
+    return null;
+  }
+  rlDocumentLookupResource = new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(1, "1 m"),
+    prefix: "rl:doclookup:res",
+  });
+  return rlDocumentLookupResource;
+}
+
+/** Consulta cadastral CNPJ: 5 req/min por usuário e 1 req/min por documento. */
+export async function assertDocumentLookupRateLimit(
+  req: NextRequest,
+  userId: string,
+  resourceKey: string,
+): Promise<Response | null> {
+  if (isRateLimitDisabled()) return null;
+
+  const uLim = documentLookupUserLimiter();
+  if (uLim) {
+    const { success } = await uLim.limit(userId);
+    if (!success) return rateLimitedResponse();
+  } else if (!memDocumentLookupUser.hit(`doclookup:user:${userId}`, 5).allowed) {
+    return rateLimitedResponse();
+  }
+
+  const rLim = documentLookupResourceLimiter();
+  const resKey = resourceKey.slice(0, 200);
+  if (rLim) {
+    const { success } = await rLim.limit(resKey);
+    if (!success) return rateLimitedResponse();
+  } else if (!memDocumentLookupResource.hit(`doclookup:res:${resKey}`, 1).allowed) {
     return rateLimitedResponse();
   }
 

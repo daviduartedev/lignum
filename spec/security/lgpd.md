@@ -22,6 +22,13 @@ Complementa controles gerais em [`../features/security/readme.md`](../features/s
 - **`document`** (CPF/CNPJ): máscara conforme `personType`; **não** logar em texto claro em logs de servidor ou telemetria externa.
 - **`minimumSellingPrice`** em `Vehicle`: dado comercial interno da revenda; **sem** implicação LGPD directa.
 
+## Cadastro staff — consulta CNPJ (cycle 0706)
+
+- Consulta CNPJ em fontes públicas/comerciais para **pré-preencher** cadastro iniciado pelo operador autorizado é finalidade legítima de operação comercial.
+- Dados normalizados persistem em `Client` / `Supplier`; payload bruto em `DocumentLookupAudit` (acesso **admin**).
+- A regra § "Dados de terceiros" que impede autofill de titular veicular (**SENATRAN**) **não** se aplica a contrapartes comerciais cadastradas pelo staff.
+- **Consulta externa de CPF** de clientes PF permanece **fora de escopo** neste produto (cadastro manual).
+
 ## Logging e observabilidade
 
 - Logs externos nao devem conter senha, token, secret, hash, CPF, CNPJ, telefone, email, endereco, nome completo, dado bancario nem identificador sensivel de tenant em claro.

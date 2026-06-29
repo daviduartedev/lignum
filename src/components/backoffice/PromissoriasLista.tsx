@@ -222,7 +222,7 @@ export function PromissoriasLista() {
 
         {isLoading ? (
           <div className="flex justify-center py-16">
-            <Loader2 className="w-10 h-10 animate-spin text-green-500" />
+            <Loader2 className="w-10 h-10 animate-spin text-primary" />
           </div>
         ) : rows.length === 0 ? (
           <p className="text-sm text-[#6B7280] py-8 text-center">

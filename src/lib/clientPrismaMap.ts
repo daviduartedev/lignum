@@ -20,6 +20,7 @@ type ClientSchemaFields = {
   streetNumber?: string;
   addressComplement?: string;
   birthDate?: string | null;
+  registrationStatus?: string;
 };
 
 export function clientSchemaToPrismaData(d: ClientSchemaFields): Record<string, unknown> {
@@ -41,6 +42,7 @@ export function clientSchemaToPrismaData(d: ClientSchemaFields): Record<string, 
     city: d.city,
     streetNumber: d.streetNumber,
     addressComplement: d.addressComplement,
+    registrationStatus: d.registrationStatus,
   };
   if (d.birthDate !== undefined) {
     out.birthDate = parseOptionalDate(d.birthDate ?? undefined);

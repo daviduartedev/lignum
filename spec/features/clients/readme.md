@@ -7,6 +7,13 @@ Cadastro de **clientes e fornecedores** no mesmo hub da revenda (pessoas física
 `Client` — `fullName`, `document`, `email`, `phone?`, `address?`, **`personType?`** (`PersonType`: `PF` | `PJ`).
 
 - **`personType`** opcional (nullable). Quando `PF`: máscara **CPF** no campo `document`; quando `PJ`: máscara **CNPJ**; quando ausente: default **CPF** na UI.
+- **`registrationStatus?`**: situação cadastral (CNPJ), preenchida por consulta externa quando disponível.
+
+## Consulta CNPJ
+
+- Formulários PJ (`/clientes/novo`, editar, dialog lista): botão **Consultar CNPJ** → `POST /api/document-lookup`.
+- Autofill preenche campos estruturados de endereço + `registrationStatus`; **só campos vazios**.
+- PF: sem consulta externa (cadastro manual).
 
 ## Endpoints (`withRole(staffRoles)`)
 

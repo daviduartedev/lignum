@@ -25,12 +25,12 @@ Documentos anexos ao cadastro do cliente (CNH, comprovantes, contratos externos)
 ## Validação
 
 - `title` e `clientId` obrigatórios.
-- Pelo menos um de `externalUrl` ou `documentFileUrl` deve estar presente
-  (neste ciclo, apenas `externalUrl` é funcional; upload está adiado).
+- Pelo menos um de `externalUrl` ou `documentFileUrl` deve estar presente.
+- Upload via `POST /api/upload` (gate env) → `documentFileUrl`; URL externa sempre disponível.
 
 ## UI
 
-- Integrado a `/clientes/[id]` (aba/bloco de documentos).
+- Integrado a `/clientes/[id]` (aba Documentos) e `/clientes/[id]/editar` (`ClientDocumentsSection`).
 
 ## Relacionamentos
 

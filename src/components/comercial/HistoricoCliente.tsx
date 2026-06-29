@@ -20,6 +20,7 @@ import { useClient } from "@/hooks/useClients";
 import { useSalesForClient } from "@/hooks/useSales";
 import { useMemo } from "react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { ClientDocumentsSection } from "@/components/comercial/ClientDocumentsSection";
 import { MercosulPlate } from "@/components/ui/MercosulPlate";
 import { ListingStatCell, listingTdStat, listingTdText, listingThStat, listingThText } from "@/components/ui/ListingStatCell";
 import { VehicleListingCell } from "@/components/ui/VehicleListingCell";
@@ -151,7 +152,7 @@ export function HistoricoCliente() {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-gray-400">
-        <Loader2 className="w-10 h-10 mb-4 animate-spin text-green-500" />
+        <Loader2 className="w-10 h-10 mb-4 animate-spin text-primary" />
         <p className="text-sm font-medium">Carregando histórico…</p>
       </div>
     );
@@ -391,9 +392,7 @@ export function HistoricoCliente() {
           </TabsContent>
 
           <TabsContent value="documentos" className="mt-0">
-            <p className="text-sm text-[#6B7280] py-6 text-center">
-              Gestão de documentos do cliente será conectada à API de arquivos na fase seguinte.
-            </p>
+            {clientId != null ? <ClientDocumentsSection clientId={clientId} /> : null}
           </TabsContent>
         </Tabs>
       </Card>

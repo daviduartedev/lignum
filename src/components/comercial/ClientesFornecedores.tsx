@@ -35,6 +35,7 @@ import {
   EMPTY_CLIENT_FORM,
   type ClientFormValues,
 } from "@/components/comercial/ClientFormFields";
+import { useDocumentLookupClient } from "@/hooks/useDocumentLookup";
 import { Pagination } from "@/components/ui/pagination";
 import { ListingStatCell, listingTdActions, listingTdStat, listingTdText, listingThActions, listingThStat, listingThText } from "@/components/ui/ListingStatCell";
 import { maskCPFCNPJ, maskPhoneBR } from "@/lib/masks";
@@ -58,6 +59,9 @@ export function ClientesFornecedores() {
   const [formValues, setFormValues] = useState<ClientFormValues>(EMPTY_CLIENT_FORM);
   const { data: editingClient, isLoading: loadingEditingClient } = useClient(
     dialogOpen && editingRouteId ? editingRouteId : undefined,
+  );
+  const lookupMutation = useDocumentLookupClient((patch) =>
+    setFormValues((prev) => ({ ...prev, ...patch })),
   );
 
   const rawClients = pageData?.clients ?? [];
@@ -159,7 +163,7 @@ export function ClientesFornecedores() {
   if (loadingBlock) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-gray-400">
-        <Loader2 className="w-10 h-10 mb-4 animate-spin text-green-500" />
+        <Loader2 className="w-10 h-10 mb-4 animate-spin text-primary" />
         <p className="text-sm font-medium">Sincronizando dados…</p>
       </div>
     );
@@ -383,13 +387,15 @@ export function ClientesFornecedores() {
           </DialogHeader>
           {editingRouteId && loadingEditingClient ? (
             <div className="flex justify-center py-10">
-              <Loader2 className="w-8 h-8 animate-spin text-green-500" />
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
             </div>
           ) : (
             <ClientFormFields
               values={formValues}
               onChange={(patch) => setFormValues((prev) => ({ ...prev, ...patch }))}
               idPrefix="crm-client"
+              onLookupCnpj={() => lookupMutation.mutate(formValues)}
+              lookupPending={lookupMutation.isPending}
             />
           )}
           <DialogFooter>

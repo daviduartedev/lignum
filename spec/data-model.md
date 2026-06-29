@@ -8,7 +8,7 @@ Este documento resume o modelo canônico.
 ```
 ErpSetting (singleton id=1)
 
-User ──< UserNotification, SenatranLookupAudit, AuditLog, UserStockAttentionPreference, ...
+User ──< UserNotification, SenatranLookupAudit, DocumentLookupAudit, AuditLog, UserStockAttentionPreference, ...
 
 Client ──< Sale          >── Vehicle
        ──< Contract      >── Vehicle
@@ -21,6 +21,11 @@ Vehicle ──┬── Sale (1..1, unique vehicleId)
           ├──< Contract, Evaluation, ServiceOrder, Warranty, PromissoryNote, ...
 
 Supplier, Payable, StorefrontLead, FinanceNotificationDispatch, ...
+
+### Cadastro comercial (cycle 0706)
+
+- **`Client.registrationStatus?`** / **`Supplier.registrationStatus?`** — situação cadastral CNPJ (ex.: "ATIVA"), preenchida por consulta externa quando disponível.
+- **`DocumentLookupAudit`** — auditoria de consultas CNPJ cadastrais: `documentNormalized`, `documentKind` (`cnpj`), `provider`, `cost`, `success`, `errorCode?`, `cachedResponse`, `snapshotJson` (admin-only). Relacionada a `User`.
 ```
 
 ## Single-tenant (cycle 0623 — ADR-0006)

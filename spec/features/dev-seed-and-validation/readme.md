@@ -34,6 +34,7 @@ Variáveis opcionais: `SEED_PASSWORD` / `SEED_ADMIN_PASSWORD`, `SEED_ADMIN_EMAIL
 ## Integrações externas nos testes
 
 - **SENATRAN** (`/api/senatran/*`): testes usam **mock** quando aplicável.
+- **Document lookup CNPJ** (`/api/document-lookup`): default **`DOCUMENT_LOOKUP_PROVIDER=mock`** em dev/testes; smoke `npm run smoke:document-lookup`.
 - **FIPE**: rota removida no cycle 0623; testes FIPE eliminados.
 
 ## Testes de integração API
@@ -45,3 +46,4 @@ Variáveis opcionais: `SEED_PASSWORD` / `SEED_ADMIN_PASSWORD`, `SEED_ADMIN_EMAIL
 
 - Migration: `20260623190000_init_lignum_single_tenant`
 - Cycle: `cycles/Q3-2026/0623-fundacao-rebrand-core/`
+- Cycle cadastros CNPJ: `cycles/Q3-2026/0706-cadastros-clientes-cpf-cnpj/` — smoke `scripts/smoke/document-lookup-smoke.ts`

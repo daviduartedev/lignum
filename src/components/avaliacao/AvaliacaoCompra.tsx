@@ -80,7 +80,7 @@ export function AvaliacaoCompra({ routeId }: Props) {
   if (isLoading) {
     return (
       <div className="flex justify-center py-20 text-muted-foreground">
-        <Loader2 className="w-10 h-10 animate-spin text-emerald-600" />
+        <Loader2 className="w-10 h-10 animate-spin text-primary" />
       </div>
     );
   }

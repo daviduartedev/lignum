@@ -280,7 +280,7 @@ function PayablesLista() {
 
         {isLoading ? (
           <div className="flex justify-center py-16">
-            <Loader2 className="w-8 h-8 animate-spin text-green-500" />
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
         ) : isError ? (
           <div className="text-sm text-red-700">Erro ao carregar A Pagar.</div>

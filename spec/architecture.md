@@ -116,13 +116,22 @@ O sistema usa roles persistidas em `User.role` (enum `Role` no Prisma). O conjun
 
 ## Integrações externas
 
-Padrão para serviços que chamam terceiros (ex.: consulta veicular / SENATRAN):
+Padrão partilhado para serviços que chamam terceiros — aplicável a **SENATRAN** (veículo) e **document lookup** (CNPJ cadastral, cycle 0706):
 
-1. **Adapter isolado** — interface estável no domínio (ex.: `lookupByPlate`, `lookupByRenavam?`); implementações concretas por provedor (`mock`, `http`, …). Trocar o provedor não altera rotas HTTP da app nem o contrato dos DTOs expostos ao frontend.
-2. **Configuração** — URLs, chaves e `SENATRAN_PROVIDER` apenas via **variáveis de ambiente**; ambientes distintos (dev/preview/prod) com credenciais distintas.
-3. **Resiliência** — timeout explícito; retries limitados só para erros idempotentes e transitórios; **circuit breaker** quando o cliente HTTP o suportar; falha do terceiro **nunca** bloqueia o fluxo manual do operador.
-4. **Cache** — respostas normalizadas cacheáveis por **placa normalizada** (uppercase, sem hífen) com TTL configurável (ex.: 24h) para reduzir custo.
-5. **Observabilidade** — logs estruturados por consulta (sucesso/erro); eventos de produto com prefixo estável (`senatran_*`); custo por consulta registado para agregação mensal (admin).
-6. **Compliance** — ver [`security/lgpd.md`](./security/lgpd.md) (payloads de terceiros) e [`audit/readme.md`](./audit/readme.md) (snapshots e acesso).
+| Camada | SENATRAN | Document lookup (CNPJ) |
+|--------|----------|------------------------|
+| Adapters | `src/lib/senatran/*` | `src/lib/documentLookup/*` |
+| Env provider | `SENATRAN_PROVIDER` | `DOCUMENT_LOOKUP_PROVIDER` |
+| Cache | placa normalizada | CNPJ dígitos (`lookupMemoryCache.ts`) |
+| Audit | `SenatranLookupAudit` | `DocumentLookupAudit` |
+| Telemetria | `senatran_*` | `document_lookup_*` |
+| Falha terceiro | não bloqueia cadastro manual | não bloqueia cadastro manual |
 
-Detalhe de UI e regras de negócio: [`features/vehicles/readme.md`](features/vehicles/readme.md).
+1. **Adapter isolado** — interface estável no domínio; implementações concretas por provedor (`mock`, `http`, `brasilapi`, …). Trocar o provedor não altera rotas HTTP da app nem o contrato dos DTOs expostos ao frontend.
+2. **Configuração** — URLs, chaves e flags de provider apenas via **variáveis de ambiente**; ambientes distintos (dev/preview/prod) com credenciais distintas.
+3. **Resiliência** — timeout explícito; retries limitados só para erros idempotentes e transitórios; falha do terceiro **nunca** bloqueia o fluxo manual do operador.
+4. **Cache** — respostas normalizadas com TTL configurável (default 24h) para reduzir custo; chave específica por domínio (placa vs. CNPJ).
+5. **Observabilidade** — logs estruturados por consulta (sucesso/erro); eventos de produto com prefixo estável; custo por consulta registado para agregação mensal (admin).
+6. **Compliance** — ver [`security/lgpd.md`](./security/lgpd.md) (payloads de terceiros; distinção titular veicular vs. contraparte comercial) e [`audit/readme.md`](./audit/readme.md) (snapshots e acesso admin-only).
+
+Detalhe de UI e regras de negócio: [`features/vehicles/readme.md`](features/vehicles/readme.md), [`features/document-lookup/readme.md`](features/document-lookup/readme.md).

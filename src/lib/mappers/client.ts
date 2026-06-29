@@ -42,6 +42,8 @@ export function mapApiRowToClient(row: Record<string, unknown>): Client {
           : row.birthDate != null
             ? String(row.birthDate).slice(0, 10)
             : undefined,
+      registration_status:
+        row.registrationStatus != null ? String(row.registrationStatus) : undefined,
       createdAt,
       updatedAt,
     },

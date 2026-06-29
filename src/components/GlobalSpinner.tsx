@@ -13,7 +13,7 @@ export function GlobalSpinner() {
       aria-hidden={!active}
     >
       <div
-        className="h-full origin-left bg-emerald-500 transition-transform duration-300 ease-out"
+        className="h-full origin-left bg-primary transition-transform duration-300 ease-out"
         style={{
           transform: active ? "scaleX(1)" : "scaleX(0)",
           opacity: active ? 1 : 0,

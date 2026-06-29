@@ -85,7 +85,7 @@ export function LeadsHub() {
       <Card className="p-6 border border-[#E5E7EB]">
         {isLoading ? (
           <div className="flex justify-center py-12 text-gray-400">
-            <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
         ) : rows.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-[#6B7280]">
