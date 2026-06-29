@@ -1,70 +1,73 @@
 # Auth
 
+Single-tenant Lignum (ADR-0006). Sem `Tenant`, `tenantId`, `super_admin` nem `/plataforma/**`.
+
 ## Modelo
 
-- Tabela `users` (`User`): `id`, `email` unico, `passwordHash` (bcrypt), `name?`, `role`, `tenantId?`, metadados de consentimento LGPD e timestamps.
-- A sessao pode continuar baseada em JWT para transporte, mas os atributos sensiveis da identidade sao derivados do servidor.
-- Logout e revogacao precisam de invalidacao server-side para impedir reutilizacao de sessao revogada.
+- Tabela `users` (`User`): `id`, `email` único, `passwordHash` (bcrypt), `name?`, `role`, `isActive`, `sessionRevokedAt?`, metadados LGPD e timestamps.
+- Sessão JWT para transporte; claims sensíveis derivadas do servidor (`jwt`/`session` callbacks).
+- Logout e revogação invalidam sessão server-side (`sessionRevokedAt`).
 
-### Multitenant (cycle 0614 — ADR-0003)
+## Papéis Lignum (cycle 0629)
 
-- **Dois níveis de identidade:** `super_admin` (plataforma, `tenantId = null`, cross-tenant auditado) acima de `admin` (dono da loja), `sales`, `finance`, `read_only`, `authenticated` (papéis dentro da loja).
-- `User.tenantId` vincula o usuário a **uma** loja. Sessão (callbacks `jwt`/`session`) expõe `session.user.tenantId`.
-- `withRole` resolve o tenant da sessão e injeta um Prisma Client **escopado** (`forTenant`); rota de loja sem tenant → 403.
-- Rotas de **plataforma** (`/api/platform/**`) usam `withSuperAdmin` (exige `super_admin`; não exige tenant; acesso auditado via `logSecurityWarn`).
-- Criação de usuário (`/api/auth/register`, `/api/sellers`) vincula o novo usuário ao tenant do admin criador; listagens de usuários são escopadas ao tenant.
+| Papel | Descrição |
+|-------|-----------|
+| `admin` | Acesso total; gestão de utilizadores e auditoria |
+| `vendedor` | Comercial: clientes, vendas, contratos, leads, veículos (legado Movix) |
+| `financeiro` | Financeiro: payables, promissórias, dispatch financeiro |
+| `producao` | Produção: OS (R/W), dashboard, notificações próprias |
+| `read_only` | Leitura nas rotas operacionais permitidas; sem mutações |
 
-## Área de plataforma (cycle 0617)
-
-- Rotas **`/plataforma/**`** exclusivas de **`super_admin`** (UI separada do ERP).
-- Middleware: sessão autenticada com role ≠ `super_admin` → **404** (anti-enumeração).
-- Layout `(platform)`: verificação server-side; `notFound()` se não for `super_admin`.
-- **Pós-login:** `super_admin` sem `returnTo` → **`/plataforma/lojas`**.
-- Onboarding de lojas: ver [Platform onboarding](features/platform-onboarding/readme.md).
+Grupos RBAC em `@/lib/apiRoles`: `allStaffReadRoles`, `commercialWriteRoles`, `financeWriteRoles`, `productionWriteRoles`, `adminOnlyRoles`. Matriz rota-a-rota: [`security/authorization-matrix.md`](security/authorization-matrix.md).
 
 ## Fluxo de login
 
-1. `/login` continua publico e usa `signIn("credentials", ...)`.
+1. `/login` público; `signIn("credentials", ...)`.
 2. `authorize` em `src/lib/auth.ts`:
-   - valida `email` e `password`;
-   - aplica rate limit e lockout temporario;
-   - verifica credenciais contra o armazenamento canonico;
-   - devolve apenas a identidade permitida pelo servidor.
-3. Callback `jwt` injeta apenas claims derivadas do servidor.
-4. Callback `session` expoe `session.user.id`, `role`, `email` e demais campos permitidos.
-5. Middleware:
-   - mantem rotas publicas explicitamente allowlisted;
-   - exige sessao para o restante;
-   - devolve `401 UNAUTHENTICATED` nas APIs quando a sessao nao e valida;
-   - exige papel adequado nas rotas administrativas;
-   - bloqueia `/plataforma/**` para não-`super_admin` (404).
+   - rate limit + lockout por IP + identidade;
+   - rejeita credenciais inválidas **ou** `isActive = false` (mensagem genérica, anti-enumeração);
+   - regista `login_success` / `login_failure` em `AuditLog` (metadados redigidos).
+3. Callbacks `jwt`/`session` expõem `id`, `role`, `email`, `sessionIssuedAt`.
+4. Middleware:
+   - rotas públicas allowlisted (`/login`, `/politica-privacidade`);
+   - exige sessão válida no restante;
+   - APIs sem sessão → `401 UNAUTHENTICATED`;
+   - `/configuracoes/**` → apenas `admin` (redirect staff para `/`).
 
-## Papeis (matriz efetiva)
+## Páginas (middleware)
 
-| Rota / API | admin | authenticated | public | Notas |
-|------------|:-----:|:-------------:|:------:|-------|
-| `/api/auth/[...nextauth]` | ✅ | ✅ | ✅ | Core NextAuth |
-| `POST /api/auth/register` | ✅ | ❌ | ❌ | Admin-only; exige aceite LGPD |
-| CRUD de dominios | ✅ | ✅ | ❌ | Sempre com verificacao de role e tenant quando aplicavel |
-| `/configuracoes**` | ✅ | ❌ | ❌ | Redireciona nao-admin nas paginas; APIs retornam 403 ou 404 conforme anti-enumeracao |
-| `/plataforma/**` | ❌ | ❌ | ❌ | Apenas `super_admin`; staff recebe 404 |
-| rotas publicas declaradas | ✅ | ✅ | ✅ | `/login`, `/cadastro`, `/politica-privacidade` e equivalentes |
+| Rota | Papéis |
+|------|--------|
+| `/login`, `/politica-privacidade` | público |
+| `/configuracoes/**` | `admin` |
+| Demais `(main)/**` | staff autenticado activo (RBAC fino na API) |
 
-## Criacao de utilizadores (admin-only)
+Nav (`Sidebar`) filtrada por papel — defesa em profundidade; API é autoritativa.
 
-- Self-signup continua desligado por padrao quando a flag publica estiver `false`.
-- O fluxo oficial de criacao de usuarios continua admin-only.
-- O form exige aceite LGPD quando aplicavel.
+## Utilizador inactivo
 
-## Rate limit, lockout e revogacao
+- Login falha com mensagem genérica (mesmo texto que credencial inválida).
+- `withRole` devolve `401` se `isActive = false` (consulta server-side).
+- Desactivar revoga sessões via `sessionRevokedAt`.
 
-- Login usa limite persistente por IP + identidade.
-- Apos excesso de falhas, a conta ou combinacao protegida entra em bloqueio temporario.
-- `POST /api/auth/register` e mutacoes sensiveis seguem limites adicionais definidos em `spec/features/security/readme.md`.
-- Troca de senha, desativacao de utilizador, mudanca de role e logout administrativo devem invalidar sessoes ativas relacionadas.
+## Criação e gestão de utilizadores
+
+- **Criar:** `POST /api/auth/register` (admin-only) ou UI `/configuracoes/usuarios/novo`.
+- **Listar/detalhe:** `GET /api/users`, `GET /api/users/[id]`.
+- **Actualizar:** `PATCH /api/users/[id]` — `name?`, `role?`, `isActive?`.
+- **Reset senha:** `POST /api/users/[id]/reset-password` — admin define nova senha; revoga sessão.
+- **Regras:** não desactivar/rebaixar a si próprio; manter pelo menos um `admin` activo.
+- Aceite LGPD na criação (`lgpdConsentVersion`).
+
+Ver também [Feature: Auth](features/auth/readme.md) e [Audit log](features/audit/readme.md).
+
+## Rate limit, lockout e revogação
+
+- Login: limite persistente por IP + identidade; lockout temporário após N falhas.
+- `POST /api/auth/register`: 5 req / 10 min / IP.
+- Gatilhos de `revokeUserSessions`: desactivação, alteração de `role`, reset de senha pelo admin.
 
 ## Logout
 
-- `signOut({ callbackUrl: "/login" })` continua a experiencia de UI esperada.
-- O encerramento de sessao precisa remover ou invalidar o estado tambem no servidor.
-- Sessao expirada ou revogada leva o cliente autenticado de volta ao login sem expor detalhe do mecanismo interno.
+- `signOut({ callbackUrl: "/login" })` na UI.
+- Sessão expirada ou revogada → login sem expor detalhe interno.

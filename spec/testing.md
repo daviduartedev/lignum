@@ -17,12 +17,17 @@
 
 ## Cobertura minima de seguranca
 
-- auth: login, rate limit, lockout, expiracao/revogacao de sessao;
-- autorizacao: RBAC, anti-IDOR e isolamento entre tenants;
+- auth: login, rate limit, lockout, expiracao/revogacao de sessao, conta inactiva;
+- autorizacao: RBAC Lignum por grupo (`tests/authorization.test.ts`), anti-IDOR;
 - validacao: payloads invalidos, allowlists de filtros e ordenacao, body size, URLs perigosas;
 - transporte: headers de seguranca e CORS;
-- logging: redacao de PII, tokens e secrets;
+- logging: redacao de PII, tokens e secrets; audit log de acoes sensiveis;
 - regressao: um teste por finding critico/alto corrigido no cycle.
+
+## Testes RBAC (cycle 0629)
+
+- `tests/authorization.test.ts` — matriz allow/deny por papel (incluido em `npm run test:security`).
+- `e2e/auth-rbac.spec.ts` — smoke login admin/vendedor/financeiro/producao; vendedor bloqueado em `/configuracoes`.
 
 ## Processo manual complementar
 

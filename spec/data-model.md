@@ -8,7 +8,7 @@ Este documento resume o modelo canônico.
 ```
 ErpSetting (singleton id=1)
 
-User ──< UserNotification, SenatranLookupAudit, UserStockAttentionPreference, ...
+User ──< UserNotification, SenatranLookupAudit, AuditLog, UserStockAttentionPreference, ...
 
 Client ──< Sale          >── Vehicle
        ──< Contract      >── Vehicle
@@ -36,7 +36,9 @@ Supplier, Payable, StorefrontLead, FinanceNotificationDispatch, ...
 
 ## Enums
 
-- `Role`: `admin` | `authenticated` | `public` | `sales` | `finance` | `read_only`. Sem `super_admin` (removido no cycle 0623).
+- `Role`: `admin` | `vendedor` | `financeiro` | `producao` | `read_only`.
+- `User.isActive` — conta desactivada não autentica; revoga sessão ao desactivar.
+- `AuditLog` + enum `AuditAction` — ver [Audit log](features/audit/readme.md).
 - `VehicleStatus`: `disponivel` | `repasse` | `reservado` | `vendido` | `removido`.
 - `VehicleLegalSituation` (alvo SENATRAN): `regular` | `irregular` | `com_restricao` — situação legal do veículo na fonte consultada; **não** confundir com `VehicleStatus` de estoque.
 - `VehicleCategoryKind` (alvo): `carro` | `moto` | `onibus` | `jet_ski` | `outros`.
@@ -71,10 +73,9 @@ Para além dos campos já listados no Prisma, o produto prevê (entre outros) `r
 - `Sale.vehicleId` é **unique** → tentar vender duas vezes o mesmo veículo
   gera `409 CONFLICT`.
 - `onDelete`:
-  - `Cascade`: `ClientDocument` (por cliente), `Evaluation`/`ServiceOrder` (por
-    veículo), `UserNotification` (por usuário), `Sale` (por veículo); **`tenantId` em todos os models de negócio (apagar um Tenant remove seus dados)**.
-  - `Restrict`: `Contract`, `Warranty`, `PromissoryNote` em relação a `Client` e
-    `Vehicle` — protege histórico comercial.
+  - `Cascade`: `ClientDocument` (por cliente), `Evaluation`/`ServiceOrder` (por veículo), `UserNotification` (por usuário), `Sale` (por veículo).
+  - `SetNull`: `AuditLog.userId` (preserva histórico se utilizador removido).
+  - `Restrict`: `Contract`, `Warranty`, `PromissoryNote` em relação a `Client` e `Vehicle` — protege histórico comercial.
 
 ## Campos LGPD (User)
 

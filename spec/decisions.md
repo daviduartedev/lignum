@@ -112,3 +112,17 @@
 **Decisão.** Core: auth, settings, financeiro, notificações, PDF, relatórios, calendário, documentos, leads, SENATRAN base. Domínio: orçamentos, produção, materiais (cycles 0629+). Neste cycle: documentação only; nav oculta itens Movix de revenda.
 
 **Consequências.** Código veículo acessível por URL em dev até cycle 0720. Novos módulos Lignum estendem core em vez de duplicar.
+
+---
+
+## ADR-0008 — Papéis Lignum e audit log genérico
+
+- **Status:** Accepted
+- **Cycle:** `cycles/Q3-2026/0629-auth-usuarios-permissoes/`
+- **Data:** 2026-06-25
+
+**Contexto.** Requisito cliente #8: administrador, vendedor, financeiro, produção com permissões distintas e registo de acções. Enum Movix (`sales`, `finance`, `authenticated`, `public`) inadequado para o domínio Lignum.
+
+**Decisão.** Cinco papéis de negócio em PT (`admin`, `vendedor`, `financeiro`, `producao`, `read_only`); RBAC explícito por grupos em `apiRoles`; `User.isActive` + revogação de sessão; `AuditLog` genérico para acções sensíveis; `SenatranLookupAudit` permanece separado.
+
+**Consequências.** Migration breaking de enum Role; handlers actualizados para grupos RBAC; testes `authorization.test.ts` e E2E `auth-rbac.spec.ts` obrigatórios.

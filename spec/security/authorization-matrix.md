@@ -2,81 +2,83 @@
 
 Matriz canonica de auditoria para revisar role e scope check por rota.
 
-## Single-tenant (cycle 0623 — ADR-0006)
+## RBAC Lignum (cycle 0629 — vigente)
 
-- **Sem tenant isolation.** Coluna histórica "Tenant check" → **Scope check** (role + `ownerUserId` + singleton).
-- **Rotas removidas:** `/api/platform/**`, storefront público, `/cadastro`, `/fipe`, `/giro`, `/site`.
-- **`/api/erp-setting`:** singleton `id = 1`; GET staff, PUT admin.
-- **`/api/auth/register`:** admin-only; sem auto-cadastro público.
-- **`/api/leads`:** staff autenticado (leads internos CRM).
-- Evidência: `tests/api/routes.test.ts` (`RUN_DB_TESTS=true`); e2e `navigation.spec.ts`, `smoke.spec.ts`.
+Single-tenant (ADR-0006). **Sem tenant isolation.** Escopo por **papel** + `ownerUserId` onde aplicável + singleton `ErpSetting`.
 
-> Secções multitenant abaixo são **históricas** (superseded por ADR-0006).
+### Grupos (`@/lib/apiRoles`)
 
-## Regras gerais
+| Constante | Papéis |
+|-----------|--------|
+| `allStaffReadRoles` | admin, vendedor, financeiro, producao, read_only |
+| `commercialWriteRoles` | admin, vendedor |
+| `financeWriteRoles` | admin, financeiro |
+| `productionWriteRoles` | admin, producao |
+| `staffPreferencesWriteRoles` | admin, vendedor, financeiro, producao |
+| `adminOnlyRoles` | admin |
 
-- Toda rota deve declarar autenticacao exigida.
-- Toda rota com recurso por `id`, `tenantId`, filtro ou listagem deve declarar como faz scoping.
-- Quando o objetivo for evitar enumeracao, a resposta para acesso indevido pode ser `404` em vez de `403`.
+### Matriz rota-a-rota
 
-## Modelo de preenchimento obrigatorio
+| Rota | GET | Mutações | Scope | Anti-enum | Notas |
+|------|-----|----------|-------|-----------|-------|
+| `/api/auth/[...nextauth]` | público parcial | público parcial | — | — | signIn/signOut |
+| `POST /api/auth/register` | — | admin | — | 403 | rate limit IP |
+| `/api/users`, `/api/users/[id]` | admin | admin PATCH | — | 403 | sem `passwordHash` |
+| `POST /api/users/[id]/reset-password` | — | admin | — | 403 | revoga sessão |
+| `/api/audit-logs` | admin | — | — | 403 | paginado |
+| `/api/dashboard/summary`, `/api/crm-summary` | allStaffRead | — | — | — | |
+| `/api/clients/**` | allStaffRead | commercialWrite | — | 404 IDOR | |
+| `/api/sales/**`, `/api/contracts/**` | allStaffRead | commercialWrite | — | 404 | |
+| `/api/leads/**` | allStaffRead | commercialWrite | — | 404 | |
+| `/api/vehicles/**` GET | allStaffRead | — | — | 404 | legado Movix |
+| `/api/vehicles/**` POST/PUT | — | commercialWrite | — | | |
+| `/api/vehicles/[id]` DELETE, restore | — | admin | — | 404 | |
+| `/api/service-orders/**` | allStaffRead | productionWrite | — | 404 | vendedor read-only |
+| `/api/payables/**`, `/api/promissory-notes/**` | allStaffRead | financeWrite | — | 404 | |
+| `/api/finance/dispatch-notifications` | — | financeWrite | — | 403 | |
+| `/api/erp-setting` | allStaffRead | PUT admin | singleton id=1 | 403 | audit PUT |
+| `/api/senatran/lookup` POST | — | commercialWrite | — | — | |
+| `/api/senatran/usage` | admin | — | — | 403 | |
+| `/api/user-notifications/**` | allStaffRead | staffPreferencesWrite / admin | ownerUserId | 404 | |
+| `/api/user/inbox-preferences` | allStaffRead | staffPreferencesWrite | session.user.id | 401 | |
+| `/api/upload` POST | — | commercialWrite | — | — | backend desactivado |
+| `/api/suppliers/**`, `/api/warranties/**`, `/api/evaluations/**`, `/api/purchase-evaluations/**` | allStaffRead | commercialWrite | — | 404 | legado |
+| `/api/sellers` GET | allStaffRead | — | — | | lista vendedores |
+| `/api/sellers` POST | — | admin | — | 403 | cria `vendedor` |
 
-| Rota | Recurso | Autenticacao | Roles permitidas | Tenant check | Anti-enumeracao | Observacoes |
-|------|---------|--------------|------------------|--------------|-----------------|-------------|
-| `/api/...` | recurso | sim/nao | admin, ... | como valida | 403 ou 404 | lacunas e follow-ups |
+**Evidência:** `tests/authorization.test.ts`, `tests/api/routes.test.ts` (`RUN_DB_TESTS=true`), `e2e/auth-rbac.spec.ts`.
 
-## Cobertura minima
+### Regras gerais (0629)
 
-- Auth (`/api/auth/*` e fluxo de sessao).
-- Rotas com `id` na URL.
-- Rotas com `tenantId` direto ou indireto.
-- Listagens filtradas.
-- Notificacoes e preferencias por utilizador.
-- Configuracoes administrativas e recursos cross-tenant.
+- Toda rota privada declara autenticação via `withRole`.
+- `403` quando rota existe e papel não permite; `404` para IDOR/recurso inexistente quando anti-enumeração.
+- Utilizador `isActive = false` → `401` em APIs; login bloqueado.
 
-## Status do cycle
+---
 
-Este documento deve ser atualizado no cycle de hardening com a matriz preenchida a partir do codigo real e servir como checklist de revisao manual antes do merge.
+## Single-tenant base (cycle 0623 — ADR-0006)
 
-## Matriz inicial do cycle 0516-security-hardening
+- Rotas removidas: `/api/platform/**`, storefront, `/cadastro`, `/fipe`, `/giro`, `/site`.
+- **`/api/auth/register`:** admin-only.
+- **`/api/leads`:** staff autenticado.
 
-| Rota | Recurso | Autenticacao | Roles permitidas | Tenant check | Anti-enumeracao | Observacoes |
-|------|---------|--------------|------------------|--------------|-----------------|-------------|
-| `/api/auth/[...nextauth]` | sessao | parcial | publico para signin/signout/session | sem tenant modelado | nao | Logout passa a registrar revogacao server-side quando houver sessao. |
-| `POST /api/auth/register` | usuario | sim | admin | sem tenant modelado | 403 | Rate limit por IP no middleware. |
-| `/api/user-notifications` | notificacao | sim | staff | `ownerUserId` para nao-admin | 404 em recurso alheio | Lista scoped; admin ve todas. |
-| `/api/user-notifications/[id]` | notificacao por id | sim | staff | `ownerUserId` para nao-admin | 404 | Anti-IDOR ja aplicado. |
-| `/api/user/inbox-preferences` | preferencias do usuario | sim | staff | `session.user.id` | 401 | Escopo sempre no usuario autenticado. |
-| `/api/erp-setting` | configuracao ERP | sim | GET staff, PUT admin | singleton sem tenant modelado | 403 | Requer revisao se tenant for introduzido. |
-| `/api/senatran/usage` | auditoria SENATRAN | sim | admin | sem tenant modelado | 403 | Agregado administrativo. |
-| `/api/upload` | upload latente | sim | staff | sem tenant modelado | nao | Backend bloqueia recurso ate checklist completo. |
-| `/api/*/[id]` dominios operacionais | veiculos, clientes, contratos, financeiro, OS | sim | staff/admin conforme rota | sem tenant modelado no schema atual | 404 quando recurso inexiste | IDOR cross-tenant fica pendente ate existir tenant no modelo de dados. |
+---
 
-Nota: o schema Prisma atual nao possui entidade ou coluna `tenant_id`. O cycle aplica scoping por usuario onde o modelo ja existe (`UserNotification`, preferencias e auditoria); isolamento entre tenants precisa de extensao de modelo antes de ser plenamente testavel.
+## [Histórico] Matriz 0516 / multitenant
 
-## Multitenant — isolamento implementado (cycle 0614)
+> **Superseded** por ADR-0006 e matriz 0629 acima. Mantido apenas para rastreabilidade.
 
-> **Supersede a nota acima.** O cycle `0614-multitenant-fundacao` introduziu `Tenant` + `tenantId` e o isolamento cross-tenant, antes pendente.
+<details>
+<summary>Matriz 0516-security-hardening e multitenant 0614 (colapsado)</summary>
 
-### Modelo de ameaças
+| Rota | Recurso | Autenticacao | Roles permitidas | Scope check | Anti-enumeracao | Observacoes |
+|------|---------|--------------|------------------|-------------|-----------------|-------------|
+| `/api/auth/[...nextauth]` | sessao | parcial | publico signin/signout | — | nao | |
+| `POST /api/auth/register` | usuario | sim | admin | — | 403 | |
+| `/api/user-notifications` | notificacao | sim | staff | ownerUserId | 404 | |
+| `/api/erp-setting` | ERP | sim | GET staff, PUT admin | singleton | 403 | |
+| `/api/senatran/usage` | SENATRAN | sim | admin | — | 403 | |
 
-- **Ameaça principal:** IDOR cross-tenant — usuário do tenant A acede/edita/apaga recurso do tenant B (por listagem ou por id).
-- **Mitigação (implementada e testada):**
-  - Guard central `forTenant(tenantId)` (`src/lib/db.ts`) força `where.tenantId` (leitura/where-ops) e `data.tenantId` (create/createMany/upsert) nos 16 models de negócio. **O tenant da sessão sempre vence** — `{ ...data, tenantId }` impede override pelo caller.
-  - `withRole` resolve tenant da sessão e injeta `db` escopado; rota de loja sem tenant → 403.
-  - `[id]` GET/PUT/DELETE: id de outro tenant não casa o `where` escopado → **NOT_FOUND** (anti-enumeração).
-  - Plataforma (`super_admin`) via `withSuperAdmin`: cross-tenant **intencional e auditado** (`logSecurityWarn`).
-- **Evidência:** `tests/tenant-scope.test.ts` + `tests/tenant-isolation.test.ts` (adversarial, sem DB) e `tests/integration/tenant-isolation.int.test.ts` (DB, 2 tenants: A não vê B; anti-IDOR por id). Todos verdes (2026-06-15).
-- **Evidência plataforma (0617):** `tests/api/platform-tenants.test.ts` (7 casos, `RUN_DB_TESTS=true`); E2E `e2e/platform-onboarding.spec.ts`, `e2e/platform-access-denied.spec.ts`.
-- **Limites/follow-ups:** RLS no Postgres como defesa em profundidade (recomendado); `$queryRaw`/`$executeRaw` fora do guard (nenhum uso em models de negócio).
+Multitenant 0614 (`Tenant`, `forTenant`, `super_admin`) removido no cycle 0623.
 
-### Tenant check (atualização das linhas pendentes)
-
-| Rota | Tenant check | Anti-enumeração |
-|------|--------------|-----------------|
-| `/api/*` domínios de negócio (coleção + `[id]`) | `tenantId` forçado pelo guard (`forTenant`) | 404 em recurso de outro tenant |
-| `/api/erp-setting` | `where: { tenantId }` (1:1 por tenant) | 403/escopo por tenant |
-| `/api/sellers`, `/api/auth/register` | grava/filtra `tenantId` do admin | 409 em e-mail duplicado |
-| `/api/platform/tenants` | `super_admin` cross-tenant auditado | 403 a não-super-admin |
-| `/plataforma/**` (páginas) | `super_admin` | 404 a staff de loja |
-| `/api/user/inbox-preferences` | `session.user.id` (self) | 401 |
+</details>

@@ -31,8 +31,9 @@ Padroes vigentes derivados do codigo atual. Melhorias futuras aparecem como **re
 
 ## Autorizacao
 
-- Sessao via `auth()`; verificar revogacao com `isSessionRevoked`.
-- Roles definidas em `@/lib/apiRoles` (`staffRoles`, etc.).
+- Sessao via `auth()`; verificar revogacao com `isSessionRevoked` e conta activa com `isUserActive`.
+- Grupos RBAC em `@/lib/apiRoles` (`allStaffReadRoles`, `commercialWriteRoles`, `financeWriteRoles`, `productionWriteRoles`, `adminOnlyRoles`).
+- Audit helper: `@/lib/auditLog` (`writeAuditLog`).
 - Escopo por owner em recursos sensiveis (ex.: notificacoes por `ownerUserId`).
 - Preferir `404` sobre `403` quando reduz enumeracao ([`api-contract.md`](api-contract.md)).
 
@@ -66,7 +67,7 @@ Padroes vigentes derivados do codigo atual. Melhorias futuras aparecem como **re
 
 ## Upload de ficheiros (veículos)
 
-- `POST /api/upload`: `withRole(staffRoles)`, `multipart/form-data` campo `files[]`, limite de corpo `API_BODY_SIZE_LIMIT_BYTES`.
+- `POST /api/upload`: `withRole(commercialWriteRoles)`, `multipart/form-data` campo `files[]`, limite de corpo `API_BODY_SIZE_LIMIT_BYTES`.
 - Desactivado por defeito até `ENABLE_SERVER_UPLOADS=true` **e** `UPLOAD_SECURITY_CHECKLIST_CONFIRMED=true`; resposta 400 com mensagem PT-BR.
 - Quando activo: validações P0 em `src/lib/uploadValidation.ts` (MIME whitelist, extensão, magic bytes, tamanho máx. 1 MiB/ficheiro, máx. 20 ficheiros, nome sanitizado); delegação a `uploadFile()` → Vercel Blob (`@vercel/blob`), prefixo `autocore/`, URLs HTTPS públicas.
 - **Proibido** persistir uploads user-generated em filesystem local (`public/`, `/tmp`) na Vercel.

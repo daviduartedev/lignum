@@ -41,9 +41,9 @@ Obrigatorio em todo cycle que tocar:
 
 ### Multi-tenant e isolamento
 
-- [ ] Estado atual: scoping por owner/recurso + matriz de autorizacao (nao ha `tenant_id` global ainda).
-- [ ] Novas areas multi-tenant: considerar `tenant_id` e RLS como padrao recomendado futuro.
-- [ ] Listagens e queries escopadas; sem vazamento cross-owner.
+- Estado actual (0629): **single-tenant**; RBAC por papel Lignum + `ownerUserId` onde aplicável.
+- Utilizadores inactivos não autenticam; sessões revogadas em eventos administrativos (desactivar, mudar papel, reset senha).
+- Audit log para acções sensíveis — lista fechada em [`features/audit/readme.md`](features/audit/readme.md).
 
 ### Erros e logs
 

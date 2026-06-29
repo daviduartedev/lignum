@@ -6,9 +6,13 @@ Objetivo: qualquer pessoa da equipa consegue levantar PostgreSQL (Neon ou local)
 
 | Papel | Email | Senha | Notas |
 |--------|--------|--------|--------|
-| Admin Lignum | `admin@lignum.local` | `Teste@123456` | Criado/atualizado pelo seed mínimo (`prisma/seed.ts`). |
+| Admin | `admin@lignum.local` | `Teste@123456` | Seed 0629 |
+| Vendedor | `vendedor@lignum.local` | `Teste@123456` | Seed 0629 |
+| Financeiro | `financeiro@lignum.local` | `Teste@123456` | Seed 0629 |
+| Produção | `producao@lignum.local` | `Teste@123456` | Seed 0629 |
+| Somente leitura | `readonly@lignum.local` | `Teste@123456` | Seed 0629 |
 
-Variáveis opcionais: `SEED_ADMIN_EMAIL`, `SEED_PASSWORD` / `SEED_ADMIN_PASSWORD`, `SEED_ADMIN_NAME`; e2e: `E2E_ADMIN_EMAIL`, `E2E_ADMIN_PASSWORD`.
+Variáveis opcionais: `SEED_PASSWORD` / `SEED_ADMIN_PASSWORD`, `SEED_ADMIN_EMAIL`, `SEED_VENDEDOR_EMAIL`, etc.; e2e: `E2E_ADMIN_EMAIL`, `E2E_PASSWORD`.
 
 ## SQL opcional (bootstrap)
 
@@ -16,9 +20,9 @@ Variáveis opcionais: `SEED_ADMIN_EMAIL`, `SEED_PASSWORD` / `SEED_ADMIN_PASSWORD
 
 ## Seed mínimo (default)
 
-`npm run db:seed` executa apenas:
+`npm run db:seed` cria (idempotente):
 
-- 1 utilizador `admin` (`admin@lignum.local`)
+- 5 utilizadores canónicos (`admin`, `vendedor`, `financeiro`, `producao`, `read_only`) — ver tabela acima
 - 1 linha `ErpSetting` (`id = 1`) com defaults AlaCruz/Lignum
 
 **Sem** multi-loja, **sem** `super_admin`, **sem** massa BULK no fluxo default.
