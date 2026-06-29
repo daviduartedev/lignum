@@ -67,11 +67,11 @@ export async function seedBulkMass(prisma: PrismaClient, adminId: number): Promi
       email: extraOpEmail,
       passwordHash: "$2a$12$n0/GAOexdwgbaNv5cDAlh.HyIlSGY3vtjTjDNZGysmD9LnifYcCm6",
       name: "Operador Seed Extra",
-      role: "authenticated",
+      role: "vendedor",
       lgpdConsentVersion: "1.0",
       lgpdConsentAt: new Date(),
     },
-    update: { name: "Operador Seed Extra", role: "authenticated" },
+    update: { name: "Operador Seed Extra", role: "vendedor" },
   });
 
   const clientRows: Prisma.ClientCreateManyInput[] = [];

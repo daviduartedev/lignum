@@ -4,29 +4,43 @@ import { ERP_SETTING_DEFAULTS } from "../src/lib/erpSettingDefaults";
 
 const prisma = new PrismaClient();
 
+const SEED_USERS = [
+  { key: "admin", email: "admin@lignum.local", name: "Administrador Lignum", role: "admin" as const },
+  { key: "vendedor", email: "vendedor@lignum.local", name: "Vendedor Lignum", role: "vendedor" as const },
+  { key: "financeiro", email: "financeiro@lignum.local", name: "Financeiro Lignum", role: "financeiro" as const },
+  { key: "producao", email: "producao@lignum.local", name: "Produção Lignum", role: "producao" as const },
+  { key: "read_only", email: "readonly@lignum.local", name: "Leitura Lignum", role: "read_only" as const },
+];
+
 async function main() {
   const seedPassword =
     process.env.SEED_PASSWORD ?? process.env.SEED_ADMIN_PASSWORD ?? "Teste@123456";
   const passwordHash = await hash(seedPassword, 12);
-  const adminEmail = (process.env.SEED_ADMIN_EMAIL ?? "admin@lignum.local").toLowerCase().trim();
-  const adminName = process.env.SEED_ADMIN_NAME ?? "Administrador Lignum";
+  const now = new Date();
 
-  await prisma.user.upsert({
-    where: { email: adminEmail },
-    create: {
-      email: adminEmail,
-      passwordHash,
-      name: adminName,
-      role: "admin",
-      lgpdConsentVersion: "1.0",
-      lgpdConsentAt: new Date(),
-    },
-    update: {
-      name: adminName,
-      role: "admin",
-      passwordHash,
-    },
-  });
+  for (const u of SEED_USERS) {
+    const email =
+      (process.env[`SEED_${u.key.toUpperCase()}_EMAIL`] as string | undefined)?.toLowerCase().trim() ??
+      u.email;
+    await prisma.user.upsert({
+      where: { email },
+      create: {
+        email,
+        passwordHash,
+        name: u.name,
+        role: u.role,
+        isActive: true,
+        lgpdConsentVersion: "1.0",
+        lgpdConsentAt: now,
+      },
+      update: {
+        name: u.name,
+        role: u.role,
+        passwordHash,
+        isActive: true,
+      },
+    });
+  }
 
   const d = ERP_SETTING_DEFAULTS;
   await prisma.erpSetting.upsert({
@@ -66,7 +80,13 @@ async function main() {
   });
 
   console.log("[seed] Lignum seed mínimo aplicado (idempotente).");
-  console.log(`[seed] Admin: ${adminEmail} / ${seedPassword}`);
+  console.log(`[seed] Senha partilhada: ${seedPassword}`);
+  for (const u of SEED_USERS) {
+    const email =
+      (process.env[`SEED_${u.key.toUpperCase()}_EMAIL`] as string | undefined)?.toLowerCase().trim() ??
+      u.email;
+    console.log(`[seed] ${u.role}: ${email}`);
+  }
 }
 
 main()
