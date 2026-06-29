@@ -74,12 +74,17 @@ export function ConfiguracoesHub() {
           <p className="text-sm text-[#6B7280]">Dados da empresa e alertas gravados nas configurações do ERP</p>
         </div>
         {isAdmin ? (
-          <Button asChild variant="outline" size="sm" className="shrink-0">
-            <Link href="/configuracoes/usuarios">
-              <Users className="h-4 w-4 mr-2" />
-              Usuários
-            </Link>
-          </Button>
+          <div className="flex flex-wrap gap-2 shrink-0">
+            <Button asChild variant="outline" size="sm">
+              <Link href="/configuracoes/auditoria">Auditoria</Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
+              <Link href="/configuracoes/usuarios">
+                <Users className="h-4 w-4 mr-2" />
+                Usuários
+              </Link>
+            </Button>
+          </div>
         ) : null}
       </div>
 

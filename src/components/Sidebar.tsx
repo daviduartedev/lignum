@@ -23,24 +23,22 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { BrandLogo } from "@/components/BrandLogo";
 import { cn } from "@/components/ui/utils";
+import { navItemsForRole, splitNavForSidebar } from "@/lib/navVisibility";
 
-const menuItems = [
-  { path: "/", label: "Painel", icon: LayoutDashboard },
-  { path: "/os", label: "OS", icon: Wrench },
-  { path: "/contratos", label: "Contratos", icon: FileText },
-  { path: "/clientes", label: "Clientes e fornecedores", icon: Users },
-  { path: "/financeiro", label: "Financeiro", icon: Wallet },
-  { path: "/garantias", label: "Garantias", icon: Shield },
-];
-
-const secondaryItems = [
-  { path: "/documentos", label: "Documentos", icon: FolderOpen },
-  { path: "/relatorios", label: "Relatórios", icon: BarChart3 },
-  { path: "/calendario", label: "Calendário", icon: Calendar },
-  { path: "/notificacoes", label: "Notificações", icon: Inbox },
-  { path: "/leads", label: "Leads", icon: UserPlus },
-  { path: "/configuracoes", label: "Configurações", icon: Settings },
-];
+const ICON_BY_PATH: Record<string, ComponentType<{ className?: string }>> = {
+  "/": LayoutDashboard,
+  "/os": Wrench,
+  "/contratos": FileText,
+  "/clientes": Users,
+  "/financeiro": Wallet,
+  "/garantias": Shield,
+  "/documentos": FolderOpen,
+  "/relatorios": BarChart3,
+  "/calendario": Calendar,
+  "/notificacoes": Inbox,
+  "/leads": UserPlus,
+  "/configuracoes": Settings,
+};
 
 function userInitials(name: string | null | undefined, email: string | null | undefined): string {
   const s = (name ?? email ?? "?").trim();
@@ -84,6 +82,8 @@ export function Sidebar() {
   const pathname = usePathname();
   const { data } = useSession();
   const user = data?.user;
+  const role = user?.role;
+  const { main, secondary } = splitNavForSidebar(navItemsForRole(role));
 
   const handleLogout = () => {
     void signOut({ callbackUrl: "/login" });
@@ -96,6 +96,11 @@ export function Sidebar() {
     return pathname.startsWith(path);
   };
 
+  const renderItem = (item: { path: string; label: string }) => {
+    const Icon = ICON_BY_PATH[item.path] ?? LayoutDashboard;
+    return <NavLink key={item.path} {...item} icon={Icon} active={isActive(item.path)} />;
+  };
+
   return (
     <aside className="flex w-[220px] shrink-0 flex-col self-stretch bg-sidebar print:hidden min-h-0 min-w-0">
       <div className="flex h-16 items-center justify-center border-b border-sidebar-border px-3">
@@ -103,16 +108,16 @@ export function Sidebar() {
       </div>
 
       <nav className="flex-1 overflow-y-auto px-2 py-4 no-scrollbar">
-        {menuItems.map((item) => (
-          <NavLink key={`${item.path}-${item.label}`} {...item} active={isActive(item.path)} />
-        ))}
+        {main.map(renderItem)}
 
-        <p className="px-3 pb-1 pt-4 text-[10px] uppercase tracking-wider text-sidebar-foreground/40">
-          Operação
-        </p>
-        {secondaryItems.map((item) => (
-          <NavLink key={`${item.path}-${item.label}`} {...item} active={isActive(item.path)} />
-        ))}
+        {secondary.length > 0 ? (
+          <>
+            <p className="px-3 pb-1 pt-4 text-[10px] uppercase tracking-wider text-sidebar-foreground/40">
+              Operação
+            </p>
+            {secondary.map(renderItem)}
+          </>
+        ) : null}
       </nav>
 
       <div className="border-t border-sidebar-border bg-sidebar-accent/50 px-4 py-3">

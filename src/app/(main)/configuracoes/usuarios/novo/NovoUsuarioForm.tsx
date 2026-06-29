@@ -11,6 +11,8 @@ import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import type { Role } from "@prisma/client";
+import { ASSIGNABLE_ROLES, roleLabel } from "@/lib/roleLabels";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export function NovoUsuarioForm() {
@@ -18,7 +20,7 @@ export function NovoUsuarioForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
-  const [role, setRole] = useState<"admin" | "sales" | "finance" | "read_only">("sales");
+  const [role, setRole] = useState<Role>("vendedor");
   const [accepted, setAccepted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -74,15 +76,16 @@ export function NovoUsuarioForm() {
         </div>
         <div className="space-y-2">
           <Label>Papel</Label>
-          <Select value={role} onValueChange={(v) => setRole(v as "admin" | "sales" | "finance" | "read_only")}>
+          <Select value={role} onValueChange={(v) => setRole(v as Role)}>
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="sales">Vendedor</SelectItem>
-              <SelectItem value="finance">Financeiro</SelectItem>
-              <SelectItem value="read_only">Somente leitura</SelectItem>
-              <SelectItem value="admin">Administrador</SelectItem>
+              {ASSIGNABLE_ROLES.map((r) => (
+                <SelectItem key={r} value={r}>
+                  {roleLabel(r)}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
