@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
 import { fail } from "@/lib/jsonResponse";
-import { isSessionRevoked } from "@/lib/sessionRevocation";
+import { isSessionRevoked, isUserActive } from "@/lib/sessionRevocation";
 import { logSecurityError } from "@/lib/secureLogger";
 import type { Role } from "@prisma/client";
 import type { NextRequest } from "next/server";
@@ -27,6 +27,10 @@ export function withRole(
         return fail("UNAUTHENTICATED", 401);
       }
       if (await isSessionRevoked(session.user.id, session.user.sessionIssuedAt)) {
+        return fail("UNAUTHENTICATED", 401);
+      }
+      const userId = Number(session.user.id);
+      if (Number.isInteger(userId) && userId > 0 && !(await isUserActive(userId))) {
         return fail("UNAUTHENTICATED", 401);
       }
       const role = session.user.role;

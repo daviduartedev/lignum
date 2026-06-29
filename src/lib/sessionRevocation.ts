@@ -15,6 +15,38 @@ export function isSessionRevocationSchemaMissing(error: unknown): boolean {
   );
 }
 
+export function isUserActiveSchemaMissing(error: unknown): boolean {
+  const candidate = error as { code?: unknown; message?: unknown; meta?: unknown } | null;
+  const code = typeof candidate?.code === "string" ? candidate.code : "";
+  const meta = JSON.stringify(candidate?.meta ?? {});
+  const message = error instanceof Error ? error.message : String(candidate?.message ?? error ?? "");
+  const text = `${message} ${meta}`.toLowerCase();
+
+  return (
+    code === "P2022" ||
+    ((text.includes("is_active") || text.includes("isactive")) &&
+      (text.includes("column") || text.includes("does not exist") || text.includes("unknown field")))
+  );
+}
+
+export async function isUserActive(userId: string | number): Promise<boolean> {
+  const id = Number(userId);
+  if (!Number.isInteger(id) || id <= 0) return false;
+  const user = await prisma.user
+    .findUnique({
+      where: { id },
+      select: { isActive: true },
+    })
+    .catch((error) => {
+      if (isUserActiveSchemaMissing(error)) {
+        logSecurityWarn("user_active.schema_missing", { action: "check", userId: id });
+        return { isActive: true };
+      }
+      throw error;
+    });
+  return user?.isActive !== false;
+}
+
 export async function revokeUserSessions(userId: string | number): Promise<void> {
   const id = Number(userId);
   if (!Number.isInteger(id) || id <= 0) return;
