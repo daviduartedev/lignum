@@ -270,7 +270,7 @@ describeDb("API REST (contratos com base seedada)", () => {
         email: unique,
         password: "SenhaSegura1",
         name: "API Test",
-        role: "authenticated",
+        role: "vendedor",
         lgpdConsentVersion: "1.0",
       }) as never,
     );
@@ -285,7 +285,7 @@ describeDb("API REST (contratos com base seedada)", () => {
         email: "admin@lignum.local",
         password: "SenhaSegura1",
         name: "Dup",
-        role: "authenticated",
+        role: "vendedor",
         lgpdConsentVersion: "1.0",
       }) as never,
     );

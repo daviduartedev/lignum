@@ -30,9 +30,33 @@ export const adminSession: MockSessionUser = {
   name: "Administrador Lignum",
 };
 
-export const operatorSession: MockSessionUser = {
+export const vendedorSession: MockSessionUser = {
   id: "2",
-  email: "operador@lignum.local",
-  role: "authenticated",
-  name: "Operador",
+  email: "vendedor@lignum.local",
+  role: "vendedor",
+  name: "Vendedor Lignum",
 };
+
+export const financeiroSession: MockSessionUser = {
+  id: "3",
+  email: "financeiro@lignum.local",
+  role: "financeiro",
+  name: "Financeiro Lignum",
+};
+
+export const producaoSession: MockSessionUser = {
+  id: "4",
+  email: "producao@lignum.local",
+  role: "producao",
+  name: "Produção Lignum",
+};
+
+export const readOnlySession: MockSessionUser = {
+  id: "5",
+  email: "readonly@lignum.local",
+  role: "read_only",
+  name: "Leitura Lignum",
+};
+
+/** @deprecated Use vendedorSession */
+export const operatorSession: MockSessionUser = vendedorSession;

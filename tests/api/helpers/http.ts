@@ -16,12 +16,15 @@ export function jsonRequest(
   body?: unknown,
   query?: Record<string, string>,
 ): NextRequest {
-  const init: RequestInit = { method };
+  const url = apiUrl(path, query);
   if (body !== undefined) {
-    init.body = JSON.stringify(body);
-    init.headers = { "Content-Type": "application/json" };
+    return new NextRequest(url, {
+      method,
+      body: JSON.stringify(body),
+      headers: { "Content-Type": "application/json" },
+    });
   }
-  return new NextRequest(apiUrl(path, query), init);
+  return new NextRequest(url, { method });
 }
 
 export async function parseEnvelope(res: Response) {
