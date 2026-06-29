@@ -1,5 +1,5 @@
 import type { NextRequest } from "next/server";
-import { staffRoles } from "@/lib/apiRoles";
+import { allStaffReadRoles, commercialWriteRoles } from "@/lib/apiRoles";
 import { parseDateInput } from "@/lib/dates";
 import { fail, ok } from "@/lib/jsonResponse";
 import { parseNumericId } from "@/lib/routeParams";
@@ -26,7 +26,7 @@ type PurchasePaymentJson = {
   installmentPlan?: InstallmentPlan;
 };
 
-export const POST = withRole(staffRoles, async (_req: NextRequest, ctx) => {
+export const POST = withRole(commercialWriteRoles, async (_req: NextRequest, ctx) => {
   const num = await parseNumericId(ctx);
   if (num == null) {
     return fail("BAD_REQUEST", 400, { message: "ID inválido." });

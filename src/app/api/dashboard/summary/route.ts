@@ -1,6 +1,6 @@
 import type { Prisma } from "@prisma/client";
 import type { NextRequest } from "next/server";
-import { staffRoles } from "@/lib/apiRoles";
+import { allStaffReadRoles, commercialWriteRoles } from "@/lib/apiRoles";
 import { bucketSalesCountsPerMonth, computeTopMarcas } from "@/lib/dashboard/commerceAggregates";
 import { getDashboardTopBrandsMonths, getDashboardVendasResumoMonths } from "@/lib/dashboard/dashboardPeriodEnv";
 import { loadPontosAtencaoCore } from "@/lib/dashboard/pontosAtencaoCore";
@@ -16,7 +16,7 @@ import { ok } from "@/lib/jsonResponse";
 import type { RouteContext } from "@/lib/withRole";
 import { withRole } from "@/lib/withRole";
 
-export const GET = withRole(staffRoles, async (_req: NextRequest) => {
+export const GET = withRole(allStaffReadRoles, async (_req: NextRequest) => {
   const now = new Date();
 
   const {

@@ -2,7 +2,7 @@ import type { Prisma, UserNotification } from "@prisma/client";
 import type { NextRequest } from "next/server";
 import { auth } from "@/lib/auth";
 import { userNotificationUpdateSchema } from "@/lib/zodSchemas";
-import { staffRoles } from "@/lib/apiRoles";
+import { allStaffReadRoles, staffPreferencesWriteRoles } from "@/lib/apiRoles";
 import { parseOptionalDate } from "@/lib/dates";
 import { isSafeUserLinkUrl } from "@/lib/urlSafety";
 import { fail, ok } from "@/lib/jsonResponse";
@@ -29,7 +29,7 @@ async function assertOwnerOrAdmin(
   return { ok: true, row };
 }
 
-export const GET = withRole(staffRoles, async (_req: NextRequest, ctx: RouteContext) => {
+export const GET = withRole(allStaffReadRoles, async (_req: NextRequest, ctx: RouteContext) => {
   const num = await parseNumericId(ctx);
   if (num == null) {
     return fail("BAD_REQUEST", 400, { message: "ID inválido." });
@@ -41,7 +41,7 @@ export const GET = withRole(staffRoles, async (_req: NextRequest, ctx: RouteCont
   return ok(gate.row);
 });
 
-export const PUT = withRole(staffRoles, async (req: NextRequest, ctx: RouteContext) => {
+export const PUT = withRole(staffPreferencesWriteRoles, async (req: NextRequest, ctx: RouteContext) => {
   const num = await parseNumericId(ctx);
   if (num == null) {
     return fail("BAD_REQUEST", 400, { message: "ID inválido." });
@@ -86,7 +86,7 @@ export const PUT = withRole(staffRoles, async (req: NextRequest, ctx: RouteConte
   }
 });
 
-export const DELETE = withRole(staffRoles, async (_req: NextRequest, ctx: RouteContext) => {
+export const DELETE = withRole(staffPreferencesWriteRoles, async (_req: NextRequest, ctx: RouteContext) => {
   const num = await parseNumericId(ctx);
   if (num == null) {
     return fail("BAD_REQUEST", 400, { message: "ID inválido." });

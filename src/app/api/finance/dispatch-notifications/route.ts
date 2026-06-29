@@ -1,5 +1,5 @@
 import type { NextRequest } from "next/server";
-import { staffRoles } from "@/lib/apiRoles";
+import { allStaffReadRoles, financeWriteRoles } from "@/lib/apiRoles";
 import { ok } from "@/lib/jsonResponse";
 import { withRole } from "@/lib/withRole";
 import { prisma } from "@/lib/db";
@@ -23,13 +23,13 @@ function addDays(date: Date, days: number): Date {
  * Execução: chamar via cron/worker externo, ou manualmente por admin.
  * Multitenant: escopado ao tenant do chamador (db escopado + erpSetting/users por tenant).
  */
-export const POST = withRole(staffRoles, async (_req: NextRequest) => {
+export const POST = withRole(financeWriteRoles, async (_req: NextRequest) => {
   const today = startOfToday();
   const erp = await prisma.erpSetting.findUnique({ where: { id: 1 } });
   const defaultDays = Math.max(0, Math.min(30, Number(erp?.financeEventNotifyDaysBefore ?? 1)));
 
   const users = await prisma.user.findMany({
-    where: { role: { in: ["admin", "finance"] } },
+    where: { role: { in: ["admin", "financeiro"] } },
     select: { id: true, financeEventNotifyDaysBeforeOverride: true },
   });
 

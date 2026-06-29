@@ -1,7 +1,7 @@
 import { hash } from "bcryptjs";
 import type { NextRequest } from "next/server";
 import { Role } from "@prisma/client";
-import { staffRoles } from "@/lib/apiRoles";
+import { allStaffReadRoles, adminOnlyRoles } from "@/lib/apiRoles";
 import { prisma } from "@/lib/db";
 import { fail, ok } from "@/lib/jsonResponse";
 import { POLICY_PRIVACY_VERSION } from "@/lib/lgpdPolicyMeta";
@@ -9,10 +9,10 @@ import { zodErrorResponse } from "@/lib/routeUtils";
 import { sellerCreateSchema } from "@/lib/zodSchemas";
 import { withRole } from "@/lib/withRole";
 
-const sellerRoles = [Role.admin, Role.authenticated, Role.sales];
+const sellerRoles = [Role.admin, Role.vendedor];
 
 /** Vendedores/usuários da loja — escopado ao tenant da sessão (cycle 0614 Stage 4). */
-export const GET = withRole(staffRoles, async (_req: NextRequest) => {
+export const GET = withRole(allStaffReadRoles, async (_req: NextRequest) => {
   const data = await prisma.user.findMany({
     where: { role: { in: sellerRoles } },
     orderBy: [{ role: "asc" }, { name: "asc" }, { email: "asc" }],
@@ -21,7 +21,7 @@ export const GET = withRole(staffRoles, async (_req: NextRequest) => {
   return ok(data);
 });
 
-export const POST = withRole(["admin"], async (req: NextRequest) => {
+export const POST = withRole(adminOnlyRoles, async (req: NextRequest) => {
   let body: unknown;
   try {
     body = await req.json();
@@ -46,7 +46,7 @@ export const POST = withRole(["admin"], async (req: NextRequest) => {
       email,
       name: parsed.data.name.trim(),
       passwordHash: await hash(parsed.data.password, 12),
-      role: Role.sales,
+      role: Role.vendedor,
       lgpdConsentVersion: POLICY_PRIVACY_VERSION,
       lgpdConsentAt: now,
     },

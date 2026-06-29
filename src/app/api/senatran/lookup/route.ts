@@ -2,7 +2,7 @@ import { Prisma } from "@prisma/client";
 import type { NextRequest } from "next/server";
 import { z } from "zod";
 import { auth } from "@/lib/auth";
-import { staffRoles } from "@/lib/apiRoles";
+import { allStaffReadRoles, commercialWriteRoles } from "@/lib/apiRoles";
 import { fail, ok } from "@/lib/jsonResponse";
 import { assertSenatranLookupRateLimit } from "@/lib/rateLimitService";
 import { SenatranLookupError } from "@/lib/senatran/errors";
@@ -36,7 +36,7 @@ function cacheTtlSeconds(): number {
   return Number.isFinite(n) && n > 0 ? n : 86400;
 }
 
-export const POST = withRole(staffRoles, async (req: NextRequest) => {
+export const POST = withRole(commercialWriteRoles, async (req: NextRequest) => {
   const session = await auth();
   const uidRaw = session?.user?.id;
   if (uidRaw == null) {

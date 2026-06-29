@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
 import { auth } from "@/lib/auth";
-import { staffRoles } from "@/lib/apiRoles";
+import { allStaffReadRoles, staffPreferencesWriteRoles } from "@/lib/apiRoles";
 import { prisma } from "@/lib/db";
 import { fail, ok } from "@/lib/jsonResponse";
 import { zodErrorResponse } from "@/lib/routeUtils";
@@ -8,7 +8,7 @@ import { userInboxPreferencesBodySchema } from "@/lib/zodSchemas";
 import type { RouteContext } from "@/lib/withRole";
 import { withRole } from "@/lib/withRole";
 
-export const GET = withRole(staffRoles, async (_req: NextRequest, _ctx: RouteContext) => {
+export const GET = withRole(allStaffReadRoles, async (_req: NextRequest, _ctx: RouteContext) => {
   const session = await auth();
   const uid = Number(session?.user?.id);
   if (!Number.isFinite(uid) || uid <= 0) {
@@ -24,7 +24,7 @@ export const GET = withRole(staffRoles, async (_req: NextRequest, _ctx: RouteCon
   });
 });
 
-export const PUT = withRole(staffRoles, async (req: NextRequest, _ctx: RouteContext) => {
+export const PUT = withRole(staffPreferencesWriteRoles, async (req: NextRequest, _ctx: RouteContext) => {
   const session = await auth();
   const uid = Number(session?.user?.id);
   if (!Number.isFinite(uid) || uid <= 0) {

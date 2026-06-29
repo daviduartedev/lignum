@@ -1,6 +1,6 @@
 import type { Prisma } from "@prisma/client";
 import type { NextRequest } from "next/server";
-import { staffRoles } from "@/lib/apiRoles";
+import { allStaffReadRoles, commercialWriteRoles } from "@/lib/apiRoles";
 import { ok } from "@/lib/jsonResponse";
 import { parsePagination, paginationMeta } from "@/lib/pagination";
 import { withRole } from "@/lib/withRole";
@@ -10,7 +10,7 @@ import { prisma } from "@/lib/db";
  * GET /api/leads — leads da vitrine do tenant (cycle 0618). Staff, tenant-scoped.
  * Query: `page`, `pageSize`, `unread=1` (apenas não lidos).
  */
-export const GET = withRole(staffRoles, async (req: NextRequest) => {
+export const GET = withRole(allStaffReadRoles, async (req: NextRequest) => {
   const { searchParams } = new URL(req.url);
   const { skip, take, page, pageSize } = parsePagination(searchParams);
 

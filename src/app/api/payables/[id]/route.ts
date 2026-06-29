@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
 import { payableUpdateSchema } from "@/lib/zodSchemas";
-import { staffRoles } from "@/lib/apiRoles";
+import { allStaffReadRoles, financeWriteRoles } from "@/lib/apiRoles";
 import { parseDateInput, parseOptionalDate } from "@/lib/dates";
 import { fail, ok } from "@/lib/jsonResponse";
 import { segmentId } from "@/lib/routeParams";
@@ -10,7 +10,7 @@ import type { RouteContext } from "@/lib/withRole";
 import { withRole } from "@/lib/withRole";
 import { prisma } from "@/lib/db";
 
-export const GET = withRole(staffRoles, async (_req: NextRequest, ctx: RouteContext) => {
+export const GET = withRole(allStaffReadRoles, async (_req: NextRequest, ctx: RouteContext) => {
   const idStr = await segmentId(ctx.params);
   if (!idStr || !Number.isFinite(Number(idStr))) {
     return fail("BAD_REQUEST", 400, { message: "ID inválido." });
@@ -22,7 +22,7 @@ export const GET = withRole(staffRoles, async (_req: NextRequest, ctx: RouteCont
   return ok(row);
 });
 
-export const PUT = withRole(staffRoles, async (req: NextRequest, ctx: RouteContext) => {
+export const PUT = withRole(financeWriteRoles, async (req: NextRequest, ctx: RouteContext) => {
   const idStr = await segmentId(ctx.params);
   if (!idStr || !Number.isFinite(Number(idStr))) {
     return fail("BAD_REQUEST", 400, { message: "ID inválido." });
@@ -66,7 +66,7 @@ export const PUT = withRole(staffRoles, async (req: NextRequest, ctx: RouteConte
   }
 });
 
-export const DELETE = withRole(staffRoles, async (_req: NextRequest, ctx: RouteContext) => {
+export const DELETE = withRole(financeWriteRoles, async (_req: NextRequest, ctx: RouteContext) => {
   const idStr = await segmentId(ctx.params);
   if (!idStr || !Number.isFinite(Number(idStr))) {
     return fail("BAD_REQUEST", 400, { message: "ID inválido." });

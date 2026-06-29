@@ -4,7 +4,7 @@ export type Seller = {
   id: number;
   email: string;
   name: string | null;
-  role: "admin" | "authenticated" | "sales";
+  role: "admin" | "vendedor";
 };
 
 export type CreateSellerPayload = {

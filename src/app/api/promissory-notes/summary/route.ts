@@ -1,5 +1,5 @@
 import type { NextRequest } from "next/server";
-import { staffRoles } from "@/lib/apiRoles";
+import { allStaffReadRoles, financeWriteRoles } from "@/lib/apiRoles";
 import { ok } from "@/lib/jsonResponse";
 import type { RouteContext } from "@/lib/withRole";
 import { withRole } from "@/lib/withRole";
@@ -17,7 +17,7 @@ function addDays(d: Date, n: number): Date {
   return x;
 }
 
-export const GET = withRole(staffRoles, async (_req: NextRequest) => {
+export const GET = withRole(allStaffReadRoles, async (_req: NextRequest) => {
   const rows = await prisma.promissoryNote.findMany({
     select: {
       status: true,

@@ -1,7 +1,7 @@
 import type { Prisma } from "@prisma/client";
 import type { NextRequest } from "next/server";
 import { payableCreateSchema } from "@/lib/zodSchemas";
-import { staffRoles } from "@/lib/apiRoles";
+import { allStaffReadRoles, financeWriteRoles } from "@/lib/apiRoles";
 import { parseDateInput, parseOptionalDate } from "@/lib/dates";
 import { ok } from "@/lib/jsonResponse";
 import { parsePagination, paginationMeta } from "@/lib/pagination";
@@ -22,7 +22,7 @@ function addMonthsClamped(d: Date, months: number): Date {
   return x;
 }
 
-export const GET = withRole(staffRoles, async (req: NextRequest) => {
+export const GET = withRole(allStaffReadRoles, async (req: NextRequest) => {
   const { searchParams } = new URL(req.url);
   const { skip, take, page, pageSize } = parsePagination(searchParams);
   const statusFilter = searchParams.get("status");
@@ -68,7 +68,7 @@ export const GET = withRole(staffRoles, async (req: NextRequest) => {
   return ok(data, {}, paginationMeta(total, page, pageSize));
 });
 
-export const POST = withRole(staffRoles, async (req: NextRequest) => {
+export const POST = withRole(financeWriteRoles, async (req: NextRequest) => {
   const raw: unknown = await req.json();
   const parsed = payableCreateSchema.safeParse(raw);
   if (!parsed.success) {

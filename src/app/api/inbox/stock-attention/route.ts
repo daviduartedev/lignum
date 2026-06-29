@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
 import { auth } from "@/lib/auth";
-import { staffRoles } from "@/lib/apiRoles";
+import { allStaffReadRoles, commercialWriteRoles } from "@/lib/apiRoles";
 import { fail, ok } from "@/lib/jsonResponse";
 import { zodErrorResponse } from "@/lib/routeUtils";
 import { inboxStockActionSchema } from "@/lib/zodSchemas";
@@ -10,7 +10,7 @@ import { prisma } from "@/lib/db";
 
 const SNOOZE_MS = 24 * 60 * 60 * 1000;
 
-export const POST = withRole(staffRoles, async (req: NextRequest) => {
+export const POST = withRole(commercialWriteRoles, async (req: NextRequest) => {
   const session = await auth();
   const uid = Number(session?.user?.id);
   if (!Number.isFinite(uid) || uid <= 0) {

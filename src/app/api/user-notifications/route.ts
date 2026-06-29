@@ -2,7 +2,7 @@ import type { Prisma } from "@prisma/client";
 import type { NextRequest } from "next/server";
 import { auth } from "@/lib/auth";
 import { userNotificationCreateSchema } from "@/lib/zodSchemas";
-import { staffRoles } from "@/lib/apiRoles";
+import { allStaffReadRoles, staffPreferencesWriteRoles } from "@/lib/apiRoles";
 import { parseOptionalDate } from "@/lib/dates";
 import { isSafeUserLinkUrl } from "@/lib/urlSafety";
 import { fail, ok } from "@/lib/jsonResponse";
@@ -11,7 +11,7 @@ import { zodErrorResponse } from "@/lib/routeUtils";
 import { withRole } from "@/lib/withRole";
 import { prisma } from "@/lib/db";
 
-export const GET = withRole(staffRoles, async (req: NextRequest) => {
+export const GET = withRole(allStaffReadRoles, async (req: NextRequest) => {
   const session = await auth();
   const role = session?.user?.role;
   const uid = Number(session?.user?.id);
@@ -52,7 +52,7 @@ export const GET = withRole(staffRoles, async (req: NextRequest) => {
   return ok(data, {}, paginationMeta(total, page, pageSize));
 });
 
-export const POST = withRole(staffRoles, async (req: NextRequest) => {
+export const POST = withRole(staffPreferencesWriteRoles, async (req: NextRequest) => {
   const session = await auth();
   const role = session?.user?.role;
   const uid = Number(session?.user?.id);

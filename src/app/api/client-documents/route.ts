@@ -1,14 +1,14 @@
 import type { Prisma } from "@prisma/client";
 import type { NextRequest } from "next/server";
 import { clientDocumentCreateSchema } from "@/lib/zodSchemas";
-import { staffRoles } from "@/lib/apiRoles";
+import { allStaffReadRoles, commercialWriteRoles } from "@/lib/apiRoles";
 import { fail, ok } from "@/lib/jsonResponse";
 import { parsePagination, paginationMeta } from "@/lib/pagination";
 import { zodErrorResponse } from "@/lib/routeUtils";
 import { withRole } from "@/lib/withRole";
 import { prisma } from "@/lib/db";
 
-export const GET = withRole(staffRoles, async (req: NextRequest) => {
+export const GET = withRole(allStaffReadRoles, async (req: NextRequest) => {
   const { searchParams } = new URL(req.url);
   const { skip, take, page, pageSize } = parsePagination(searchParams);
   const clientId = searchParams.get("clientId");
@@ -34,7 +34,7 @@ export const GET = withRole(staffRoles, async (req: NextRequest) => {
   return ok(data, {}, paginationMeta(total, page, pageSize));
 });
 
-export const POST = withRole(staffRoles, async (req: NextRequest) => {
+export const POST = withRole(commercialWriteRoles, async (req: NextRequest) => {
   const raw: unknown = await req.json();
   const parsed = clientDocumentCreateSchema.safeParse(raw);
   if (!parsed.success) {

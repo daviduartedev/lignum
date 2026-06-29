@@ -1,5 +1,5 @@
 import type { NextRequest } from "next/server";
-import { staffRoles } from "@/lib/apiRoles";
+import { allStaffReadRoles, commercialWriteRoles } from "@/lib/apiRoles";
 import { ok, fail } from "@/lib/jsonResponse";
 import { API_BODY_SIZE_LIMIT_BYTES } from "@/lib/rateLimitService";
 import { isServerUploadEnabled, uploadFile, UPLOAD_DISABLED_MESSAGE } from "@/lib/upload";
@@ -20,7 +20,7 @@ import { withRole } from "@/lib/withRole";
  *
  * Desactivado por defeito até `ENABLE_SERVER_UPLOADS` + `UPLOAD_SECURITY_CHECKLIST_CONFIRMED`.
  */
-export const POST = withRole(staffRoles, async (req: NextRequest) => {
+export const POST = withRole(commercialWriteRoles, async (req: NextRequest) => {
   const len = req.headers.get("content-length");
   if (len) {
     const n = Number.parseInt(len, 10);

@@ -1,5 +1,5 @@
 import type { NextRequest } from "next/server";
-import { staffRoles } from "@/lib/apiRoles";
+import { allStaffReadRoles, commercialWriteRoles } from "@/lib/apiRoles";
 import { fail } from "@/lib/jsonResponse";
 import { segmentId } from "@/lib/routeParams";
 import { parsePositiveInt } from "@/lib/parseId";
@@ -16,7 +16,7 @@ import { prisma } from "@/lib/db";
  * portanto um pedido para um contrato de outro tenant resulta em 404 - sem IDOR.
  * Auth obrigatoria via withRole(staffRoles).
  */
-export const GET = withRole(staffRoles, async (_req: NextRequest, ctx: RouteContext) => {
+export const GET = withRole(allStaffReadRoles, async (_req: NextRequest, ctx: RouteContext) => {
 
   const idStr = await segmentId(ctx.params);
   const internalId = idStr ? parsePositiveInt(idStr) : null;

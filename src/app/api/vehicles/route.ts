@@ -1,14 +1,14 @@
 import type { Prisma, VehicleStatus } from "@prisma/client";
 import type { NextRequest } from "next/server";
 import { vehicleCreateSchema } from "@/lib/zodSchemas";
-import { staffRoles } from "@/lib/apiRoles";
+import { allStaffReadRoles, commercialWriteRoles } from "@/lib/apiRoles";
 import { fail, ok } from "@/lib/jsonResponse";
 import { parsePagination, paginationMeta } from "@/lib/pagination";
 import { zodErrorResponse } from "@/lib/routeUtils";
 import { withRole } from "@/lib/withRole";
 import { prisma } from "@/lib/db";
 
-export const GET = withRole(staffRoles, async (req: NextRequest) => {
+export const GET = withRole(allStaffReadRoles, async (req: NextRequest) => {
   const { searchParams } = new URL(req.url);
   if (searchParams.get("all") === "1") {
     const data = await prisma.vehicle.findMany({
@@ -43,7 +43,7 @@ export const GET = withRole(staffRoles, async (req: NextRequest) => {
   return ok(data, {}, paginationMeta(total, page, pageSize));
 });
 
-export const POST = withRole(staffRoles, async (req: NextRequest) => {
+export const POST = withRole(commercialWriteRoles, async (req: NextRequest) => {
   const text = await req.text();
   let raw: unknown = {};
   if (text.trim()) {

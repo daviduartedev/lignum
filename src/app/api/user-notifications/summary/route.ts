@@ -1,12 +1,12 @@
 import type { NextRequest } from "next/server";
 import { auth } from "@/lib/auth";
-import { staffRoles } from "@/lib/apiRoles";
+import { allStaffReadRoles, staffPreferencesWriteRoles } from "@/lib/apiRoles";
 import { ok } from "@/lib/jsonResponse";
 import type { RouteContext } from "@/lib/withRole";
 import { withRole } from "@/lib/withRole";
 import { prisma } from "@/lib/db";
 
-export const GET = withRole(staffRoles, async (_req: NextRequest) => {
+export const GET = withRole(allStaffReadRoles, async (_req: NextRequest) => {
   const session = await auth();
   const role = session?.user?.role;
   const uid = Number(session?.user?.id);
