@@ -1,10 +1,12 @@
 import { hash } from "bcryptjs";
 import type { NextRequest } from "next/server";
 import { adminUserCreateSchema } from "@/lib/zodSchemas";
+import { writeAuditLog } from "@/lib/auditLog";
 import { prisma } from "@/lib/db";
 import { fail, ok } from "@/lib/jsonResponse";
 import { zodErrorResponse } from "@/lib/routeUtils";
 import { withRole } from "@/lib/withRole";
+import { auth } from "@/lib/auth";
 
 /**
  * Criação de usuários, apenas administradores (substitui cadastro público Strapi).
@@ -42,7 +44,17 @@ export const POST = withRole(["admin"], async (req: NextRequest) => {
       lgpdConsentVersion,
       lgpdConsentAt: now,
     },
-    select: { id: true, email: true, name: true, role: true },
+    select: { id: true, email: true, name: true, role: true, isActive: true },
+  });
+
+  const session = await auth();
+  const actorId = Number(session?.user?.id);
+  await writeAuditLog({
+    action: "user_created",
+    userId: Number.isInteger(actorId) ? actorId : null,
+    resourceType: "user",
+    resourceId: String(created.id),
+    metadata: { role: created.role },
   });
 
   return ok(created, { status: 201 });
