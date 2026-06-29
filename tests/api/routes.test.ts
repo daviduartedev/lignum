@@ -42,6 +42,9 @@ import { GET as getDocumentLookupUsage } from "@/app/api/document-lookup/usage/r
 import { POST as postClientDocument } from "@/app/api/client-documents/route";
 import { POST as postUpload } from "@/app/api/upload/route";
 import { POST as postRegister } from "@/app/api/auth/register/route";
+import { GET as getQuotes, POST as postQuotes } from "@/app/api/quotes/route";
+import { POST as postQuoteCalculate } from "@/app/api/quotes/calculate/route";
+import { GET as getBodyModels } from "@/app/api/body-models/route";
 
 const describeDb = hasDatabaseUrl() ? describe : describe.skip;
 
@@ -327,6 +330,57 @@ describeDb("API REST (contratos com base seedada)", () => {
     expect(res.status).toBe(201);
     const body = await parseEnvelope(res);
     expect(body.success).toBe(true);
+  });
+
+  it("quotes GET lista (staff)", async () => {
+    const res = await getQuotes(new Request(apiUrl("/api/quotes?page=1&pageSize=10")) as never);
+    expect(res.status).toBe(200);
+    const body = await parseEnvelope(res);
+    expect(body.success).toBe(true);
+  });
+
+  it("quotes calculate POST", async () => {
+    const res = await postQuoteCalculate(
+      jsonRequest("POST", "/api/quotes/calculate", {
+        lengthM: 4,
+        widthM: 2,
+        heightM: 1.8,
+        coverStyle: "tampa_plana",
+        floorType: "assoalho_madeira",
+        finishType: "pintura",
+        options: [],
+      }) as never,
+    );
+    expect(res.status).toBe(200);
+    const body = await parseEnvelope(res);
+    expect(body.success).toBe(true);
+    expect(Number((body.data as { total?: number }).total)).toBeGreaterThan(0);
+  });
+
+  it("quotes POST cria orçamento rascunho", async () => {
+    const res = await postQuotes(
+      jsonRequest("POST", "/api/quotes", {
+        clientId: testClientId,
+        lengthM: 4,
+        widthM: 2,
+        heightM: 1.8,
+        coverStyle: "tampa_plana",
+        floorType: "assoalho_madeira",
+        finishType: "pintura",
+        options: [],
+        paymentTerms: "À vista",
+        deliveryDays: 30,
+      }) as never,
+    );
+    expect(res.status).toBe(201);
+    const body = await parseEnvelope(res);
+    expect(body.success).toBe(true);
+    expect((body.data as { status?: string }).status).toBe("rascunho");
+  });
+
+  it("body-models GET", async () => {
+    const res = await getBodyModels(new Request(apiUrl("/api/body-models")) as never);
+    expect(res.status).toBe(200);
   });
 
   it("registro com email duplicado devolve CONFLICT", async () => {

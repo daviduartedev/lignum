@@ -92,6 +92,32 @@ enum ContractStatus {
   cancelado
 }
 
+enum QuoteStatus {
+  rascunho
+  enviado
+  aprovado
+  convertido
+  cancelado
+}
+
+enum BodyCoverStyle {
+  tampa_plana
+  tampa_arqueada
+  tampa_basculante
+}
+
+enum BodyFloorType {
+  assoalho_madeira
+  assoalho_aco
+  assoalho_aluminio
+}
+
+enum BodyFinishType {
+  pintura
+  verniz
+  lamina_natural
+}
+
 enum ServiceOrderType {
   manutencao
   revisao
@@ -200,6 +226,7 @@ model User {
   stockAttentionPreferences  UserStockAttentionPreference[]
   financeNotificationDispatches FinanceNotificationDispatch[]
   sales                      Sale[] @relation("SaleSeller")
+  quotesCreated              Quote[] @relation("QuoteCreator")
 
   @@map("users")
 }
@@ -334,6 +361,7 @@ model Client {
   promissoryNotes PromissoryNote[]
   documents      ClientDocument[]
   purchaseEvaluations PurchaseEvaluation[]
+  quotes         Quote[]
 
   @@index([document])
   @@index([email])
@@ -621,9 +649,98 @@ model ErpSetting {
   alertEmailDigestEnabled  Boolean  @default(true) @map("alert_email_digest_enabled")
   financeEventNotifyDaysBefore Int  @default(1) @map("finance_event_notify_days_before")
   inboxPreEventPopupMinutes Int     @default(30) @map("inbox_pre_event_popup_minutes")
+  quotePricingJson         Json     @default("{}") @map("quote_pricing_json")
   updatedAt                DateTime @updatedAt @map("updated_at")
 
   @@map("erp_settings")
+}
+
+/// Modelo base de carroceria (catálogo paramétrico).
+model BodyModel {
+  id          Int      @id @default(autoincrement())
+  documentId  String?  @unique @map("document_id")
+  name        String
+  description String?
+  basePrice   Decimal  @db.Decimal(14, 2) @map("base_price")
+  pricePerM2  Decimal  @default(0) @db.Decimal(14, 2) @map("price_per_m2")
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  quotes Quote[]
+
+  @@map("body_models")
+}
+
+/// Orçamento comercial de carroceria.
+model Quote {
+  id              Int             @id @default(autoincrement())
+  documentId      String?         @unique @map("document_id")
+  quoteNumber     String?         @unique @map("quote_number")
+  status          QuoteStatus     @default(rascunho)
+  clientId        Int             @map("client_id")
+  client          Client          @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  bodyModelId     Int?            @map("body_model_id")
+  bodyModel       BodyModel?      @relation(fields: [bodyModelId], references: [id], onDelete: SetNull)
+  lengthM         Decimal         @db.Decimal(8, 2) @map("length_m")
+  widthM          Decimal         @db.Decimal(8, 2) @map("width_m")
+  heightM         Decimal         @db.Decimal(8, 2) @map("height_m")
+  coverStyle      BodyCoverStyle  @map("cover_style")
+  floorType       BodyFloorType   @map("floor_type")
+  finishType      BodyFinishType  @map("finish_type")
+  optionsJson     Json            @default("[]") @map("options_json")
+  subtotal        Decimal         @db.Decimal(14, 2)
+  discount        Decimal         @default(0) @db.Decimal(14, 2)
+  total           Decimal         @db.Decimal(14, 2)
+  marginPercent   Decimal?        @db.Decimal(5, 2) @map("margin_percent")
+  paymentTerms    String?         @map("payment_terms")
+  deliveryDays    Int?            @map("delivery_days")
+  notes           String?
+  validUntil      DateTime?       @map("valid_until") @db.Date
+  approvedAt      DateTime?       @map("approved_at")
+  convertedAt     DateTime?       @map("converted_at")
+  createdByUserId Int?            @map("created_by_user_id")
+  createdBy       User?           @relation("QuoteCreator", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  items           QuoteItem[]
+  technicalSheet  TechnicalSheet?
+  createdAt       DateTime        @default(now()) @map("created_at")
+  updatedAt       DateTime        @updatedAt @map("updated_at")
+
+  @@index([status])
+  @@index([clientId])
+  @@map("quotes")
+}
+
+/// Linha de item calculada ou manual do orçamento.
+model QuoteItem {
+  id          Int     @id @default(autoincrement())
+  quoteId     Int     @map("quote_id")
+  quote       Quote   @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  sortOrder   Int     @default(0) @map("sort_order")
+  itemType    String  @map("item_type")
+  description String
+  quantity    Decimal @db.Decimal(14, 4)
+  unit        String  @default("un")
+  unitPrice   Decimal @db.Decimal(14, 2) @map("unit_price")
+  totalPrice  Decimal @db.Decimal(14, 2) @map("total_price")
+
+  @@index([quoteId])
+  @@map("quote_items")
+}
+
+/// Ficha técnica / BOM gerada a partir de orçamento aprovado.
+model TechnicalSheet {
+  id          Int      @id @default(autoincrement())
+  documentId  String?  @unique @map("document_id")
+  quoteId     Int      @unique @map("quote_id")
+  quote       Quote    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  sheetNumber String?  @map("sheet_number")
+  bomJson     Json     @map("bom_json")
+  notes       String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("technical_sheets")
 }
 
 /// Auditoria de consultas SENATRAN (snapshot completo; acesso administrativo).

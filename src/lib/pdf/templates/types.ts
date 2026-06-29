@@ -53,3 +53,55 @@ export type ContractViewModel = {
   vehicle: ContractVehicleInfo;
   witnesses: ContractWitness[];
 };
+
+export type QuotePdfItem = {
+  description: string;
+  quantity: number;
+  unitPrice: number;
+  totalPrice: number;
+};
+
+export type QuotePdfViewModel = {
+  quoteNumber: string;
+  quoteDate: Date | string;
+  validUntil?: Date | string | null;
+  issuer: ContractIssuer;
+  clientName: string;
+  clientDocument: string;
+  clientEmail?: string | null;
+  lengthM: number;
+  widthM: number;
+  heightM: number;
+  coverStyle: string;
+  floorType: string;
+  finishType: string;
+  items: QuotePdfItem[];
+  subtotal: number;
+  discount: number;
+  total: number;
+  paymentTerms?: string | null;
+  deliveryDays?: number | null;
+  notes?: string | null;
+};
+
+export type TechnicalSheetPdfLine = {
+  sku: string;
+  description: string;
+  quantity: number;
+  unit: string;
+  category: string;
+};
+
+export type TechnicalSheetPdfViewModel = {
+  sheetNumber: string;
+  sheetDate: Date | string;
+  quoteNumber: string;
+  issuer: ContractIssuer;
+  clientName: string;
+  lengthM: number;
+  widthM: number;
+  heightM: number;
+  coverStyle: string;
+  lines: TechnicalSheetPdfLine[];
+  notes?: string | null;
+};

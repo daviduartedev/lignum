@@ -9,6 +9,7 @@ export type NavItem = {
 export function navItemsForRole(role: Role | undefined): NavItem[] {
   const allMain: NavItem[] = [
     { path: "/", label: "Painel" },
+    { path: "/orcamentos", label: "Orçamentos" },
     { path: "/os", label: "OS" },
     { path: "/contratos", label: "Contratos" },
     { path: "/clientes", label: "Clientes e fornecedores" },

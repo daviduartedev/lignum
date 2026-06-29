@@ -10,12 +10,12 @@ import { Input } from "@/components/ui/input";
 import { MaskedInput } from "@/components/ui/MaskedInput";
 import { maskCEP, maskCPFCNPJ, maskPhoneBR } from "@/lib/masks";
 import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { StitchPageHeader, StitchSectionCard } from "@/components/ui/stitch";
+import { cn } from "@/components/ui/utils";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Building2, Bell, Users, CreditCard, Check, Loader2, AlertCircle, RefreshCw, FileText } from "lucide-react";
+import { Building2, Bell, Users, Loader2, AlertCircle, RefreshCw, FileText, Calculator } from "lucide-react";
 import { useErpSettingQuery, useErpSettingSave } from "@/hooks/useErpSettings";
 import { ERP_SETTING_DEFAULTS, type ErpSettingFlat } from "@/lib/erpSettingDefaults";
 import { fetchSenatranUsage } from "@/services/internal/senatranLookup";
@@ -32,6 +32,7 @@ export function ConfiguracoesHub() {
   const { data, isLoading, isError, error, refetch } = useErpSettingQuery();
   const saveMutation = useErpSettingSave();
   const [form, setForm] = useState<ErpSettingFlat>(() => ({ ...ERP_SETTING_DEFAULTS }));
+  const [settingsSection, setSettingsSection] = useState<"empresa" | "alertas" | "orcamentos">("empresa");
 
   useEffect(() => {
     if (!data) return;
@@ -67,34 +68,34 @@ export function ConfiguracoesHub() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold text-[#111827] mb-1">Configurações</h1>
-          <p className="text-sm text-[#6B7280]">Dados da empresa e alertas gravados nas configurações do ERP</p>
-        </div>
-        {isAdmin ? (
-          <div className="flex flex-wrap gap-2 shrink-0">
-            <Button asChild variant="outline" size="sm">
-              <Link href="/configuracoes/auditoria">Auditoria</Link>
-            </Button>
-            <Button asChild variant="outline" size="sm">
-              <Link href="/configuracoes/usuarios">
-                <Users className="h-4 w-4 mr-2" />
-                Usuários
-              </Link>
-            </Button>
-          </div>
-        ) : null}
-      </div>
+    <div className="space-y-6 max-w-[1200px]">
+      <StitchPageHeader
+        title="Configurações do Sistema"
+        description="Gerencie dados da empresa emitente e regras de alertas da fábrica."
+        actions={
+          isAdmin ? (
+            <div className="flex flex-wrap gap-2">
+              <Button asChild variant="outline" size="sm">
+                <Link href="/configuracoes/auditoria">Auditoria</Link>
+              </Button>
+              <Button asChild variant="outline" size="sm">
+                <Link href="/configuracoes/usuarios">
+                  <Users className="h-4 w-4" />
+                  Usuários
+                </Link>
+              </Button>
+            </div>
+          ) : null
+        }
+      />
 
-      <Card className="p-4 border border-border/80 bg-card">
+      <Card className="p-4 border border-border bg-card">
         <div className="flex items-start gap-3">
-          <FileText className="h-5 w-5 shrink-0 text-emerald-700 mt-0.5" aria-hidden />
+          <FileText className="h-5 w-5 shrink-0 text-primary mt-0.5" aria-hidden />
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-medium text-[#111827]">Documentação, integração SENATRAN</p>
-            <p className="text-xs text-[#6B7280] mt-1">
-              Material para compartilhar com o cliente (imprimir do navegador ou «Salvar como PDF»).
+            <p className="text-sm font-medium text-foreground">Documentação — integração SENATRAN</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Material para compartilhar com o cliente (imprimir ou salvar como PDF).
             </p>
             <Button asChild variant="outline" size="sm" className="mt-3">
               <Link href="/documentacao/senatran">Abrir documento</Link>
@@ -104,24 +105,22 @@ export function ConfiguracoesHub() {
       </Card>
 
       {isAdmin ? (
-        <Card className="p-4 border border-emerald-100 bg-emerald-50/50">
-          <p className="text-sm font-medium text-emerald-900">Custo acumulado, consultas SENATRAN (mês corrente)</p>
+        <Card className="p-4 border border-border bg-muted/30">
+          <p className="text-sm font-medium text-foreground">Custo acumulado — consultas SENATRAN (mês corrente)</p>
           {senatranUsage.isLoading ? (
             <p className="text-sm text-muted-foreground mt-2">Carregando…</p>
           ) : senatranUsage.isError ? (
             <p className="text-sm text-destructive mt-2">Não foi possível carregar o uso.</p>
           ) : (
             <>
-              <p className="text-2xl font-semibold text-emerald-950 mt-1 tabular-nums">
+              <p className="text-2xl font-semibold text-foreground mt-1 tabular-nums">
                 {Number(senatranUsage.data?.monthTotal ?? 0).toLocaleString("pt-BR", {
                   style: "currency",
                   currency: "BRL",
                 })}
               </p>
               {senatranUsage.data?.isDemo ? (
-                <p className="text-xs text-muted-foreground mt-2">
-                  Modo demonstração (provedor mock), custo registrado como zero.
-                </p>
+                <p className="text-xs text-muted-foreground mt-2">Modo demonstração (mock), custo zero.</p>
               ) : (
                 <p className="text-xs text-muted-foreground mt-2">Provedor: {senatranUsage.data?.provider ?? "-"}</p>
               )}
@@ -131,50 +130,83 @@ export function ConfiguracoesHub() {
       ) : null}
 
       {isError && (
-        <Alert variant="destructive" className="bg-amber-50 border-amber-200">
-          <AlertCircle className="h-4 w-4 text-amber-700" />
-          <AlertTitle className="text-amber-900">Configuração indisponível</AlertTitle>
-          <AlertDescription className="text-amber-800 flex flex-col gap-3 items-start">
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Configuração indisponível</AlertTitle>
+          <AlertDescription className="flex flex-col gap-3 items-start">
             <p>
               {(error as Error)?.message ||
-                "Não foi possível ler /api/erp-setting. Tente «Salvar alterações» se tiver permissão."}
+                "Não foi possível ler /api/erp-setting. Tente salvar se tiver permissão."}
             </p>
             <Button type="button" variant="outline" size="sm" onClick={() => void refetch()}>
-              <RefreshCw className="h-4 w-4 mr-2" />
+              <RefreshCw className="h-4 w-4" />
               Tentar novamente
             </Button>
           </AlertDescription>
         </Alert>
       )}
 
-      <Card className="p-6 border border-[#E5E7EB]">
-        <Tabs defaultValue="empresa" className="w-full">
-          <TabsList className="mb-6">
-            <TabsTrigger value="empresa">
-              <Building2 className="w-4 h-4 mr-2" />
-              Empresa
-            </TabsTrigger>
-            <TabsTrigger value="usuarios">
-              <Users className="w-4 h-4 mr-2" />
-              Usuários
-            </TabsTrigger>
-            <TabsTrigger value="alertas">
-              <Bell className="w-4 h-4 mr-2" />
-              Alertas
-            </TabsTrigger>
-            <TabsTrigger value="plano">
-              <CreditCard className="w-4 h-4 mr-2" />
-              Plano
-            </TabsTrigger>
-          </TabsList>
+      <div className="flex flex-col lg:flex-row gap-8">
+        <nav className="w-full lg:w-64 shrink-0 space-y-1" aria-label="Secções de configuração">
+          <button
+            type="button"
+            onClick={() => setSettingsSection("empresa")}
+            className={cn(
+              "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left text-sm font-medium transition-all border",
+              settingsSection === "empresa"
+                ? "bg-card border-border text-primary shadow-sm"
+                : "border-transparent text-muted-foreground hover:bg-muted/50",
+            )}
+          >
+            <Building2 className="w-4 h-4 shrink-0" />
+            Dados da Empresa
+          </button>
+          {isAdmin ? (
+            <Link
+              href="/configuracoes/usuarios"
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left text-sm font-medium text-muted-foreground hover:bg-muted/50 transition-all"
+            >
+              <Users className="w-4 h-4 shrink-0" />
+              Usuários e Permissões
+            </Link>
+          ) : null}
+          <button
+            type="button"
+            onClick={() => setSettingsSection("orcamentos")}
+            className={cn(
+              "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left text-sm font-medium transition-all border",
+              settingsSection === "orcamentos"
+                ? "bg-card border-border text-primary shadow-sm"
+                : "border-transparent text-muted-foreground hover:bg-muted/50",
+            )}
+          >
+            <Calculator className="w-4 h-4 shrink-0" />
+            Parâmetros de Orçamento
+          </button>
+          <button
+            type="button"
+            onClick={() => setSettingsSection("alertas")}
+            className={cn(
+              "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left text-sm font-medium transition-all border",
+              settingsSection === "alertas"
+                ? "bg-card border-border text-primary shadow-sm"
+                : "border-transparent text-muted-foreground hover:bg-muted/50",
+            )}
+          >
+            <Bell className="w-4 h-4 shrink-0" />
+            Alertas do Sistema
+          </button>
+        </nav>
 
-          <TabsContent value="empresa">
-            <div className="max-w-2xl space-y-6">
-              <Card className="p-4 border border-[#E5E7EB] bg-[#F9FAFB]">
-                <p className="text-xs text-[#6B7280] mb-1">Sessão atual</p>
-                <p className="text-sm font-medium text-[#111827]">{session?.user?.name ?? "-"}</p>
-                <p className="text-xs text-[#6B7280] mt-1">{session?.user?.email ?? ""}</p>
-              </Card>
+        <div className="flex-1 min-w-0 space-y-6">
+          {settingsSection === "empresa" ? (
+            <StitchSectionCard title="Informações corporativas">
+              <div className="max-w-2xl space-y-6">
+                <Card className="p-4 border border-border bg-muted/30">
+                  <p className="text-xs text-muted-foreground mb-1">Sessão atual</p>
+                  <p className="text-sm font-medium text-foreground">{session?.user?.name ?? "-"}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{session?.user?.email ?? ""}</p>
+                </Card>
               <div>
                 <Label htmlFor="co-name">Nome da Empresa</Label>
                 <Input
@@ -270,73 +302,70 @@ export function ConfiguracoesHub() {
                   />
                 </div>
               </div>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="usuarios">
-            <Alert className="mb-4 border-blue-200 bg-blue-50/80">
-              <AlertDescription className="text-sm text-blue-900">
-                Lista abaixo é <strong>ilustrativa</strong>. A gestão real de usuários é feita no banco de dados
-                (administrador).
-              </AlertDescription>
-            </Alert>
-            <div className="space-y-6">
-              <div className="flex justify-end">
-                <Button type="button" variant="secondary" disabled>
-                  Adicionar Usuário
-                </Button>
               </div>
-
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-[#E5E7EB]">
-                    <th className="text-left text-xs font-medium text-[#6B7280] pb-3">Nome</th>
-                    <th className="text-left text-xs font-medium text-[#6B7280] pb-3">E-mail</th>
-                    <th className="text-left text-xs font-medium text-[#6B7280] pb-3">Perfil</th>
-                    <th className="text-left text-xs font-medium text-[#6B7280] pb-3">Status</th>
-                    <th className="text-left text-xs font-medium text-[#6B7280] pb-3"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {[
-                    { nome: "Administrador", email: "admin@lignum.local", perfil: "Administrador", ativo: true },
-                    { nome: "João Vendedor", email: "joao@lignum.local", perfil: "Vendedor", ativo: true },
-                    { nome: "Maria Vendas", email: "maria@lignum.local", perfil: "Vendedor", ativo: true },
-                    { nome: "Carlos Gerente", email: "carlos@lignum.local", perfil: "Gerente", ativo: false },
-                  ].map((usuario, index) => (
-                    <tr key={index} className="border-b border-[#E5E7EB] last:border-0">
-                      <td className="py-3 text-sm text-[#111827]">{usuario.nome}</td>
-                      <td className="py-3 text-sm text-[#6B7280]">{usuario.email}</td>
-                      <td className="py-3 text-sm text-[#6B7280]">{usuario.perfil}</td>
-                      <td className="py-3">
-                        <Badge
-                          className={
-                            usuario.ativo
-                              ? "bg-[#DCFCE7] text-[#15803D] border-0"
-                              : "bg-[#F9FAFB] text-[#6B7280] border-0"
-                          }
-                        >
-                          {usuario.ativo ? "Ativo" : "Inativo"}
-                        </Badge>
-                      </td>
-                      <td className="py-3">
-                        <Button variant="ghost" size="sm" type="button" disabled>
-                          Editar
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="alertas">
-            <div className="max-w-2xl space-y-6">
-              <div className="flex items-center justify-between p-4 bg-[#F9FAFB] rounded-lg">
+            </StitchSectionCard>
+          ) : settingsSection === "orcamentos" ? (
+            <StitchSectionCard title="Parâmetros de orçamento">
+              <div className="max-w-2xl space-y-6">
+                <p className="text-sm text-muted-foreground">
+                  Margens e taxa horária usadas pelo motor de preço paramétrico dos orçamentos.
+                </p>
                 <div>
-                  <div className="text-sm font-medium text-[#111827]">Alertas de Giro</div>
-                  <div className="text-xs text-[#6B7280]">Notificar quando veículos ultrapassarem prazo</div>
+                  <Label htmlFor="qt-margin">Margem sugerida (%)</Label>
+                  <Input
+                    id="qt-margin"
+                    type="number"
+                    min={0}
+                    max={100}
+                    value={form.quote_suggested_margin_percent}
+                    onChange={(e) =>
+                      setForm((f) => ({
+                        ...f,
+                        quote_suggested_margin_percent: Math.min(100, Math.max(0, Number(e.target.value) || 0)),
+                      }))
+                    }
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="qt-min-margin">Margem mínima (%)</Label>
+                  <Input
+                    id="qt-min-margin"
+                    type="number"
+                    min={0}
+                    max={100}
+                    value={form.quote_min_margin_percent}
+                    onChange={(e) =>
+                      setForm((f) => ({
+                        ...f,
+                        quote_min_margin_percent: Math.min(100, Math.max(0, Number(e.target.value) || 0)),
+                      }))
+                    }
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="qt-labor">Taxa horária mão de obra (R$)</Label>
+                  <Input
+                    id="qt-labor"
+                    type="number"
+                    min={0}
+                    value={form.quote_labor_hour_rate}
+                    onChange={(e) =>
+                      setForm((f) => ({
+                        ...f,
+                        quote_labor_hour_rate: Math.max(0, Number(e.target.value) || 0),
+                      }))
+                    }
+                  />
+                </div>
+              </div>
+            </StitchSectionCard>
+          ) : (
+            <StitchSectionCard title="Alertas do sistema">
+              <div className="max-w-2xl space-y-6">
+              <div className="flex items-center justify-between p-4 bg-muted/40 rounded-lg">
+                <div>
+                  <div className="text-sm font-medium text-foreground">Alertas de Giro</div>
+                  <div className="text-xs text-muted-foreground">Notificar quando veículos ultrapassarem prazo</div>
                 </div>
                 <Switch
                   checked={form.alert_giro_enabled}
@@ -370,10 +399,10 @@ export function ConfiguracoesHub() {
                 />
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-[#F9FAFB] rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-muted/40 rounded-lg">
                 <div>
-                  <div className="text-sm font-medium text-[#111827]">Alertas de Promissórias</div>
-                  <div className="text-xs text-[#6B7280]">Notificar sobre vencimentos</div>
+                  <div className="text-sm font-medium text-foreground">Alertas de Promissórias</div>
+                  <div className="text-xs text-muted-foreground">Notificar sobre vencimentos</div>
                 </div>
                 <Switch
                   checked={form.alert_prom_enabled}
@@ -397,10 +426,10 @@ export function ConfiguracoesHub() {
                 />
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-[#F9FAFB] rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-muted/40 rounded-lg">
                 <div>
-                  <div className="text-sm font-medium text-[#111827]">Alertas de Documentação</div>
-                  <div className="text-xs text-[#6B7280]">Notificar sobre documentos pendentes</div>
+                  <div className="text-sm font-medium text-foreground">Alertas de Documentação</div>
+                  <div className="text-xs text-muted-foreground">Notificar sobre documentos pendentes</div>
                 </div>
                 <Switch
                   checked={form.alert_docs_enabled}
@@ -408,10 +437,10 @@ export function ConfiguracoesHub() {
                 />
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-[#F9FAFB] rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-muted/40 rounded-lg">
                 <div>
-                  <div className="text-sm font-medium text-[#111827]">Notificações por E-mail</div>
-                  <div className="text-xs text-[#6B7280]">Receber resumo diário por e-mail</div>
+                  <div className="text-sm font-medium text-foreground">Notificações por E-mail</div>
+                  <div className="text-xs text-muted-foreground">Receber resumo diário por e-mail</div>
                 </div>
                 <Switch
                   checked={form.alert_email_digest_enabled}
@@ -421,7 +450,7 @@ export function ConfiguracoesHub() {
 
               <div>
                 <Label htmlFor="inbox-pre-min">Minutos antes do compromisso (pré-aviso)</Label>
-                <p className="text-xs text-[#6B7280] mb-2">
+                <p className="text-xs text-muted-foreground mb-2">
                   Janela para o lembrete não bloqueante antes da hora de <span className="font-medium">remindAt</span> nas
                   notificações.
                 </p>
@@ -442,77 +471,27 @@ export function ConfiguracoesHub() {
                   }
                 />
               </div>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="plano">
-            <Alert className="mb-4 border-amber-200 bg-amber-50/80">
-              <AlertDescription className="text-sm text-amber-950">
-                Informação de plano <strong>não</strong> é persistida nestas configurações, apenas referência visual.
-              </AlertDescription>
-            </Alert>
-            <div className="max-w-2xl space-y-6">
-              <Card className="p-6 border-2 border-[#22C55E] bg-[#F0FDF4]">
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <h3 className="text-lg font-semibold text-[#111827]">Plano Premium</h3>
-                    <p className="text-sm text-[#6B7280]">Todas as funcionalidades liberadas</p>
-                  </div>
-                  <Badge className="bg-[#22C55E] text-white border-0 text-lg px-4 py-2">Ativo</Badge>
-                </div>
-
-                <div className="space-y-3 mb-6">
-                  {["Veículos ilimitados", "Usuários ilimitados", "Site personalizado", "Relatórios avançados", "Suporte prioritário"].map(
-                    (t) => (
-                      <div key={t} className="flex items-center gap-2 text-sm text-[#111827]">
-                        <Check className="w-4 h-4 text-[#22C55E]" />
-                        <span>{t}</span>
-                      </div>
-                    ),
-                  )}
-                </div>
-
-                <div className="flex items-baseline gap-2 mb-4">
-                  <span className="text-3xl font-semibold text-[#111827]">R$ 497</span>
-                  <span className="text-sm text-[#6B7280]">/ mês</span>
-                </div>
-
-                <div className="text-sm text-[#6B7280]">Próxima renovação: a definir comercialmente</div>
-              </Card>
-
-              <div className="flex gap-3">
-                <Button type="button" variant="outline" disabled>
-                  Alterar Forma de Pagamento
-                </Button>
-                <Button type="button" variant="outline" className="text-red-600 border-red-300 hover:bg-red-50" disabled>
-                  Cancelar Plano
-                </Button>
               </div>
-            </div>
-          </TabsContent>
-        </Tabs>
+            </StitchSectionCard>
+          )}
 
-        <div className="flex justify-end gap-3 mt-6 pt-6 border-t border-[#E5E7EB]">
-          <Button type="button" variant="outline" onClick={resetForm} disabled={saveMutation.isPending}>
-            Cancelar
-          </Button>
-          <Button
-            type="button"
-            className="bg-[#22C55E] hover:bg-[#16A34A] text-white"
-            onClick={handleSave}
-            disabled={saveMutation.isPending}
-          >
-            {saveMutation.isPending ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                A guardar…
-              </>
-            ) : (
-              "Salvar alterações"
-            )}
-          </Button>
+          <div className="flex justify-end gap-3 pt-2">
+            <Button type="button" variant="outline" onClick={resetForm} disabled={saveMutation.isPending}>
+              Cancelar
+            </Button>
+            <Button type="button" onClick={handleSave} disabled={saveMutation.isPending}>
+              {saveMutation.isPending ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  A guardar…
+                </>
+              ) : (
+                "Salvar alterações"
+              )}
+            </Button>
+          </div>
         </div>
-      </Card>
+      </div>
     </div>
   );
 }

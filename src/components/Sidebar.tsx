@@ -19,6 +19,7 @@ import {
   Settings,
   Inbox,
   UserPlus,
+  Calculator,
 } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { BrandLogo } from "@/components/BrandLogo";
@@ -27,6 +28,7 @@ import { navItemsForRole, splitNavForSidebar } from "@/lib/navVisibility";
 
 const ICON_BY_PATH: Record<string, ComponentType<{ className?: string }>> = {
   "/": LayoutDashboard,
+  "/orcamentos": Calculator,
   "/os": Wrench,
   "/contratos": FileText,
   "/clientes": Users,

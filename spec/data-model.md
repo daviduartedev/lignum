@@ -15,7 +15,12 @@ Client ──< Sale          >── Vehicle
        ──< Warranty      >── Vehicle
        ──< PromissoryNote>── Vehicle
        ──< ClientDocument
+       ──< Quote >── BodyModel?
        ──< Vehicle (VehicleBuyer, opcional)
+
+BodyModel ──< Quote
+Quote ──< QuoteItem
+Quote ──|── TechnicalSheet (1:1 após conversão)
 
 Vehicle ──┬── Sale (1..1, unique vehicleId)
           ├──< Contract, Evaluation, ServiceOrder, Warranty, PromissoryNote, ...
@@ -53,6 +58,8 @@ Supplier, Payable, StorefrontLead, FinanceNotificationDispatch, ...
 - `PaymentMethod`: `financiamento` | `a_vista` | `cartao` | `troca` | `pix`.
 - `ContractType`: `compra_venda` | `financiamento` | `consorcio` | `locacao`.
 - `ContractStatus`: `rascunho` | `pendente_assinatura` | `assinado` | `cancelado`.
+- `QuoteStatus`: `rascunho` | `enviado` | `aprovado` | `convertido` | `cancelado`.
+- `BodyCoverStyle`, `BodyFloorType`, `BodyFinishType` — parâmetros do configurador 2D.
 - `ServiceOrderType`: `manutencao` | `revisao` | `funilaria` | `eletrica` | `mecanica` | `estetica` | `outros`.
 - `ServiceOrderStatus`: `aguardando` | `andamento` | `concluida` | `cancelada`.
 - `WarrantyType`: `motor_cambio` | `completa` | `motor` | `acessorios` | `outros`.

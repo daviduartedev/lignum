@@ -1,3 +1,5 @@
+import { DEFAULT_QUOTE_PRICING, parseQuotePricingJson } from "@/lib/quotes/quotePricingDefaults";
+
 export type ErpSettingFlat = {
   company_name: string;
   company_tax_id: string;
@@ -17,6 +19,9 @@ export type ErpSettingFlat = {
   alert_email_digest_enabled: boolean;
   finance_event_notify_days_before: number;
   inbox_pre_event_popup_minutes: number;
+  quote_suggested_margin_percent: number;
+  quote_min_margin_percent: number;
+  quote_labor_hour_rate: number;
 };
 
 export const ERP_SETTING_DEFAULTS: ErpSettingFlat = {
@@ -38,6 +43,9 @@ export const ERP_SETTING_DEFAULTS: ErpSettingFlat = {
   alert_email_digest_enabled: true,
   finance_event_notify_days_before: 1,
   inbox_pre_event_popup_minutes: 30,
+  quote_suggested_margin_percent: 38,
+  quote_min_margin_percent: 25,
+  quote_labor_hour_rate: 85,
 };
 
 function num(v: unknown, fallback: number): number {
@@ -87,10 +95,33 @@ export function mapErpApiRowToFlat(row: Record<string, unknown>): ErpSettingFlat
       row.inboxPreEventPopupMinutes,
       ERP_SETTING_DEFAULTS.inbox_pre_event_popup_minutes,
     ),
+    quote_suggested_margin_percent: num(
+      parseQuotePricingJson(row.quotePricingJson).suggestedMarginPercent,
+      ERP_SETTING_DEFAULTS.quote_suggested_margin_percent,
+    ),
+    quote_min_margin_percent: num(
+      parseQuotePricingJson(row.quotePricingJson).minMarginPercent,
+      ERP_SETTING_DEFAULTS.quote_min_margin_percent,
+    ),
+    quote_labor_hour_rate: num(
+      parseQuotePricingJson(row.quotePricingJson).laborHourRate,
+      ERP_SETTING_DEFAULTS.quote_labor_hour_rate,
+    ),
   };
 }
 
 export function flatToErpPutBody(f: ErpSettingFlat): Record<string, unknown> {
+  const existing = parseQuotePricingJson(undefined);
+  const quotePricingJson = {
+    ...DEFAULT_QUOTE_PRICING,
+    suggestedMarginPercent: f.quote_suggested_margin_percent,
+    minMarginPercent: f.quote_min_margin_percent,
+    laborHourRate: f.quote_labor_hour_rate,
+    coverSurcharges: existing.coverSurcharges,
+    floorSurcharges: existing.floorSurcharges,
+    finishSurcharges: existing.finishSurcharges,
+    options: DEFAULT_QUOTE_PRICING.options,
+  };
   return {
     companyName: f.company_name,
     companyTaxId: f.company_tax_id,
@@ -110,5 +141,6 @@ export function flatToErpPutBody(f: ErpSettingFlat): Record<string, unknown> {
     alertEmailDigestEnabled: f.alert_email_digest_enabled,
     financeEventNotifyDaysBefore: f.finance_event_notify_days_before,
     inboxPreEventPopupMinutes: f.inbox_pre_event_popup_minutes,
+    quotePricingJson,
   };
 }

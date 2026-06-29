@@ -15,6 +15,7 @@ Este diretorio e o **hub de especificacao** do repositorio: descreve o comportam
 |-----------|---------|--------|
 | Fluxo SDD e ciclos | [development-workflow.md](development-workflow.md) | Quando criar request, refine, validar e fechar ciclo; small/medium/large. |
 | Development Harness | [harness.md](harness.md) | Definicao, principios, responsabilidades e gates do Harness. |
+| ADRs em staging | [adr-staging.md](adr-staging.md) | Decisoes aceites pendentes de promocao a `decisions.md`. |
 | Seguranca (hub de ciclo) | [security.md](security.md) | Checklist operacional para ciclos que tocam API, auth ou dados privados. |
 | Backend | [backend.md](backend.md) | Route handlers, services, validacao, autorizacao e erros. |
 | Banco de dados | [database.md](database.md) | Migrations Prisma, naming, queries, seeds e rollback. |

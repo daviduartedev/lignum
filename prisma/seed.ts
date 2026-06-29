@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { hash } from "bcryptjs";
 import { ERP_SETTING_DEFAULTS } from "../src/lib/erpSettingDefaults";
+import { DEFAULT_QUOTE_PRICING } from "../src/lib/quotes/quotePricingDefaults";
 
 const prisma = new PrismaClient();
 
@@ -65,6 +66,7 @@ async function main() {
       alertEmailDigestEnabled: d.alert_email_digest_enabled,
       financeEventNotifyDaysBefore: d.finance_event_notify_days_before,
       inboxPreEventPopupMinutes: d.inbox_pre_event_popup_minutes,
+      quotePricingJson: DEFAULT_QUOTE_PRICING,
     },
     update: {
       companyName: d.company_name,
@@ -78,6 +80,18 @@ async function main() {
       companyEmail: d.company_email,
     },
   });
+
+  const bodyModels = [
+    { name: "Baú seco padrão", description: "Carroceria baú para carga seca", basePrice: 18500, pricePerM2: 95 },
+    { name: "Frigorífico", description: "Baú frigorífico com isolamento", basePrice: 42000, pricePerM2: 180 },
+    { name: "Sider", description: "Carroceria sider cortina", basePrice: 32000, pricePerM2: 140 },
+  ];
+  for (const m of bodyModels) {
+    const existing = await prisma.bodyModel.findFirst({ where: { name: m.name } });
+    if (!existing) {
+      await prisma.bodyModel.create({ data: m });
+    }
+  }
 
   console.log("[seed] Lignum seed mínimo aplicado (idempotente).");
   console.log(`[seed] Senha partilhada: ${seedPassword}`);

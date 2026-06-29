@@ -385,7 +385,65 @@ export const erpSettingUpdateSchema = z.object({
   alertEmailDigestEnabled: z.boolean().optional(),
   financeEventNotifyDaysBefore: z.number().int().min(0).max(30).optional(),
   inboxPreEventPopupMinutes: z.number().int().min(1).max(1440).optional(),
+  quotePricingJson: z.record(z.string(), z.unknown()).optional(),
 });
+
+const quoteParamSchema = z.object({
+  lengthM: z.number().positive().max(30),
+  widthM: z.number().positive().max(5),
+  heightM: z.number().positive().max(4),
+  coverStyle: z.enum(["tampa_plana", "tampa_arqueada", "tampa_basculante"]),
+  floorType: z.enum(["assoalho_madeira", "assoalho_aco", "assoalho_aluminio"]),
+  finishType: z.enum(["pintura", "verniz", "lamina_natural"]),
+  options: z.array(z.string().max(64)).max(20).optional(),
+  discount: z.number().min(0).optional(),
+});
+
+export const quoteCalculateSchema = quoteParamSchema.extend({
+  bodyModelId: z.number().int().positive().optional(),
+  basePrice: z.number().min(0).optional(),
+  pricePerM2: z.number().min(0).optional(),
+});
+
+export const quoteCreateSchema = quoteParamSchema.extend({
+  documentId: z.string().optional(),
+  clientId: z.number().int().positive(),
+  bodyModelId: z.number().int().positive().optional(),
+  status: z.enum(["rascunho", "enviado"]).optional(),
+  paymentTerms: z.string().max(500).optional(),
+  deliveryDays: z.number().int().min(0).max(365).optional(),
+  notes: z.string().max(5000).optional(),
+  validUntil: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+});
+
+export const quoteUpdateSchema = quoteParamSchema
+  .partial()
+  .extend({
+    clientId: z.number().int().positive().optional(),
+    bodyModelId: z.number().int().positive().optional().nullable(),
+    status: z.enum(["rascunho", "enviado", "aprovado", "cancelado"]).optional(),
+    paymentTerms: z.string().max(500).optional().nullable(),
+    deliveryDays: z.number().int().min(0).max(365).optional().nullable(),
+    notes: z.string().max(5000).optional().nullable(),
+    validUntil: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().nullable(),
+  })
+  .refine((data) => Object.keys(data).length > 0, { message: "Nenhum campo para actualizar." });
+
+export type QuoteCreateInput = z.infer<typeof quoteCreateSchema>;
+export type QuoteUpdateInput = z.infer<typeof quoteUpdateSchema>;
+
+export const bodyModelCreateSchema = z.object({
+  documentId: z.string().optional(),
+  name: z.string().min(1).max(255),
+  description: z.string().max(2000).optional(),
+  basePrice: z.number().min(0),
+  pricePerM2: z.number().min(0).optional(),
+  active: z.boolean().optional(),
+});
+
+export const bodyModelUpdateSchema = bodyModelCreateSchema
+  .partial()
+  .refine((data) => Object.keys(data).length > 0, { message: "Nenhum campo para actualizar." });
 
 export const inboxStockActionSchema = z.object({
   vehicleId: z.number().int().positive(),

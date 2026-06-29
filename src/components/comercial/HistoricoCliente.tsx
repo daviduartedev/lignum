@@ -2,9 +2,8 @@
 
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   ArrowLeft,
@@ -20,6 +19,7 @@ import { useClient } from "@/hooks/useClients";
 import { useSalesForClient } from "@/hooks/useSales";
 import { useMemo } from "react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { EntityAvatar, StitchKpiCard, StitchSectionCard } from "@/components/ui/stitch";
 import { ClientDocumentsSection } from "@/components/comercial/ClientDocumentsSection";
 import { MercosulPlate } from "@/components/ui/MercosulPlate";
 import { ListingStatCell, listingTdStat, listingTdText, listingThStat, listingThText } from "@/components/ui/ListingStatCell";
@@ -180,115 +180,84 @@ export function HistoricoCliente() {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500 pb-10">
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="sm" onClick={() => router.back()} className="hover:bg-gray-100 rounded-full">
+      <div className="flex flex-col sm:flex-row sm:items-start gap-4">
+        <Button variant="ghost" size="icon" onClick={() => router.back()} className="shrink-0 rounded-full">
           <ArrowLeft className="w-4 h-4" />
         </Button>
-        <div className="flex-1">
-          <h1 className="text-2xl font-semibold text-[#111827] mb-1">{cliente.nome}</h1>
-          <p className="text-sm text-[#6B7280]">{cliente.cpf}</p>
+        <div className="flex flex-1 flex-col sm:flex-row sm:items-center gap-4 min-w-0">
+          <div className="flex items-center gap-3 min-w-0">
+            <EntityAvatar name={cliente.nome} variant="client" className="w-10 h-10 text-xs rounded-lg" />
+            <div className="min-w-0">
+              <h1 className="text-2xl font-semibold tracking-tight text-foreground truncate">{cliente.nome}</h1>
+              <p className="text-sm text-muted-foreground tabular-nums">{cliente.cpf}</p>
+            </div>
+          </div>
+          <Link href={`/clientes/${id}/editar`} className="sm:ml-auto">
+            <Button variant="outline" size="sm">
+              Editar cadastro
+            </Button>
+          </Link>
         </div>
-        <Link href={`/clientes/${id}/editar`}>
-          <Button variant="outline" size="sm" className="border-blue-200 text-blue-700 hover:bg-blue-50">
-            Editar cadastro
-          </Button>
-        </Link>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {kpiData.map((kpi, index) => {
           const Icon = kpi.icon;
           return (
-            <Card key={index} className="p-6 border border-[#E5E7EB] shadow-sm">
-              <div className="flex items-center gap-3 mb-4">
-                <div
-                  className={`p-2 rounded-lg ${
-                    kpi.cor === "blue"
-                      ? "bg-blue-50"
-                      : kpi.cor === "green"
-                        ? "bg-green-50"
-                        : kpi.cor === "purple"
-                          ? "bg-purple-50"
-                          : "bg-amber-50"
-                  }`}
-                >
-                  <Icon
-                    className={`w-5 h-5 ${
-                      kpi.cor === "blue"
-                        ? "text-blue-600"
-                        : kpi.cor === "green"
-                          ? "text-green-600"
-                          : kpi.cor === "purple"
-                            ? "text-purple-600"
-                            : "text-amber-600"
-                    }`}
-                  />
-                </div>
-              </div>
-              <div className="text-2xl font-semibold text-[#111827] mb-1">{kpi.valor}</div>
-              <div className="text-sm text-[#6B7280] font-medium">{kpi.label}</div>
-            </Card>
+            <StitchKpiCard key={index} label={kpi.label} value={kpi.valor} icon={Icon} />
           );
         })}
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <Card className="p-6 border border-[#E5E7EB] shadow-sm">
-          <h3 className="text-sm font-semibold text-[#111827] mb-4 uppercase tracking-wide">Contato</h3>
+        <StitchSectionCard title="Dados cadastrais">
           <div className="space-y-4">
             <div>
-              <div className="text-[10px] uppercase font-bold text-[#6B7280]">Telefone</div>
-              <div className="text-sm font-medium text-[#111827]">{cliente.telefone}</div>
+              <div className="text-[10px] uppercase font-bold text-muted-foreground tracking-wide">Telefone</div>
+              <div className="text-sm font-medium text-foreground mt-1">{cliente.telefone}</div>
             </div>
             <div>
-              <div className="text-[10px] uppercase font-bold text-[#6B7280]">E-mail</div>
-              <div className="text-sm font-medium text-[#111827]">{cliente.email}</div>
+              <div className="text-[10px] uppercase font-bold text-muted-foreground tracking-wide">E-mail</div>
+              <div className="text-sm font-medium text-foreground mt-1">{cliente.email}</div>
             </div>
             <div>
-              <div className="text-[10px] uppercase font-bold text-[#6B7280]">Endereço</div>
-              <div className="text-sm font-medium text-[#111827] leading-tight">{cliente.endereco}</div>
+              <div className="text-[10px] uppercase font-bold text-muted-foreground tracking-wide">Endereço</div>
+              <div className="text-sm font-medium text-foreground mt-1 leading-snug">{cliente.endereco}</div>
             </div>
             <div>
-              <div className="text-[10px] uppercase font-bold text-[#6B7280]">Cliente desde</div>
-              <div className="text-sm font-medium text-[#111827]">{cliente.cadastro}</div>
+              <div className="text-[10px] uppercase font-bold text-muted-foreground tracking-wide">Cliente desde</div>
+              <div className="text-sm font-medium text-foreground mt-1">{cliente.cadastro}</div>
             </div>
           </div>
-        </Card>
+        </StitchSectionCard>
 
-        <Card className="xl:col-span-2 p-6 border border-[#E5E7EB] shadow-sm">
-          <h3 className="text-sm font-semibold text-[#111827] mb-4 uppercase tracking-wide">Linha do tempo</h3>
+        <StitchSectionCard title="Linha do tempo" className="xl:col-span-2">
           <div className="space-y-4 max-h-[300px] overflow-y-auto pr-2">
             {timeline.length === 0 ? (
-              <p className="text-sm text-gray-400 italic">Sem eventos registrados.</p>
+              <p className="text-sm text-muted-foreground italic">Sem eventos registrados.</p>
             ) : (
               timeline.map((item, index) => (
                 <div key={index} className="flex gap-4">
                   <div className="flex flex-col items-center">
                     <div
-                      className={`w-2.5 h-2.5 rounded-full ring-4 ring-white ${
-                        item.tipo === "compra"
-                          ? "bg-green-500"
-                          : item.tipo === "pagamento"
-                            ? "bg-blue-500"
-                            : "bg-gray-400"
+                      className={`w-2.5 h-2.5 rounded-full ring-4 ring-card ${
+                        item.tipo === "compra" ? "bg-primary" : item.tipo === "pagamento" ? "bg-accent" : "bg-muted-foreground"
                       }`}
                     />
-                    {index < timeline.length - 1 && <div className="w-0.5 h-full bg-[#E5E7EB] my-1" />}
+                    {index < timeline.length - 1 ? <div className="w-0.5 h-full bg-border my-1" /> : null}
                   </div>
                   <div className="flex-1 pb-4">
-                    <div className="text-sm font-medium text-[#111827]">{item.evento}</div>
-                    <div className="text-[11px] font-bold uppercase tracking-wider text-[#6B7280] mt-1">
-                      {item.data}
-                    </div>
+                    <div className="text-sm font-medium text-foreground">{item.evento}</div>
+                    <div className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mt-1">{item.data}</div>
                   </div>
                 </div>
               ))
             )}
           </div>
-        </Card>
+        </StitchSectionCard>
       </div>
 
-      <Card className="p-6 border border-[#E5E7EB] shadow-sm">
+      <StitchSectionCard>
         <Tabs defaultValue="compras" className="w-full">
           <TabsList className="bg-gray-100 p-1 mb-4">
             <TabsTrigger value="compras" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">
@@ -379,12 +348,12 @@ export function HistoricoCliente() {
 
           <TabsContent value="promissorias" className="mt-0">
             <div className="py-10 text-center space-y-4">
-              <p className="text-sm text-[#6B7280]">
+              <p className="text-sm text-muted-foreground">
                 Promissórias integradas com o módulo financeiro (próxima fase da migração).
               </p>
               <Link href="/financeiro?tab=receber">
-                <Button className="bg-[#22C55E] hover:bg-[#16A34A] text-white">
-                  <Plus className="w-4 h-4 mr-2" />
+                <Button>
+                  <Plus className="w-4 h-4" />
                   Nova promissória
                 </Button>
               </Link>
@@ -395,7 +364,7 @@ export function HistoricoCliente() {
             {clientId != null ? <ClientDocumentsSection clientId={clientId} /> : null}
           </TabsContent>
         </Tabs>
-      </Card>
+      </StitchSectionCard>
     </div>
   );
 }

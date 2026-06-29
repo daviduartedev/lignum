@@ -11,6 +11,11 @@ cycle. Cada pasta traz:
 O design system completo do Stitch (tokens, tipografia, regras de componentes) está em
 **`STITCH-DESIGN.md`** nesta pasta — alinhado com `spec/design-system.md`.
 
+**Política de entrega (ADR-0009, a partir do cycle 0713):** paridade visual com o Stitch
+mapeado ao cycle é **critério de aceite** na última stage de produto — não follow-up. Cycles
+anteriores (0623–0706) podem ter entregue só funcionalidade; polish deferido do 0706 entra
+como Stage 1 do 0713. Ver [`spec/adr-staging.md`](../../spec/adr-staging.md).
+
 > **Precedência:** os tokens em `src/styles/theme.css` / `src/lib/brand.ts` mandam sobre o
 > `code.html`. A paleta do Stitch confere com a marca (Azul Royal `#0234C9`, sidebar preta,
 > accent `#046CEB`). Atenção: o `STITCH-DESIGN.md` traz alguns tons extras (ex.: `primary

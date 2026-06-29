@@ -139,6 +139,21 @@ Detalhe de feature: [document-lookup](features/document-lookup/readme.md).
 - Sucesso `200`: corpo binário `application/pdf` (não envelope JSON), `Content-Disposition: attachment; filename="contrato-<id>.pdf"`, `Cache-Control: private, no-store`, headers de segurança canônicos.
 - Sem persistência (PDF on-demand neste ciclo).
 
+## Orçamentos (cycle 0713)
+
+Ver [features/quotes/readme.md](features/quotes/readme.md).
+
+### `POST /api/quotes/calculate`
+
+- Auth: staff read.
+- Body: parâmetros (`lengthM`, `widthM`, `heightM`, `coverStyle`, `floorType`, `finishType`, `options?`, `discount?`, `bodyModelId?`).
+- Resposta: `{ items, subtotal, discount, total, marginPercent, ... }`.
+
+### `GET /api/quotes/[id]/pdf` / `GET /api/quotes/[id]/technical-sheet/pdf`
+
+- Auth: staff read.
+- PDF binário; emissor de `ErpSetting`.
+
 ## Plataforma — gestão de lojas (super_admin)
 
 Cycle `0617`. Detalhe de UX em [platform-onboarding](features/platform-onboarding/readme.md).

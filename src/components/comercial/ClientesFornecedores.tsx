@@ -2,10 +2,9 @@
 
 import Link from "next/link";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -24,6 +23,9 @@ import {
 } from "@/components/ui/dialog";
 import { Plus, Search, Users, Building2, Loader2, AlertCircle, RefreshCw, Trash2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { EntityAvatar, StitchKpiCard, StitchPageHeader, StitchTableShell } from "@/components/ui/stitch";
+import { cn } from "@/components/ui/utils";
 import { useClient, useClientsPage, useCreateClient, useDeleteClient, useUpdateClient } from "@/hooks/useClients";
 import { useCrmSummary } from "@/hooks/useCrmSummary";
 import { useSales } from "@/hooks/useSales";
@@ -37,7 +39,7 @@ import {
 } from "@/components/comercial/ClientFormFields";
 import { useDocumentLookupClient } from "@/hooks/useDocumentLookup";
 import { Pagination } from "@/components/ui/pagination";
-import { ListingStatCell, listingTdActions, listingTdStat, listingTdText, listingThActions, listingThStat, listingThText } from "@/components/ui/ListingStatCell";
+import { listingTdActions, listingTdStat, listingTdText, listingThActions, listingThStat, listingThText } from "@/components/ui/ListingStatCell";
 import { maskCPFCNPJ, maskPhoneBR } from "@/lib/masks";
 import { clientAttrs } from "@/types";
 import type { Client } from "@/types";
@@ -97,6 +99,8 @@ export function ClientesFornecedores() {
         documento: a.document || "-",
         telefone: a.phone || "-",
         email: a.email || "-",
+        cidade: a.city || "—",
+        personType: a.person_type,
         createdAt: a.createdAt,
         compras,
         totalGasto,
@@ -192,184 +196,154 @@ export function ClientesFornecedores() {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
-      <div>
-        <h1 className="text-2xl font-semibold text-[#111827] mb-1">Clientes e fornecedores</h1>
-        <p className="text-sm text-[#6B7280]">Gestão de relacionamento</p>
-      </div>
+      <StitchPageHeader
+        title="Base de Clientes & Fornecedores"
+        description="Gerencie relacionamentos comerciais, consulte créditos e dados cadastrais."
+        actions={
+          activeTab === "clientes" ? (
+            <>
+              <Button onClick={openCreateDialog}>
+                <Plus className="w-4 h-4" />
+                Novo cliente
+              </Button>
+            </>
+          ) : null
+        }
+      />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="p-6 border border-[#E5E7EB] shadow-sm">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-blue-50 rounded-lg">
-              <Users className="w-5 h-5 text-blue-600" />
-            </div>
-            <div className="text-sm font-medium text-[#6B7280]">Total clientes</div>
-          </div>
-          <div className="text-3xl font-black text-[#111827]">{kpis.total}</div>
-          <div className="text-xs text-[#6B7280] font-medium mt-1">cadastros</div>
-        </Card>
-
-        <Card className="p-6 border border-[#E5E7EB] shadow-sm">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-green-50 rounded-lg">
-              <Users className="w-5 h-5 text-green-600" />
-            </div>
-            <div className="text-sm font-medium text-[#6B7280]">Clientes ativos</div>
-          </div>
-          <div className="text-3xl font-black text-[#111827]">{kpis.ativos}</div>
-          <div className="text-xs text-[#6B7280] font-medium mt-1 uppercase tracking-wide">compra ≤ 6 meses</div>
-        </Card>
-
-        <Card
-          role="button"
-          tabIndex={0}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <StitchKpiCard label="Total de clientes" value={kpis.total} sublabel="cadastros" icon={Users} />
+        <StitchKpiCard
+          label="Clientes ativos"
+          value={kpis.ativos}
+          sublabel="compra nos últimos 6 meses"
+          icon={Users}
+        />
+        <button
+          type="button"
           onClick={() => setActiveTab("fornecedores")}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              setActiveTab("fornecedores");
-            }
-          }}
-          className="p-6 border border-[#E5E7EB] shadow-sm cursor-pointer transition-shadow hover:shadow-md hover:border-purple-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400/60"
-          aria-label={`Abrir separador Fornecedores, ${kpis.fornecedoresCount} cadastrados`}
+          className="text-left rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-purple-50 rounded-lg">
-              <Building2 className="w-5 h-5 text-purple-600" />
-            </div>
-            <div className="text-sm font-medium text-[#6B7280]">Fornecedores</div>
-          </div>
-          <div className="text-3xl font-black text-[#111827]">{kpis.fornecedoresCount}</div>
-          <div className="text-xs text-[#6B7280] font-medium mt-1 uppercase tracking-wide">clique para ver</div>
-        </Card>
-
-        <Card className="p-6 border border-[#E5E7EB] shadow-sm">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-amber-50 rounded-lg">
-              <Users className="w-5 h-5 text-amber-600" />
-            </div>
-            <div className="text-sm font-medium text-[#6B7280]">Novos este mês</div>
-          </div>
-          <div className="text-3xl font-black text-[#111827]">{kpis.novosEsteMes}</div>
-          <div className="text-xs text-[#6B7280] font-medium mt-1">cadastros no mês corrente</div>
-        </Card>
+          <StitchKpiCard
+            label="Fornecedores"
+            value={kpis.fornecedoresCount}
+            sublabel="clique para ver a lista"
+            icon={Building2}
+          />
+        </button>
+        <StitchKpiCard label="Novos este mês" value={kpis.novosEsteMes} sublabel="cadastros no mês corrente" icon={Users} />
       </div>
 
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "clientes" | "fornecedores")} className="w-full">
-        <TabsList className="bg-gray-100 p-1 w-full sm:w-auto flex flex-wrap gap-1 h-auto min-h-10">
-          <TabsTrigger value="clientes" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">
-            Clientes
-          </TabsTrigger>
-          <TabsTrigger value="fornecedores" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">
-            Fornecedores
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="clientes" className="mt-6 space-y-4">
-          <div className="flex flex-col sm:flex-row gap-3 justify-between">
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <Input
-                placeholder="Pesquisar por nome ou documento…"
-                className="pl-9"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-            </div>
-            <Button className="bg-[#22C55E] hover:bg-[#16A34A] text-white shrink-0" onClick={openCreateDialog}>
-              <Plus className="w-4 h-4 mr-2" />
-              Novo cliente
-            </Button>
-          </div>
-
-          <Card className="overflow-hidden border border-border/80 shadow-sm min-w-0">
-            <div className="px-4 pb-4 pt-3 md:px-6 md:pb-5 md:pt-4">
-              <div className="w-full min-w-0 overflow-x-auto overscroll-x-contain">
-                <table className="w-full min-w-[720px]">
-                  <thead>
-                    <tr className="border-b border-border/80">
-                      <th className={listingThText}>Cliente</th>
-                      <th className={listingThText}>Documento</th>
-                      <th className={listingThText}>Contato</th>
-                      <th className={listingThStat}>Compras</th>
-                      <th className={listingThStat}>Total</th>
-                      <th className={listingThStat}>Última compra</th>
-                      <th className={listingThActions}>Ações</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {normalizedClients.length === 0 ? (
-                      <tr>
-                        <td colSpan={7} className="py-12 text-center text-sm text-muted-foreground">
-                          Nenhum cliente encontrado.
-                        </td>
-                      </tr>
-                    ) : (
-                      normalizedClients.map((c) => (
-                        <tr
-                          key={c.routeId}
-                          className="border-b border-border/80 last:border-0 transition-colors hover:bg-muted/40"
-                        >
-                          <td className={`${listingTdText} py-3.5`}>
-                            <Link
-                              href={`/clientes/${c.routeId}`}
-                              className="font-semibold text-foreground hover:text-emerald-700"
-                            >
-                              {c.nome}
-                            </Link>
-                          </td>
-                          <td className={`${listingTdText} py-3.5 text-sm text-muted-foreground`}>{c.documento}</td>
-                          <td className={`${listingTdText} py-3.5 text-sm text-muted-foreground`}>
-                            <div>{c.telefone}</div>
-                            <div className="text-xs">{c.email}</div>
-                          </td>
-                          <td className={`${listingTdStat} py-3.5`}>
-                            <ListingStatCell hideLabel label="Compras" value={c.compras} />
-                          </td>
-                          <td className={`${listingTdStat} py-3.5`}>
-                            <ListingStatCell hideLabel
-                              label="Total"
-                              value={c.totalGasto.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
-                              valueClassName="text-green-700"
-                            />
-                          </td>
-                          <td className={`${listingTdStat} py-3.5`}>
-                            <ListingStatCell hideLabel label="Última compra" value={c.ultimaCompra} valueClassName="font-medium" />
-                          </td>
-                          <td className={`${listingTdActions} py-3.5`}>
-                            <Button variant="ghost" size="sm" onClick={() => openEditDialog(c.routeId)}>
-                              Editar
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="text-red-600"
-                              onClick={() => setDeleteTarget({ id: c.routeId, nome: c.nome })}
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </td>
-                        </tr>
-                      ))
+        <TabsContent value="clientes" className="mt-0 space-y-4">
+          <StitchTableShell
+            toolbar={
+              <>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <button
+                    type="button"
+                    className={cn(
+                      "px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wide border transition-colors",
+                      activeTab === "clientes"
+                        ? "bg-muted border-border text-foreground"
+                        : "text-muted-foreground border-transparent hover:bg-muted/50",
                     )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </Card>
-
-          {meta ? (
-            <Pagination
-              page={meta.page}
-              totalPages={meta.totalPages}
-              total={meta.total}
-              pageSize={meta.pageSize}
-              onPageChange={setPage}
-            />
-          ) : null}
+                    onClick={() => setActiveTab("clientes")}
+                  >
+                    Clientes
+                  </button>
+                  <button
+                    type="button"
+                    className="px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wide text-muted-foreground border border-transparent hover:bg-muted/50 transition-colors"
+                    onClick={() => setActiveTab("fornecedores")}
+                  >
+                    Fornecedores
+                  </button>
+                </div>
+                <div className="relative flex-1 min-w-[200px] max-w-md">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Buscar por nome ou documento…"
+                    className="pl-9 bg-muted/50 border-border"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                  />
+                </div>
+              </>
+            }
+            footer={
+              meta ? (
+                <Pagination
+                  page={meta.page}
+                  totalPages={meta.totalPages}
+                  total={meta.total}
+                  pageSize={meta.pageSize}
+                  onPageChange={setPage}
+                />
+              ) : null
+            }
+          >
+            <table className="w-full min-w-[800px] text-left border-collapse">
+              <thead>
+                <tr className="bg-muted/40 border-b border-border">
+                  <th className={`${listingThText} text-xs uppercase tracking-wider text-muted-foreground`}>Nome / Razão social</th>
+                  <th className={`${listingThText} text-xs uppercase tracking-wider text-muted-foreground`}>CPF / CNPJ</th>
+                  <th className={`${listingThText} text-xs uppercase tracking-wider text-muted-foreground`}>Telefone</th>
+                  <th className={`${listingThText} text-xs uppercase tracking-wider text-muted-foreground`}>Cidade</th>
+                  <th className={`${listingThText} text-xs uppercase tracking-wider text-muted-foreground`}>Tipo</th>
+                  <th className={`${listingThStat} text-xs uppercase tracking-wider text-muted-foreground`}>Última compra</th>
+                  <th className={`${listingThActions} text-xs uppercase tracking-wider text-muted-foreground`}>Ações</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {normalizedClients.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="py-12 text-center text-sm text-muted-foreground">
+                      Nenhum cliente encontrado.
+                    </td>
+                  </tr>
+                ) : (
+                  normalizedClients.map((c) => (
+                    <tr key={c.routeId} className="hover:bg-muted/30 transition-colors">
+                      <td className={`${listingTdText} py-4`}>
+                        <div className="flex items-center gap-3">
+                          <EntityAvatar name={c.nome} variant="client" />
+                          <Link href={`/clientes/${c.routeId}`} className="font-medium text-foreground hover:text-primary">
+                            {c.nome}
+                          </Link>
+                        </div>
+                      </td>
+                      <td className={`${listingTdText} py-4 text-sm tabular-nums text-muted-foreground`}>{c.documento}</td>
+                      <td className={`${listingTdText} py-4 text-sm text-muted-foreground`}>{c.telefone}</td>
+                      <td className={`${listingTdText} py-4 text-sm text-muted-foreground`}>{c.cidade}</td>
+                      <td className={`${listingTdText} py-4`}>
+                        <Badge variant="secondary" className="text-[10px] font-bold uppercase tracking-wide">
+                          {c.personType === "PJ" ? "PJ" : c.personType === "PF" ? "PF" : "Cliente"}
+                        </Badge>
+                      </td>
+                      <td className={`${listingTdStat} py-4 text-sm tabular-nums text-muted-foreground`}>{c.ultimaCompra}</td>
+                      <td className={`${listingTdActions} py-4`}>
+                        <Button variant="ghost" size="sm" onClick={() => openEditDialog(c.routeId)}>
+                          Editar
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-destructive hover:text-destructive"
+                          onClick={() => setDeleteTarget({ id: c.routeId, nome: c.nome })}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </StitchTableShell>
         </TabsContent>
 
-        <TabsContent value="fornecedores" className="mt-6">
+        <TabsContent value="fornecedores" className="mt-0">
           <FornecedoresPanel />
         </TabsContent>
       </Tabs>
@@ -404,7 +378,6 @@ export function ClientesFornecedores() {
             </Button>
             <Button
               type="button"
-              className="bg-[#22C55E] hover:bg-[#16A34A] text-white"
               disabled={isSavingClient || (editingRouteId != null && loadingEditingClient)}
               onClick={() => void handleSaveClient()}
             >

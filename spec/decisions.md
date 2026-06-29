@@ -126,3 +126,17 @@
 **Decisão.** Cinco papéis de negócio em PT (`admin`, `vendedor`, `financeiro`, `producao`, `read_only`); RBAC explícito por grupos em `apiRoles`; `User.isActive` + revogação de sessão; `AuditLog` genérico para acções sensíveis; `SenatranLookupAudit` permanece separado.
 
 **Consequências.** Migration breaking de enum Role; handlers actualizados para grupos RBAC; testes `authorization.test.ts` e E2E `auth-rbac.spec.ts` obrigatórios.
+
+---
+
+## ADR-0009 — Estratégia de UI: por cycle de domínio e paridade Stitch
+
+- **Status:** Accepted
+- **Cycle:** `cycles/Q3-2026/0713-orcamentos-fichas-pdf/`
+- **Data:** 2026-06-29
+
+**Contexto.** UI legada Movix vs módulos Lignum; referências em `design/stitch/`.
+
+**Decisão.** UI por cycle de domínio (não transversal); a partir do 0713 paridade Stitch na última stage de produto; interpretação híbrida (domínio novo = fluxo+UI; core = skin; legado veículo = não reskinar).
+
+**Consequências.** Stage 1 do 0713 = polish 0706 + Painel honesto; Stage 7 = paridade 06–08; Painel completo pós-0727.

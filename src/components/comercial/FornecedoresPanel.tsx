@@ -33,6 +33,7 @@ import {
 } from "@/hooks/useSuppliers";
 import { useDocumentLookupSupplier } from "@/hooks/useDocumentLookup";
 import { Pagination } from "@/components/ui/pagination";
+import { EntityAvatar, StitchTableShell } from "@/components/ui/stitch";
 import { listingTdActions, listingTdText, listingThActions, listingThText } from "@/components/ui/ListingStatCell";
 import type { Supplier } from "@/types";
 
@@ -186,77 +187,86 @@ export function FornecedoresPanel() {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row gap-3 justify-between">
-        <Input
-          placeholder="Pesquisar fornecedor…"
-          className="max-w-md"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <Button type="button" className="bg-emerald-600 hover:bg-emerald-700 text-white shrink-0" onClick={openCreate}>
-          <Plus className="w-4 h-4 mr-2" />
-          Novo fornecedor
-        </Button>
-      </div>
-
-      <div className="overflow-x-auto rounded-xl border border-border/80">
-        <div className="px-4 pb-4 pt-3 md:px-6 md:pb-5 md:pt-4">
-          <table className="w-full min-w-[520px]">
-            <thead>
-              <tr className="border-b border-border/80">
-                <th className={listingThText}>Fornecedor</th>
-                <th className={listingThText}>Documento</th>
-                <th className={listingThText}>Contato</th>
-                <th className={listingThActions}>Ações</th>
+      <StitchTableShell
+        toolbar={
+          <>
+            <div className="relative flex-1 min-w-[200px] max-w-md">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                placeholder="Buscar fornecedor…"
+                className="pl-9 bg-muted/50 border-border"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+            <Button type="button" className="shrink-0" onClick={openCreate}>
+              <Plus className="w-4 h-4" />
+              Novo fornecedor
+            </Button>
+          </>
+        }
+        footer={
+          meta ? (
+            <Pagination
+              page={meta.page}
+              totalPages={meta.totalPages}
+              total={meta.total}
+              pageSize={meta.pageSize}
+              onPageChange={setPage}
+            />
+          ) : null
+        }
+      >
+        <table className="w-full min-w-[640px] text-left border-collapse">
+          <thead>
+            <tr className="bg-muted/40 border-b border-border">
+              <th className={`${listingThText} text-xs uppercase tracking-wider text-muted-foreground`}>Fornecedor</th>
+              <th className={`${listingThText} text-xs uppercase tracking-wider text-muted-foreground`}>CNPJ / documento</th>
+              <th className={`${listingThText} text-xs uppercase tracking-wider text-muted-foreground`}>Contato</th>
+              <th className={`${listingThActions} text-xs uppercase tracking-wider text-muted-foreground`}>Ações</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border">
+            {rows.length === 0 ? (
+              <tr>
+                <td colSpan={4} className="py-10 text-center text-sm text-muted-foreground">
+                  Nenhum fornecedor cadastrado.
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {rows.length === 0 ? (
-                <tr>
-                  <td colSpan={4} className="py-10 text-center text-sm text-muted-foreground">
-                    Nenhum fornecedor cadastrado.
+            ) : (
+              rows.map((r) => (
+                <tr key={r.id} className="hover:bg-muted/30 transition-colors">
+                  <td className={`${listingTdText} py-4`}>
+                    <div className="flex items-center gap-3">
+                      <EntityAvatar name={r.nome} variant="supplier" />
+                      <span className="text-sm font-medium text-foreground">{r.nome}</span>
+                    </div>
+                  </td>
+                  <td className={`${listingTdText} py-4 text-sm tabular-nums text-muted-foreground`}>{r.documento}</td>
+                  <td className={`${listingTdText} py-4 text-sm text-muted-foreground`}>
+                    <div>{r.telefone}</div>
+                    <div className="text-xs">{r.email}</div>
+                  </td>
+                  <td className={`${listingTdActions} py-4`}>
+                    <Button type="button" variant="ghost" size="sm" onClick={() => openEdit(r.raw)}>
+                      <Pencil className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="text-destructive hover:text-destructive"
+                      onClick={() => setDeleteTarget(r.raw)}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
                   </td>
                 </tr>
-              ) : (
-                rows.map((r) => (
-                  <tr key={r.id} className="border-b border-border/80 last:border-0 hover:bg-muted/40 transition-colors">
-                    <td className={`${listingTdText} py-3.5 text-sm font-medium text-foreground`}>{r.nome}</td>
-                    <td className={`${listingTdText} py-3.5 text-sm text-muted-foreground`}>{r.documento}</td>
-                    <td className={`${listingTdText} py-3.5 text-sm text-muted-foreground`}>
-                      <div>{r.telefone}</div>
-                      <div className="text-xs">{r.email}</div>
-                    </td>
-                    <td className={`${listingTdActions} py-3.5`}>
-                      <Button type="button" variant="ghost" size="sm" onClick={() => openEdit(r.raw)}>
-                        <Pencil className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="text-red-600 hover:text-red-700"
-                        onClick={() => setDeleteTarget(r.raw)}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {meta ? (
-        <Pagination
-          page={meta.page}
-          totalPages={meta.totalPages}
-          total={meta.total}
-          pageSize={meta.pageSize}
-          onPageChange={setPage}
-        />
-      ) : null}
+              ))
+            )}
+          </tbody>
+        </table>
+      </StitchTableShell>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="sm:max-w-md">
@@ -338,7 +348,6 @@ export function FornecedoresPanel() {
             </Button>
             <Button
               type="button"
-              className="bg-emerald-600 hover:bg-emerald-700 text-white"
               disabled={!companyName.trim() || createMutation.isPending || updateMutation.isPending}
               onClick={() => void handleSave()}
             >

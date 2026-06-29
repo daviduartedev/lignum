@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { StitchPageHeader, StitchSectionCard } from "@/components/ui/stitch";
 import { ArrowLeft, Save, Loader2 } from "lucide-react";
 import { useClient, useCreateClient, useUpdateClient } from "@/hooks/useClients";
 import { maskCPFCNPJ, maskPhoneBR } from "@/lib/masks";
@@ -76,25 +76,36 @@ export function FormCliente() {
   }
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500">
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="sm" onClick={() => router.back()} disabled={isMutating}>
+    <div className="space-y-6 animate-in fade-in duration-500 max-w-3xl">
+      <div className="flex items-start gap-3">
+        <Button variant="ghost" size="icon" onClick={() => router.back()} disabled={isMutating} className="shrink-0 rounded-full">
           <ArrowLeft className="w-4 h-4" />
         </Button>
-        <div>
-          <h1 className="text-2xl font-semibold text-[#111827] mb-1">
-            {isEditing ? "Editar cliente" : "Novo cliente"}
-          </h1>
-          <p className="text-sm text-[#6B7280]">
-            {isEditing
+        <StitchPageHeader
+          title={isEditing ? "Editar cliente" : "Novo cliente"}
+          description={
+            isEditing
               ? `Atualizando dados de ${values.fullName || "…"}`
-              : "Cadastre um cliente comprador ou contato comercial"}
-          </p>
-        </div>
+              : "Cadastre um cliente comprador ou contato comercial"
+          }
+        />
       </div>
 
       <form onSubmit={(e) => void handleSubmit(e)}>
-        <Card className="p-8 border border-[#E5E7EB] shadow-sm max-w-2xl">
+        <StitchSectionCard
+          title="Dados cadastrais"
+          footer={
+            <>
+              <Button type="button" variant="outline" onClick={() => router.back()} disabled={isMutating}>
+                Cancelar
+              </Button>
+              <Button type="submit" disabled={isMutating}>
+                {isMutating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                Salvar
+              </Button>
+            </>
+          }
+        >
           <div className="space-y-6">
             <ClientFormFields
               values={values}
@@ -104,21 +115,9 @@ export function FormCliente() {
               lookupPending={lookupMutation.isPending}
             />
 
-            {isEditing && clientData?.id ? (
-              <ClientDocumentsSection clientId={clientData.id} />
-            ) : null}
-
-            <div className="flex justify-end gap-3 pt-4 border-t border-[#E5E7EB]">
-              <Button type="button" variant="outline" onClick={() => router.back()} disabled={isMutating}>
-                Cancelar
-              </Button>
-              <Button type="submit" className="bg-[#22C55E] hover:bg-[#16A34A] text-white" disabled={isMutating}>
-                {isMutating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                <span className="ml-2">Salvar</span>
-              </Button>
-            </div>
+            {isEditing && clientData?.id ? <ClientDocumentsSection clientId={clientData.id} /> : null}
           </div>
-        </Card>
+        </StitchSectionCard>
       </form>
     </div>
   );
