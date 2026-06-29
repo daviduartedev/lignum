@@ -13,11 +13,22 @@ datasource db {
 
 enum Role {
   admin
-  authenticated
-  public
-  sales
-  finance
+  vendedor
+  financeiro
+  producao
   read_only
+}
+
+enum AuditAction {
+  login_success
+  login_failure
+  user_created
+  user_updated
+  user_deactivated
+  user_reactivated
+  user_role_changed
+  user_password_reset
+  erp_setting_updated
 }
 
 enum VehicleStatus {
@@ -172,7 +183,8 @@ model User {
   email                        String    @unique
   passwordHash                 String    @map("password_hash")
   name                         String?
-  role                         Role      @default(sales)
+  role                         Role      @default(vendedor)
+  isActive                     Boolean   @default(true) @map("is_active")
   lgpdConsentVersion           String?   @map("lgpd_consent_version")
   lgpdConsentAt                DateTime? @map("lgpd_consent_at")
   showDashboardAttentionStripe Boolean   @default(true) @map("show_dashboard_attention_stripe")
@@ -183,11 +195,28 @@ model User {
 
   notifications              UserNotification[]
   senatranLookupAudits       SenatranLookupAudit[]
+  auditLogs                  AuditLog[]
   stockAttentionPreferences  UserStockAttentionPreference[]
   financeNotificationDispatches FinanceNotificationDispatch[]
   sales                      Sale[] @relation("SaleSeller")
 
   @@map("users")
+}
+
+model AuditLog {
+  id           Int         @id @default(autoincrement())
+  userId       Int?        @map("user_id")
+  user         User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action       AuditAction
+  resourceType String      @map("resource_type")
+  resourceId   String?     @map("resource_id")
+  metadata     Json        @default("{}")
+  createdAt    DateTime    @default(now()) @map("created_at")
+
+  @@index([userId, createdAt])
+  @@index([action, createdAt])
+  @@index([resourceType, createdAt])
+  @@map("audit_logs")
 }
 
 model Vehicle {
