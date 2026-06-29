@@ -383,13 +383,28 @@ export const userInboxPreferencesBodySchema = z.object({
   financeEventNotifyDaysBeforeOverride: z.number().int().min(0).max(30).optional().nullable(),
 });
 
+export const lignumRoleSchema = z.enum(["admin", "vendedor", "financeiro", "producao", "read_only"]);
+
 /** Criação de usuário por administrador (`POST /api/auth/register`). */
 export const adminUserCreateSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
   name: zTextNoHtmlOptional(255),
-  role: z.enum(["admin", "authenticated", "sales", "finance", "read_only"]),
+  role: lignumRoleSchema,
   lgpdConsentVersion: z.literal(POLICY_PRIVACY_VERSION),
+});
+
+/** Actualização de usuário por administrador (`PATCH /api/users/[id]`). */
+export const adminUserPatchSchema = z
+  .object({
+    name: zTextNoHtmlOptional(255),
+    role: lignumRoleSchema,
+    isActive: z.boolean(),
+  })
+  .refine((data) => Object.keys(data).length > 0, { message: "Nenhum campo para actualizar." });
+
+export const adminUserResetPasswordSchema = z.object({
+  password: z.string().min(8),
 });
 
 export const sellerCreateSchema = z.object({

@@ -3,6 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
 import { RateLimitedSignin } from "@/lib/authSigninErrors";
 import { authConfig } from "@/lib/auth.config";
+import { writeAuditLog } from "@/lib/auditLog";
 import { prisma } from "@/lib/db";
 import { checkLoginFailuresAllowed, clearLoginFailuresRemote, recordLoginFailureRemote } from "@/lib/loginFailureRateLimit";
 
@@ -39,16 +40,42 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }
 
         const user = await prisma.user.findUnique({ where: { email: emailNorm } });
-        if (!user) {
+        if (!user || !user.isActive) {
           await recordLoginFailureRemote(rateKey);
+          if (user) {
+            await writeAuditLog({
+              action: "login_failure",
+              userId: user.id,
+              resourceType: "auth",
+              metadata: { reason: "inactive_or_invalid" },
+            });
+          } else {
+            await writeAuditLog({
+              action: "login_failure",
+              resourceType: "auth",
+              metadata: { reason: "invalid_credentials" },
+            });
+          }
           return null;
         }
         const passwordOk = await compare(password, user.passwordHash);
         if (!passwordOk) {
           await recordLoginFailureRemote(rateKey);
+          await writeAuditLog({
+            action: "login_failure",
+            userId: user.id,
+            resourceType: "auth",
+            metadata: { reason: "invalid_credentials" },
+          });
           return null;
         }
         await clearLoginFailuresRemote(rateKey);
+        await writeAuditLog({
+          action: "login_success",
+          userId: user.id,
+          resourceType: "auth",
+          resourceId: String(user.id),
+        });
         return {
           id: String(user.id),
           email: user.email,
