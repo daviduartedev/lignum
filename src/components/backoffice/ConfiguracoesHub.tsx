@@ -93,7 +93,7 @@ export function ConfiguracoesHub() {
         <div className="flex items-start gap-3">
           <FileText className="h-5 w-5 shrink-0 text-primary mt-0.5" aria-hidden />
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-medium text-foreground">Documentação — integração SENATRAN</p>
+            <p className="text-sm font-medium text-foreground">Documentação · integração SENATRAN</p>
             <p className="text-xs text-muted-foreground mt-1">
               Material para compartilhar com o cliente (imprimir ou salvar como PDF).
             </p>
@@ -106,7 +106,7 @@ export function ConfiguracoesHub() {
 
       {isAdmin ? (
         <Card className="p-4 border border-border bg-muted/30">
-          <p className="text-sm font-medium text-foreground">Custo acumulado — consultas SENATRAN (mês corrente)</p>
+          <p className="text-sm font-medium text-foreground">Custo acumulado · consultas SENATRAN (mês corrente)</p>
           {senatranUsage.isLoading ? (
             <p className="text-sm text-muted-foreground mt-2">Carregando…</p>
           ) : senatranUsage.isError ? (

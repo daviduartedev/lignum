@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -77,15 +77,15 @@ export function FormOrcamento() {
     [bodyModelId, lengthM, widthM, heightM, coverStyle, floorType, finishType, options, discount],
   );
 
-  const runCalc = useCallback(() => {
-    if (!Number.isFinite(calcPayload.lengthM) || calcPayload.lengthM <= 0) return;
-    calcMutation.mutate(calcPayload);
-  }, [calcPayload, calcMutation]);
+  const calcKey = JSON.stringify(calcPayload);
+  const calcMutate = calcMutation.mutate;
 
   useEffect(() => {
-    const t = setTimeout(runCalc, 350);
+    if (!Number.isFinite(calcPayload.lengthM) || calcPayload.lengthM <= 0) return;
+    const t = setTimeout(() => calcMutate(calcPayload), 350);
     return () => clearTimeout(t);
-  }, [runCalc]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [calcKey, calcMutate]);
 
   const pricing = calcMutation.data;
 
@@ -128,7 +128,7 @@ export function FormOrcamento() {
     <div className="space-y-6 max-w-[1200px]">
       <StitchPageHeader
         title="Novo orçamento"
-        description="Configure medidas, acabamentos e opcionais — o total é calculado automaticamente."
+        description="Configure medidas, acabamentos e opcionais. O total é calculado automaticamente."
         actions={
           <Button variant="outline" asChild>
             <Link href="/orcamentos">Voltar</Link>
@@ -159,12 +159,12 @@ export function FormOrcamento() {
                 <Label>Modelo base</Label>
                 <Select value={bodyModelId || undefined} onValueChange={setBodyModelId}>
                   <SelectTrigger disabled={loadingModels}>
-                    <SelectValue placeholder="Opcional — catálogo de modelos" />
+                    <SelectValue placeholder="Opcional · catálogo de modelos" />
                   </SelectTrigger>
                   <SelectContent>
                     {bodyModels.map((m) => (
                       <SelectItem key={m.id} value={String(m.id)}>
-                        {bodyModelAttrs(m).name} — {formatBRL(bodyModelAttrs(m).base_price)}
+                        {bodyModelAttrs(m).name} · {formatBRL(bodyModelAttrs(m).base_price)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -288,56 +288,69 @@ export function FormOrcamento() {
         </div>
 
         <aside className="lg:sticky lg:top-4 h-fit">
-          <StitchSectionCard title="Total estimado">
-            {calcMutation.isPending && !pricing ? (
-              <div className="flex items-center gap-2 text-muted-foreground py-4">
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Calculando…
-              </div>
-            ) : pricing ? (
-              <div className="space-y-3">
-                <div className="max-h-48 overflow-y-auto space-y-1 text-xs text-muted-foreground">
-                  {pricing.items.map((item, i) => (
-                    <div key={i} className="flex justify-between gap-2">
-                      <span className="truncate">{item.description}</span>
-                      <span className="shrink-0 tabular-nums">{formatBRL(item.totalPrice)}</span>
-                    </div>
-                  ))}
+          <div className="rounded-xl border border-border shadow-sm overflow-hidden">
+            <div className="bg-primary px-6 py-4">
+              <p className="text-xs font-medium uppercase tracking-wide text-primary-foreground/80">
+                Total estimado
+              </p>
+              <p className="mt-1 text-3xl font-bold tabular-nums text-primary-foreground">
+                {pricing ? formatBRL(pricing.total) : formatBRL(0)}
+              </p>
+              {pricing ? (
+                <p className="mt-1 text-xs text-primary-foreground/80">
+                  Margem estimada: {pricing.marginPercent.toFixed(1)}%
+                </p>
+              ) : null}
+            </div>
+
+            <div className="bg-card p-6">
+              {!pricing && calcMutation.isPending ? (
+                <div className="flex items-center gap-2 text-muted-foreground py-4">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Calculando…
                 </div>
-                <div className="border-t pt-3 space-y-1 text-sm">
-                  <div className="flex justify-between">
-                    <span>Subtotal</span>
-                    <span>{formatBRL(pricing.subtotal)}</span>
+              ) : pricing ? (
+                <div className="space-y-4">
+                  <div className="max-h-48 overflow-y-auto space-y-1 text-xs text-muted-foreground">
+                    {pricing.items.map((item, i) => (
+                      <div key={i} className="flex justify-between gap-2">
+                        <span className="truncate">{item.description}</span>
+                        <span className="shrink-0 tabular-nums">{formatBRL(item.totalPrice)}</span>
+                      </div>
+                    ))}
                   </div>
-                  {pricing.discount > 0 ? (
-                    <div className="flex justify-between text-muted-foreground">
-                      <span>Desconto</span>
-                      <span>- {formatBRL(pricing.discount)}</span>
+                  <div className="rounded-lg bg-secondary/60 p-3 space-y-1 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Subtotal</span>
+                      <span className="font-medium tabular-nums">{formatBRL(pricing.subtotal)}</span>
                     </div>
-                  ) : null}
-                  <div className="flex justify-between text-lg font-semibold text-primary pt-1">
-                    <span>Total</span>
-                    <span>{formatBRL(pricing.total)}</span>
+                    {pricing.discount > 0 ? (
+                      <div className="flex justify-between text-[#b91c1c]">
+                        <span>Desconto</span>
+                        <span className="tabular-nums">- {formatBRL(pricing.discount)}</span>
+                      </div>
+                    ) : null}
+                    <div className="flex justify-between pt-1 text-base font-semibold text-primary">
+                      <span>Total</span>
+                      <span className="tabular-nums">{formatBRL(pricing.total)}</span>
+                    </div>
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    Margem estimada: {pricing.marginPercent.toFixed(1)}%
-                  </p>
+                  <Button className="w-full" disabled={!canSubmit} onClick={handleSubmit}>
+                    {createMutation.isPending ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Salvando…
+                      </>
+                    ) : (
+                      "Criar orçamento"
+                    )}
+                  </Button>
                 </div>
-                <Button className="w-full" disabled={!canSubmit} onClick={handleSubmit}>
-                  {createMutation.isPending ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Salvando…
-                    </>
-                  ) : (
-                    "Criar orçamento"
-                  )}
-                </Button>
-              </div>
-            ) : (
-              <p className="text-sm text-muted-foreground">Preencha as medidas para calcular.</p>
-            )}
-          </StitchSectionCard>
+              ) : (
+                <p className="text-sm text-muted-foreground">Preencha as medidas para calcular.</p>
+              )}
+            </div>
+          </div>
         </aside>
       </div>
     </div>

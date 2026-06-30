@@ -17,9 +17,9 @@ export function formatBRL(value: number | string | null | undefined): string {
 
 /** Formata uma data (Date | ISO string) no padrão dd/mm/aaaa. */
 export function formatDateBR(value: Date | string | null | undefined): string {
-  if (!value) return "—";
+  if (!value) return "-";
   const d = value instanceof Date ? value : new Date(value);
-  if (Number.isNaN(d.getTime())) return "—";
+  if (Number.isNaN(d.getTime())) return "-";
   return new Intl.DateTimeFormat("pt-BR", {
     day: "2-digit",
     month: "2-digit",
@@ -30,9 +30,9 @@ export function formatDateBR(value: Date | string | null | undefined): string {
 
 /** Texto por extenso aproximado da data (ex.: "17 de junho de 2026"). */
 export function formatDateLong(value: Date | string | null | undefined): string {
-  if (!value) return "—";
+  if (!value) return "-";
   const d = value instanceof Date ? value : new Date(value);
-  if (Number.isNaN(d.getTime())) return "—";
+  if (Number.isNaN(d.getTime())) return "-";
   return new Intl.DateTimeFormat("pt-BR", {
     day: "2-digit",
     month: "long",
@@ -41,8 +41,8 @@ export function formatDateLong(value: Date | string | null | undefined): string 
   }).format(d);
 }
 
-/** Valor seguro para campos de texto — devolve travessão quando vazio. */
+/** Valor seguro para campos de texto: devolve hífen quando vazio. */
 export function orDash(value: string | null | undefined): string {
   const v = (value ?? "").trim();
-  return v ? v : "—";
+  return v ? v : "-";
 }

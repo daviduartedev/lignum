@@ -149,11 +149,14 @@ export function OrcamentoDetalhe({ routeId }: { routeId: string }) {
         }
       />
 
-      <div className="flex flex-wrap gap-2 items-center">
+      <div className="flex flex-wrap items-center gap-3">
         <Badge className={cn("font-normal", statusBadgeClass(a.status))}>
           {QUOTE_STATUS_LABELS[a.status]}
         </Badge>
-        <span className="text-2xl font-semibold text-primary tabular-nums">{formatBRL(a.total)}</span>
+        <span className="inline-flex items-baseline gap-2 rounded-lg bg-primary px-4 py-2 text-primary-foreground shadow-sm">
+          <span className="text-xs font-medium text-primary-foreground/80">Total</span>
+          <span className="text-2xl font-bold tabular-nums">{formatBRL(a.total)}</span>
+        </span>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
@@ -248,7 +251,7 @@ export function OrcamentoDetalhe({ routeId }: { routeId: string }) {
       </StitchSectionCard>
 
       {bom.length > 0 ? (
-        <StitchSectionCard title="Ficha técnica — lista de materiais (BOM)">
+        <StitchSectionCard title="Ficha técnica · lista de materiais (BOM)">
         <StitchTableShell>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">

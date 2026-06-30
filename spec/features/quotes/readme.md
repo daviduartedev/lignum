@@ -32,9 +32,21 @@ Orçamento paramétrico de carroceria: medidas, tampa, assoalho, acabamento, opc
 
 ## UI
 
-- `/orcamentos` — lista (Stitch 06)
+- `/orcamentos` — lista (Stitch 06): KPIs sólidos por status
 - `/orcamentos/novo` — formulário paramétrico + total ao vivo (Stitch 07)
 - `/orcamentos/[id]` — detalhe, transições de status, BOM (Stitch 08)
+
+Componentes reutilizáveis: `src/components/ui/stitch/` (`StitchPageHeader`, `StitchKpiCard`, `StitchSectionCard`, `StitchTableShell`, `EntityAvatar`).
+
+### Cálculo ao vivo (`/orcamentos/novo`)
+
+- `POST /api/quotes/calculate` com debounce ~350 ms ao alterar medidas/opcionais/desconto.
+- Card lateral **Total estimado**: cabeçalho azul royal sólido com valor; lista de itens + subtotais abaixo.
+- Estado inicial calcula com medidas default (4,20 × 2,10 × 1,80 m); não deve entrar em loop de loading.
+
+### Copy e tipografia (P0)
+
+- Interface PT-BR: **não usar travessão longo (`—`)** em labels, placeholders ou textos de UI/PDF; usar `-`, `·` ou frase completa.
 
 ## Motor de preço
 

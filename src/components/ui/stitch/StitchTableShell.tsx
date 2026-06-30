@@ -8,7 +8,7 @@ interface StitchTableShellProps {
   className?: string;
 }
 
-/** Container branco com borda para tabelas — referência Stitch 03. */
+/** Container com borda para tabelas (ref. Stitch 03). */
 export function StitchTableShell({ children, toolbar, footer, className }: StitchTableShellProps) {
   return (
     <div className={cn("bg-card rounded-xl border border-border shadow-sm overflow-hidden min-w-0", className)}>

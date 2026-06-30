@@ -101,10 +101,10 @@ export function OrcamentosLista() {
       />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StitchKpiCard label="Total" value={String(kpis.total)} icon={FileText} />
-        <StitchKpiCard label="Rascunhos" value={String(kpis.rascunho)} />
-        <StitchKpiCard label="Enviados" value={String(kpis.enviado)} />
-        <StitchKpiCard label="Aprovados / convertidos" value={String(kpis.aprovado)} />
+        <StitchKpiCard label="Total" value={String(kpis.total)} icon={FileText} tone="primary" solid />
+        <StitchKpiCard label="Rascunhos" value={String(kpis.rascunho)} tone="warning" solid />
+        <StitchKpiCard label="Enviados" value={String(kpis.enviado)} tone="accent" solid />
+        <StitchKpiCard label="Aprovados / convertidos" value={String(kpis.aprovado)} tone="success" solid />
       </div>
 
       <StitchSectionCard title="Lista de orçamentos">

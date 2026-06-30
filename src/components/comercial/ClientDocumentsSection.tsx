@@ -71,7 +71,7 @@ export function ClientDocumentsSection({ clientId }: ClientDocumentsSectionProps
       <div>
         <h3 className="text-sm font-semibold text-[#111827]">Documentos anexos</h3>
         <p className="text-xs text-muted-foreground mt-1">
-          CNH, comprovantes ou contratos — ficheiro (upload) ou link externo.
+          CNH, comprovantes ou contratos: ficheiro (upload) ou link externo.
         </p>
       </div>
 

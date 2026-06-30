@@ -203,8 +203,15 @@ export function HistoricoCliente() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {kpiData.map((kpi, index) => {
           const Icon = kpi.icon;
+          const tones = ["primary", "success", "accent", "warning"] as const;
           return (
-            <StitchKpiCard key={index} label={kpi.label} value={kpi.valor} icon={Icon} />
+            <StitchKpiCard
+              key={index}
+              label={kpi.label}
+              value={kpi.valor}
+              icon={Icon}
+              tone={tones[index % tones.length]}
+            />
           );
         })}
       </div>

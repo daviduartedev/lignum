@@ -99,7 +99,7 @@ export function ClientesFornecedores() {
         documento: a.document || "-",
         telefone: a.phone || "-",
         email: a.email || "-",
-        cidade: a.city || "—",
+        cidade: a.city || "-",
         personType: a.person_type,
         createdAt: a.createdAt,
         compras,
@@ -212,12 +212,13 @@ export function ClientesFornecedores() {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StitchKpiCard label="Total de clientes" value={kpis.total} sublabel="cadastros" icon={Users} />
+        <StitchKpiCard label="Total de clientes" value={kpis.total} sublabel="cadastros" icon={Users} tone="primary" />
         <StitchKpiCard
           label="Clientes ativos"
           value={kpis.ativos}
           sublabel="compra nos últimos 6 meses"
           icon={Users}
+          tone="success"
         />
         <button
           type="button"
@@ -229,9 +230,10 @@ export function ClientesFornecedores() {
             value={kpis.fornecedoresCount}
             sublabel="clique para ver a lista"
             icon={Building2}
+            tone="accent"
           />
         </button>
-        <StitchKpiCard label="Novos este mês" value={kpis.novosEsteMes} sublabel="cadastros no mês corrente" icon={Users} />
+        <StitchKpiCard label="Novos este mês" value={kpis.novosEsteMes} sublabel="cadastros no mês corrente" icon={Users} tone="warning" />
       </div>
 
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "clientes" | "fornecedores")} className="w-full">

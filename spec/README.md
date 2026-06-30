@@ -34,6 +34,7 @@ Este diretorio e o **hub de especificacao** do repositorio: descreve o comportam
 | Financeiro (A pagar / A receber) | [features/financeiro](features/financeiro/readme.md) | Hub `/financeiro` com recebiveis, despesas e notificacoes. |
 | Giro / Marketing | [features/giro-marketing](features/giro-marketing/readme.md) | **Removido da nav (0623)**; rota `/giro` deletada. Spec histórica. |
 | Estoque (lista, tabs e deep links) | [features/estoque](features/estoque/readme.md) | Tabs por status; filtro `diasMin`; atalhos de detalhe e venda. |
+| Orçamentos (paramétrico, PDF, BOM) | [features/quotes](features/quotes/readme.md) | `/orcamentos`; motor de preço; conversão ficha técnica; Stitch 06–08 (cycle 0713). |
 | Clientes e fornecedores | [features/clients](features/clients/readme.md) | Hub `/clientes`; cadastro PJ/PF; consulta CNPJ; documentos anexos. |
 | Fornecedores | [features/suppliers](features/suppliers/readme.md) | Aba em `/clientes`; consulta CNPJ; `registrationStatus`. |
 | Consulta cadastral CNPJ | [features/document-lookup](features/document-lookup/readme.md) | Autofill clientes/fornecedores; cache; audit; rate limit. |

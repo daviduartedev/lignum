@@ -8,12 +8,13 @@ interface StitchSectionCardProps {
   className?: string;
 }
 
-/** Card com cabeçalho de secção — referência Stitch 04/05. */
+/** Card com cabeçalho de secção (ref. Stitch 04/05). */
 export function StitchSectionCard({ title, children, footer, className }: StitchSectionCardProps) {
   return (
     <div className={cn("bg-card rounded-xl border border-border shadow-sm overflow-hidden", className)}>
       {title ? (
-        <div className="px-6 py-4 border-b border-border bg-muted/40">
+        <div className="flex items-center gap-2.5 px-6 py-4 border-b border-border bg-secondary/50">
+          <span className="h-4 w-1 rounded-full bg-primary" aria-hidden />
           <h3 className="text-base font-semibold text-foreground">{title}</h3>
         </div>
       ) : null}

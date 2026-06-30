@@ -179,6 +179,22 @@ permissoes`, `04-cliente-detalhe`, `08-ficha-tecnica`, `10-os-detalhe`.
 
 Instruções de exportação e nomenclatura: `design/stitch/README.md`.
 
+### Componentes Stitch no código (cycle 0713+)
+
+Implementação em `src/components/ui/stitch/` — adaptar protótipos HTML do Stitch para tokens Lignum:
+
+| Componente | Uso |
+|------------|-----|
+| `StitchPageHeader` | Título + descrição + acções |
+| `StitchKpiCard` | KPI compacto; props `tone` (`primary` \| `accent` \| `success` \| `warning` \| `neutral`) e `solid` (fundo de cor sólida da paleta) |
+| `StitchSectionCard` | Secção com cabeçalho e faixa de acento azul |
+| `StitchTableShell` | Container de tabela com toolbar/footer |
+| `EntityAvatar` | Iniciais em círculo (listas de clientes) |
+
+**Cores sólidas:** preferir `tone` + `solid` em KPIs de listagem (orçamentos) e ícones tintados nos KPIs de clientes; evitar cards brancos sem hierarquia visual. Tokens: `--primary`, `#046ceb`, `#16a34a`, `#d97706` (ver `theme.css`).
+
+**Tipografia UI (P0):** não usar travessão longo (`—`) em copy de interface; usar `-`, `·` ou pontuação normal.
+
 > **Paleta Lignum (origem da marca):** Azul Royal `#0234C9` (primary), Azul Claro `#046CEB`
 > (accent), Preto `#000000` (sidebar), Branco `#FFFFFF`. Definida em `src/styles/theme.css` e
 > `src/lib/brand.ts`. O rebrand dos tokens `--lignum-space-*`/`--movix-*` para `--lignum-*` é

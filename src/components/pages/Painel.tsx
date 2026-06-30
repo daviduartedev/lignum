@@ -12,7 +12,7 @@ const PLACEHOLDER_KPIS = [
 ] as const;
 
 /**
- * Painel Lignum — placeholders até KPIs reais (mini-cycle pós-0727).
+ * Painel Lignum: placeholders até KPIs reais (mini-cycle pós-0727).
  * KPIs Movix de veículo removidos no 0713 Stage 1 (ADR-0009).
  */
 export function Painel() {
@@ -28,7 +28,7 @@ export function Painel() {
           <StitchKpiCard
             key={item.label}
             label={item.label}
-            value="—"
+            value="-"
             sublabel={`Módulo em construção (cycle ${item.cycle})`}
             icon={item.icon}
           />

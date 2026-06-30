@@ -70,14 +70,14 @@ export function TechnicalSheetDocument({ vm }: { vm: TechnicalSheetPdfViewModel 
           </View>
         </View>
 
-        <Text style={styles.title}>Ficha técnica — lista de materiais (BOM)</Text>
+        <Text style={styles.title}>Ficha técnica · lista de materiais (BOM)</Text>
 
         <Text style={styles.sectionTitle}>Cliente</Text>
         <Text>{vm.clientName}</Text>
 
         <Text style={styles.sectionTitle}>Especificação</Text>
         <Text>
-          {vm.lengthM} m × {vm.widthM} m × {vm.heightM} m — {vm.coverStyle}
+          {vm.lengthM} m × {vm.widthM} m × {vm.heightM} m · {vm.coverStyle}
         </Text>
 
         <Text style={styles.sectionTitle}>Materiais</Text>

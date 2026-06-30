@@ -68,10 +68,10 @@ export function QuoteDocument({ vm }: { vm: QuotePdfViewModel }) {
             <Text style={styles.issuerLine}>CNPJ: {orDash(vm.issuer.companyTaxId)}</Text>
             <Text style={styles.issuerLine}>{orDash(vm.issuer.companyAddress)}</Text>
             <Text style={styles.issuerLine}>
-              {orDash(vm.issuer.companyCity)} — {orDash(vm.issuer.companyState)} — CEP {orDash(vm.issuer.companyZip)}
+              {orDash(vm.issuer.companyCity)} · {orDash(vm.issuer.companyState)} · CEP {orDash(vm.issuer.companyZip)}
             </Text>
             <Text style={styles.issuerLine}>
-              Tel: {orDash(vm.issuer.companyPhone)} — {orDash(vm.issuer.companyEmail)}
+              Tel: {orDash(vm.issuer.companyPhone)} · {orDash(vm.issuer.companyEmail)}
             </Text>
           </View>
           <View>

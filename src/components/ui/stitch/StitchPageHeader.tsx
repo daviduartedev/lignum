@@ -6,7 +6,7 @@ interface StitchPageHeaderProps {
   actions?: ReactNode;
 }
 
-/** Cabeçalho de página alinhado ao layout Stitch (03–05). */
+/** Cabeçalho de página alinhado ao layout Stitch (03 a 05). */
 export function StitchPageHeader({ title, description, actions }: StitchPageHeaderProps) {
   return (
     <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-6">
