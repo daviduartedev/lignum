@@ -28,42 +28,42 @@ Este diretorio e o **hub de especificacao** do repositorio: descreve o comportam
 
 | Feature | Pasta | Resumo |
 |--------|--------|--------|
-| Painel (dashboard Lignum) | [features/dashboard](features/dashboard/readme.md) | Stitch 01 em `/`; KPIs mock; tabela de orçamentos reais; KPIs financeiros reais pós-0727. |
-| Centro de alertas (inbox unificado) | [features/inbox-centro-alertas](features/inbox-centro-alertas/readme.md) | Popup pos-login, drawer do sininho, agregacao `inbox/summary`, snooze e dispensar. |
-| Calendario (operacional) | [features/calendario](features/calendario/readme.md) | Rota unica `/calendario`: recebiveis, contas a pagar, OS, garantias e lembretes. |
-| Financeiro (A pagar / A receber) | [features/financeiro](features/financeiro/readme.md) | Hub `/financeiro` com recebiveis, despesas e notificacoes. |
-| Giro / Marketing | [features/giro-marketing](features/giro-marketing/readme.md) | **Removido da nav (0623)**; rota `/giro` deletada. Spec histórica. |
-| Estoque (lista, tabs e deep links) | [features/estoque](features/estoque/readme.md) | Tabs por status; filtro `diasMin`; atalhos de detalhe e venda. |
-| Orçamentos (paramétrico, PDF, BOM) | [features/quotes](features/quotes/readme.md) | `/orcamentos`; motor de preço; conversão ficha técnica; Stitch 06–08 (cycle 0713). |
-| Clientes e fornecedores | [features/clients](features/clients/readme.md) | Hub `/clientes`; cadastro PJ/PF; consulta CNPJ; documentos anexos. |
-| Fornecedores | [features/suppliers](features/suppliers/readme.md) | Aba em `/clientes`; consulta CNPJ; `registrationStatus`. |
-| Consulta cadastral CNPJ | [features/document-lookup](features/document-lookup/readme.md) | Autofill clientes/fornecedores; cache; audit; rate limit. |
-| Ciberseguranca (transversal) | [features/security](features/security/readme.md) | RBAC Lignum, rate limits, revogacao de sessao, audit log. |
-| Auth (login, papéis, utilizadores) | [features/auth](features/auth/readme.md) | NextAuth, 5 papéis, gestão admin, `/configuracoes/usuarios`. |
-| Audit log (acções sensíveis) | [features/audit](features/audit/readme.md) | Registo persistido; consulta admin; distinto de SENATRAN. |
-| Code hygiene | [features/code-hygiene](features/code-hygiene/readme.md) | Limpeza interna de baixo risco: remover gambiarras, codigo morto, duplicacao obvia e follow-ups de refactor. |
-| Cores de veiculo (revenda) | [features/vehicle-colors](features/vehicle-colors/readme.md) | Sugestoes curadas + "Outro"; persistencia em texto. |
-| Avaliacao de compra e standby | [features/purchase-evaluation-standby](features/purchase-evaluation-standby/readme.md) | Fluxo separado da avaliacao tecnica; lista dedicada; motivo estruturado. |
-| Venda e promissoria | [features/sale-promissory](features/sale-promissory/readme.md) | Pagamento promissorio; modal na venda; parcelas em `promissory_notes`. |
-| FIPE automatico e lucro x FIPE | [features/fipe-and-margin](features/fipe-and-margin/readme.md) | **Removido (0623)**; rota `/fipe` deletada. Spec histórica. |
-| Estoque removido e restauracao | [features/stock-removed](features/stock-removed/readme.md) | Soft delete; removidos; restauracao so admin. |
-| Veiculos (cadastro, API, SENATRAN) | [features/vehicles](features/vehicles/readme.md) | CRUD; consulta oficial por placa; extensao de modelo e validacoes. |
-| Vitrine (loja publica / previa) | [features/storefront](features/storefront/readme.md) | **Removida (0623)** — single-tenant; spec historica. |
-| Onboarding de lojas (plataforma) | [features/platform-onboarding](features/platform-onboarding/readme.md) | **Removida (0623)** — `super_admin` e plataforma deletados. |
-| Seed de dev e validacao | [features/dev-seed-and-validation](features/dev-seed-and-validation/readme.md) | 5 utilizadores canonicos (`*@lignum.local`); seed minimo idempotente; bulk opcional manual. |
+| Painel (dashboard Lignum) | [features/dashboard](features/dashboard/readme.md) | Stitch 01; KPIs mock; FAB → `/producao` (0720). |
+| Orçamentos (paramétrico, PDF, BOM) | [features/quotes](features/quotes/readme.md) | `/orcamentos`; convert → OP (0713 + 0720). |
+| Ordens de produção | [features/production-orders](features/production-orders/readme.md) | Kanban `/producao`; baixa BOM (0720). |
+| Estoque matérias-primas | [features/materials-stock](features/materials-stock/readme.md) | `/estoque/materiais` (0720). |
+| Carrocerias usadas | [features/used-bodies](features/used-bodies/readme.md) | `/carrocerias-usadas` (0720). |
+| Funcionários | [features/employees](features/employees/readme.md) | `/funcionarios` (0720). |
+| Centro de alertas (inbox) | [features/inbox-centro-alertas](features/inbox-centro-alertas/readme.md) | `materialLowStock`; sem veículos (0720). |
+| Calendario (operacional) | [features/calendario](features/calendario/readme.md) | `/calendario`: payables e lembretes. |
+| Financeiro (A pagar) | [features/financeiro](features/financeiro/readme.md) | Hub `/financeiro` — payables pós-0720. |
+| Clientes e fornecedores | [features/clients](features/clients/readme.md) | Hub `/clientes`; CNPJ; documentos. |
+| Fornecedores | [features/suppliers](features/suppliers/readme.md) | Aba em `/clientes`. |
+| Consulta cadastral CNPJ | [features/document-lookup](features/document-lookup/readme.md) | Autofill; cache; audit. |
+| Ciberseguranca | [features/security](features/security/readme.md) | RBAC, rate limits, audit log. |
+| Auth | [features/auth](features/auth/readme.md) | NextAuth; 5 papéis. |
+| Audit log | [features/audit](features/audit/readme.md) | Acções sensíveis; admin-only. |
+| Code hygiene | [features/code-hygiene](features/code-hygiene/readme.md) | Limpeza interna de baixo risco. |
+| Seed de dev e validacao | [features/dev-seed-and-validation](features/dev-seed-and-validation/readme.md) | Seed Lignum + E2E (0720). |
+
+**Removidos (Movix 0720):** `vehicles`, `estoque`, `service-orders`, `giro-marketing`, `fipe-and-margin`, `stock-removed`, `purchase-evaluation-standby`. Ver ADR-0010.
 
 ## Materiais client-facing
 
 | Documento | Caminho | Resumo |
 |-----------|---------|--------|
 | Hub client-facing | [client-facing/readme.md](client-facing/readme.md) | Textos para impressao/PDF e alinhamento comercial. |
-| SENATRAN, explicacao para o cliente | [client-facing/senatran-integracao-movix.md](client-facing/senatran-integracao-movix.md) | Mock vs producao; SERPRO; precos por portaria; LGPD; limites. |
+
+> SENATRAN veículo (Movix) arquivado — removido no cycle 0720.
 
 ## Dominio e UX transversal
 
 | Documento | Caminho | Resumo |
 |-----------|---------|--------|
-| Vendas, margem e mes civil | [domain/vendas.md](domain/vendas.md) | Definicao de margem bruta sobre receita; fuso America/Sao_Paulo. |
+| Produção Lignum | [domain/producao.md](domain/producao.md) | OP, convert, start, BOM (0720). |
+| Estoque materiais | [domain/estoque-materiais.md](domain/estoque-materiais.md) | Custo médio, movimentações, alertas (0720). |
+| Carrocerias usadas | [domain/carrocerias-usadas.md](domain/carrocerias-usadas.md) | Status, histórico, RBAC (0720). |
+| Vendas, margem e mes civil | [domain/vendas.md](domain/vendas.md) | Definicao de margem; fuso America/Sao_Paulo. |
 | Modais e dialogos bloqueantes | [ux/modais.md](ux/modais.md) | `alertdialog`, foco, backdrop e comportamento mobile. |
 | LGPD e minimizacao | [security/lgpd.md](security/lgpd.md) | Minimizacao, redacao de logs, retencao; isolamento por role/usuario. |
 | Headers e CORS | [security/headers.md](security/headers.md) | Politica canonica de headers, cookies, allowlist de origens e excecoes por ambiente. |
@@ -78,7 +78,7 @@ Este diretorio e o **hub de especificacao** do repositorio: descreve o comportam
 
 ## Testes E2E e seguranca
 
-Os cenarios de fumo e integracao criticos vivem em `e2e/` e sao executados com **Chromium**. Setup admin: `admin@lignum.local` (seed). Smoke RBAC por papel: `e2e/auth-rbac.spec.ts` (cycle 0629). Specs legacy de storefront/plataforma removidos no cycle 0623.
+Os cenarios de fumo e integracao criticos vivem em `e2e/`. Setup admin: `admin@lignum.local`. Smoke RBAC: `e2e/auth-rbac.spec.ts`. Produção Lignum: `e2e/producao-lignum.spec.ts` (0720).
 
 ## Idioma
 

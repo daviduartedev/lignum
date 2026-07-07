@@ -22,20 +22,32 @@ Variáveis opcionais: `SEED_PASSWORD` / `SEED_ADMIN_PASSWORD`, `SEED_ADMIN_EMAIL
 
 `npm run db:seed` cria (idempotente):
 
-- 5 utilizadores canónicos (`admin`, `vendedor`, `financeiro`, `producao`, `read_only`) — ver tabela acima
-- 1 linha `ErpSetting` (`id = 1`) com defaults AlaCruz/Lignum
+- 5 utilizadores canónicos — ver tabela acima
+- 1 linha `ErpSetting` (`id = 1`)
+- **Orçamentos / body models** (cycle 0713)
+- **Carrocerias usadas:** 3–5 registos com `UsedBodyStatusHistory` (cycle 0720)
+- **Materiais:** todos os SKUs de `BOM_CATALOG_SEED` com saldo inicial; `EST-PER` abaixo do mínimo para alertas
+- **Funcionários:** 4 exemplos (Roberto, Ana, Carlos, Juliana)
+- **OP de exemplo:** orçamento aprovado → convert manual ou via seed → kanban `/producao`
 
-**Sem** multi-loja, **sem** `super_admin`, **sem** massa BULK no fluxo default.
+## Massa volumosa (desactivada)
 
-## Massa volumosa (opcional, manual)
+`prisma/seedBulk.ts` **desactivado** após teardown Movix (0720). Não executar em fluxo normal.
 
-`prisma/seedBulk.ts` permanece no repo para demos de performance, **fora** do `db:seed` default. Executar manualmente: `npx tsx prisma/seedBulk.ts` (requer admin existente).
+## Validação E2E Lignum (0720)
+
+| Spec | Cenário |
+|------|---------|
+| `e2e/producao-lignum.spec.ts` | convert → start OP → materiais consumidos; RBAC vendedor |
+| `e2e/auth-rbac.spec.ts` | login por papel |
+| `e2e/smoke.spec.ts` | painel, clientes, leads |
+
+Login produção: `producao@lignum.local` / `Teste@123456`
 
 ## Integrações externas nos testes
 
-- **SENATRAN** (`/api/senatran/*`): testes usam **mock** quando aplicável.
-- **Document lookup CNPJ** (`/api/document-lookup`): default **`DOCUMENT_LOOKUP_PROVIDER=mock`** em dev/testes; smoke `npm run smoke:document-lookup`.
-- **FIPE**: rota removida no cycle 0623; testes FIPE eliminados.
+- **SENATRAN veículo:** removido (0720)
+- **Document lookup CNPJ:** mock em dev/testes
 
 ## Testes de integração API
 

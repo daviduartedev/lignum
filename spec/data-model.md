@@ -1,97 +1,85 @@
 # Data Model
 
 Fonte única: [`prisma/schema.prisma`](../prisma/schema.prisma).
-Este documento resume o modelo canônico.
+Este documento resume o modelo canônico Lignum pós-cycle `0720-producao-os-estoque`.
 
 ## Entidades e relacionamentos
 
 ```
 ErpSetting (singleton id=1)
 
-User ──< UserNotification, SenatranLookupAudit, DocumentLookupAudit, AuditLog, UserStockAttentionPreference, ...
+User ──< UserNotification, DocumentLookupAudit, AuditLog, ...
 
-Client ──< Sale          >── Vehicle
-       ──< Contract      >── Vehicle
-       ──< Warranty      >── Vehicle
-       ──< PromissoryNote>── Vehicle
-       ──< ClientDocument
+Client ──< ClientDocument
        ──< Quote >── BodyModel?
-       ──< Vehicle (VehicleBuyer, opcional)
+       ──< StorefrontLead
 
-BodyModel ──< Quote
 Quote ──< QuoteItem
-Quote ──|── TechnicalSheet (1:1 após conversão)
+      ──|── TechnicalSheet (1:1 após conversão)
+      └──|── ProductionOrder (1:1 após conversão)
 
-Vehicle ──┬── Sale (1..1, unique vehicleId)
-          ├──< Contract, Evaluation, ServiceOrder, Warranty, PromissoryNote, ...
+ProductionOrder ──< ProductionOrderEmployee >── Employee
+                ──< StockMovement (saídas/estornos)
 
-Supplier, Payable, StorefrontLead, FinanceNotificationDispatch, ...
+Material ──< StockMovement
+         >── Supplier?
+
+UsedBody ──< UsedBodyStatusHistory
+         >── Supplier?
+
+Employee >── User? (opcional)
+
+Supplier, Payable, FinanceNotificationDispatch, ...
+```
 
 ### Cadastro comercial (cycle 0706)
 
-- **`Client.registrationStatus?`** / **`Supplier.registrationStatus?`** — situação cadastral CNPJ (ex.: "ATIVA"), preenchida por consulta externa quando disponível.
-- **`DocumentLookupAudit`** — auditoria de consultas CNPJ cadastrais: `documentNormalized`, `documentKind` (`cnpj`), `provider`, `cost`, `success`, `errorCode?`, `cachedResponse`, `snapshotJson` (admin-only). Relacionada a `User`.
-```
+- **`Client.registrationStatus?`** / **`Supplier.registrationStatus?`** — situação cadastral CNPJ.
+- **`DocumentLookupAudit`** — auditoria de consultas CNPJ cadastrais (admin-only).
 
 ## Single-tenant (cycle 0623 — ADR-0006)
 
 - **Sem `Tenant` nem `tenantId`** em qualquer model.
-- **`User`** pertence à instalação (sem FK tenant); roles de loja/fábrica apenas.
-- **`ErpSetting`** singleton **`id = 1`** — dados da fábrica; campos de vitrine/subdomínio removidos.
-- Isolamento por **RBAC** (`withRole`) e **`ownerUserId`** onde aplicável; ver [`architecture.md`](./architecture.md).
+- **`User`** pertence à instalação; roles de fábrica apenas.
+- **`ErpSetting`** singleton **`id = 1`**.
+- Isolamento por **RBAC** (`withRole`) e **`ownerUserId`** onde aplicável.
 
-## Multitenant (histórico — superseded)
+## Enums Lignum (produção e estoque — cycle 0720)
 
-> Removido no cycle `0623`. Ver ADR-0006. Diagrama anterior incluía `Tenant ──< ...` e `ErpSetting` 1:1 por `tenantId`.
+- `ProductionOrderStatus`: `aguardando` | `andamento` | `concluida` | `cancelada`
+- `UsedBodyStatus`: `disponivel` | `reservada` | `vendida` | `em_reforma`
+- `UsedBodyCondition`: `excelente` | `bom` | `regular` | `ruim`
+- `MaterialCategory`: `madeira` | `ferragens` | `tintas` | `estrutura` | `tampa` | `assoalho` | `acabamento` | `consumivel` | `opcional`
+- `StockMovementType`: `entrada` | `saida` | `estorno`
 
-## Enums
+## Enums comerciais (orçamentos — cycle 0713)
 
-- `Role`: `admin` | `vendedor` | `financeiro` | `producao` | `read_only`.
-- `User.isActive` — conta desactivada não autentica; revoga sessão ao desactivar.
-- `AuditLog` + enum `AuditAction` — ver [Audit log](features/audit/readme.md).
-- `VehicleStatus`: `disponivel` | `repasse` | `reservado` | `vendido` | `removido`.
-- `VehicleLegalSituation` (alvo SENATRAN): `regular` | `irregular` | `com_restricao` — situação legal do veículo na fonte consultada; **não** confundir com `VehicleStatus` de estoque.
-- `VehicleCategoryKind` (alvo): `carro` | `moto` | `onibus` | `jet_ski` | `outros`.
-- `VehicleCautelar` (alvo): `nao` | `leilao` | `sinistro` | `leilao_sinistro` | `outras_restricoes`.
-- `FuelType`: `flex` | `gasolina` | `diesel` | `eletrico` | `hibrido`.
-- `TransmissionType`: `manual` | `automatico` | `cvt`.
-- `PaymentMethod`: `financiamento` | `a_vista` | `cartao` | `troca` | `pix`.
-- `ContractType`: `compra_venda` | `financiamento` | `consorcio` | `locacao`.
-- `ContractStatus`: `rascunho` | `pendente_assinatura` | `assinado` | `cancelado`.
-- `QuoteStatus`: `rascunho` | `enviado` | `aprovado` | `convertido` | `cancelado`.
-- `BodyCoverStyle`, `BodyFloorType`, `BodyFinishType` — parâmetros do configurador 2D.
-- `ServiceOrderType`: `manutencao` | `revisao` | `funilaria` | `eletrica` | `mecanica` | `estetica` | `outros`.
-- `ServiceOrderStatus`: `aguardando` | `andamento` | `concluida` | `cancelada`.
-- `WarrantyType`: `motor_cambio` | `completa` | `motor` | `acessorios` | `outros`.
-- `WarrantyStatus`: `ativa` | `vencendo` | `expirada` | `cancelada`.
-- `PromissoryNoteStatus`: `aberta` | `paga` | `vencida` | `cancelada`.
+- `Role`: `admin` | `vendedor` | `financeiro` | `producao` | `read_only`
+- `QuoteStatus`: `rascunho` | `enviado` | `aprovado` | `convertido` | `cancelado`
+- `BodyCoverStyle`, `BodyFloorType`, `BodyFinishType` — configurador paramétrico
 
-## Vehicle — extensão SENATRAN (alvo)
+## Removidos (teardown Movix — cycle 0720)
 
-Para além dos campos já listados no Prisma, o produto prevê (entre outros) `renavam`, `chassis`, tipo (`VehicleCategoryKind`), situação legal (`VehicleLegalSituation`), cautelar (`VehicleCautelar`), município/UF de emplacamento, título de anúncio, JSON de **outros dados oficiais**, e metadados de origem por campo. Fonte canónica após migração: [`prisma/schema.prisma`](../prisma/schema.prisma) e [Vehicles](features/vehicles/readme.md).
+Models e enums Movix removidos do schema: `Vehicle`, `Sale`, `Contract`, `Evaluation`, `PurchaseEvaluation`, `ServiceOrder`, `Warranty`, `PromissoryNote`, `UserStockAttentionPreference`, `SenatranLookupAudit` e enums associados (`VehicleStatus`, `FuelType`, `ServiceOrderStatus`, etc.).
+
+Ver ADR-0010 em [`decisions.md`](decisions.md).
 
 ## Convenções
 
 - Ids inteiros autoincremento.
-- `documentId: String?` unique em quase todas as tabelas (legado Strapi; **não**
-  usado em roteamento — ver [`api-contract.md`](./api-contract.md)).
+- `documentId: String?` unique (legado Strapi; **não** usado em roteamento).
 - Colunas monetárias: `Decimal(14,2)`.
-- Datas apenas-data: `DateTime @db.Date`.
 - Timestamps: `createdAt @default(now())`, `updatedAt @updatedAt`.
-- Arrays de URL (mídia): `String[]` com `@default([])`.
 
 ## Regras de integridade notáveis
 
-- `Sale.vehicleId` é **unique** → tentar vender duas vezes o mesmo veículo
-  gera `409 CONFLICT`.
-- `onDelete`:
-  - `Cascade`: `ClientDocument` (por cliente), `Evaluation`/`ServiceOrder` (por veículo), `UserNotification` (por usuário), `Sale` (por veículo).
-  - `SetNull`: `AuditLog.userId` (preserva histórico se utilizador removido).
-  - `Restrict`: `Contract`, `Warranty`, `PromissoryNote` em relação a `Client` e `Vehicle` — protege histórico comercial.
+- `ProductionOrder.quoteId` **unique** — uma OP por orçamento convertido.
+- `Material.sku` **unique**.
+- Baixa BOM: transacção atómica; bloqueio 409 se saldo insuficiente.
+- `UsedBodyStatusHistory` append-only.
+- `onDelete SetNull`: `AuditLog.userId` (preserva histórico).
 
 ## Campos LGPD (User)
 
-Adicionados neste ciclo:
-
-- `lgpdConsentVersion: String?` — versão do texto aceito (vem de `src/lib/lgpdPolicyMeta.ts`).
-- `lgpdConsentAt: DateTime?` — momento do aceite.
+- `lgpdConsentVersion: String?`
+- `lgpdConsentAt: DateTime?`

@@ -21,7 +21,7 @@ Orçamento paramétrico de carroceria: medidas, tampa, assoalho, acabamento, opc
 | POST | `/api/quotes` | commercialWrite | Cria com itens calculados |
 | GET/PUT/DELETE | `/api/quotes/[id]` | read / write | Edição bloqueada se `convertido` |
 | POST | `/api/quotes/calculate` | staff read | Preview sem persistir |
-| POST | `/api/quotes/[id]/convert` | commercialWrite | `aprovado` → `TechnicalSheet` |
+| POST | `/api/quotes/[id]/convert` | commercialWrite | `aprovado` → `TechnicalSheet` + **`ProductionOrder`** (`aguardando`) |
 | GET | `/api/quotes/[id]/pdf` | staff read | PDF binário |
 | GET | `/api/quotes/[id]/technical-sheet/pdf` | staff read | PDF BOM |
 | GET/POST | `/api/body-models` | read / commercialWrite | Catálogo |
@@ -69,3 +69,9 @@ Layout em duas colunas (form 7 / resumo 5) com scroll interno e **footer fixo** 
 ## Motor de preço
 
 `src/lib/quotes/pricingEngine.ts` — testável; parâmetros de `quotePricingJson`.
+
+## Conversão e produção (cycle 0720)
+
+- `POST /api/quotes/[id]/convert` cria `TechnicalSheet` (BOM) e `ProductionOrder` 1:1 com status `aguardando`.
+- Não é possível converter duas vezes o mesmo orçamento (409).
+- Ver [production-orders](../production-orders/readme.md).

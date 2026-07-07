@@ -140,3 +140,17 @@
 **Decisão.** UI por cycle de domínio (não transversal); a partir do 0713 paridade Stitch na última stage de produto; interpretação híbrida (domínio novo = fluxo+UI; core = skin; legado veículo = não reskinar).
 
 **Consequências.** Stage 1 do 0713 = polish 0706 + Painel Stitch 01 (shell mock); Stage 7 = paridade 06–08 + 07; KPIs e gráficos do Painel com dados reais pós-0727.
+
+---
+
+## ADR-0010 — Teardown Movix e domínio Lignum fábrica
+
+- **Status:** Accepted
+- **Cycle:** `cycles/Q3-2026/0720-producao-os-estoque/`
+- **Data:** 2026-07-07
+
+**Contexto.** O produto pivotou de revenda de veículos (Movix) para fábrica de carrocerias (Lignum). Cycles 0713 (orçamentos) e 0720 (produção/estoque) entregaram o núcleo industrial; código e schema Movix permaneciam como dívida técnica.
+
+**Decisão.** Remoção física de models `Vehicle`, `ServiceOrder`, `Sale`, `Contract`, `Warranty`, `PromissoryNote`, `Evaluation`, `PurchaseEvaluation`, `UserStockAttentionPreference`, `SenatranLookupAudit` e todas as rotas UI/API associadas. Domínio canónico: `ProductionOrder`, `Material`, `UsedBody`, `Employee`. Sem migração de dados Movix.
+
+**Consequências.** Financeiro (0727) baseia lucro em Quote/OP/Material, não em `Sale`/`Vehicle`. Specs Movix removidas de `spec/features/`. E2E e testes unit focados em fluxo Lignum.

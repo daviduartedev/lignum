@@ -4,42 +4,41 @@ Cycle `0713-orcamentos-fichas-pdf` (shell Stitch 01); KPIs reais de produção/f
 
 ## Objetivo
 
-Visão geral da operação industrial Lignum: indicadores comerciais, produção, alertas e últimos orçamentos. O layout segue **`design/stitch/01-painel-dashboard`**.
+Visão geral da operação industrial Lignum: indicadores comerciais, produção, alertas e últimos orçamentos. Layout **`design/stitch/01-painel-dashboard`**.
 
-> **Histórico Movix:** KPIs de revenda de veículos (`GET /api/dashboard/summary`, stock FIPE, etc.) foram **desactivados** no cycle 0713 (ADR-0009). A spec anterior deste ficheiro descrevia esse painel; comportamento legado permanece na API mas **não** é renderizado em `/`.
+> **Movix removido (0720):** KPIs de revenda de veículos, `GET /api/dashboard/summary` e superfícies `/estoque` veículos eliminados.
 
 ## Rotas e UI
 
-- Rota: **`/`** — componente `src/components/pages/Painel.tsx`
+- Rota: **`/`** — `src/components/pages/Painel.tsx`
 - Subcomponentes: `src/components/painel/` (`PainelKpiCard`, `PainelCharts`, `PainelAlerts`, `PainelRecentQuotesTable`, `painelMockData.ts`)
 
 ## Layout (Stitch 01)
 
 | Bloco | Descrição |
 |-------|-----------|
-| Cabeçalho | Título «Painel de Controle»; botões Exportar (toast informativo) e Novo Orçamento → `/orcamentos/novo` |
-| 4 KPIs | Faturamento do Mês, Lucro Estimado, Em Produção, Orçamentos Pendentes — cards brancos com ícone azul e tendência |
-| Gráficos | Faturamento x Lucro (6 meses, SVG); Produção por Mês (barras) |
-| Alertas | Coluna direita com 4 alertas coloridos + card «Vista da Fábrica» |
-| Tabela | Últimos Orçamentos — dados reais de `GET /api/quotes` (4 itens) ou fallback estático do mock |
-| FAB | Botão `+` fixo → `/os/nova` (tooltip «Nova Ordem de Serviço») |
+| Cabeçalho | «Painel de Controle»; Exportar (toast); **Novo Orçamento** → `/orcamentos/novo` |
+| 4 KPIs | Faturamento, Lucro, Em Produção, Orçamentos Pendentes — mock até 0727 |
+| Gráficos | Faturamento x Lucro; Produção por Mês — mock |
+| Alertas | Coluna direita — mock |
+| Tabela | Últimos Orçamentos — `GET /api/quotes` (4 itens) |
+| FAB | Botão `+` fixo → **`/producao`** (tooltip «Produção») |
 
-## Dados (v1 pós-0713)
+## Dados (v1 pós-0720)
 
 | Área | Fonte |
 |------|--------|
-| KPIs, gráficos, alertas | Estáticos (`painelMockData.ts`) até integração 0720/0727 |
-| Últimos orçamentos | API `/api/quotes?page=1&pageSize=4`; fallback mock se vazio |
-| Exportar | Placeholder — exportação real pós-0727 |
+| KPIs, gráficos, alertas mock | `painelMockData.ts` até 0727 |
+| Últimos orçamentos | API `/api/quotes?page=1&pageSize=4` |
+| Badges de status | `src/lib/quoteLabels.ts` (centralizado) |
+| Em Produção (futuro) | `ProductionOrder` status `andamento` — 0727 |
 
 ## Fora de âmbito nesta entrega
 
-- KPIs e gráficos ligados a financeiro/produção real
-- Alertas de estoque mínimo e contas a pagar (cycles 0720, 0727)
-- Widgets Movix (veículos parados, marcas vendidas, `dashboard/summary`)
+- KPIs e gráficos financeiros reais (cycle 0727)
+- Widgets Movix (removidos)
 
 ## Referências
 
-- Design: `design/stitch/01-painel-dashboard/code.html`
-- ADR-0009 em [`decisions.md`](../../decisions.md)
 - Orçamentos: [features/quotes](../quotes/readme.md)
+- Produção: [features/production-orders](../production-orders/readme.md)

@@ -49,7 +49,18 @@ Ao fechar um cycle, `validate-cycle` registra resultados em `validation.md` com 
 - Playwright/E2E obrigatorio quando o cycle tocar fluxo critico de UI, auth, jornada principal ou regressao conhecida — nao em todo medium/large.
 - Fluxo completo: [`development-workflow.md`](development-workflow.md) e [`harness.md`](harness.md).
 
-## Fora de cobertura por padrao
+## Testes Lignum (cycle 0720)
+
+- `tests/lib/production/deductBomStock.test.ts` — baixa BOM, bloqueio, estorno
+- `tests/api/productionOrders.test.ts` — convert, start, cancel
+- `tests/lib/materials/stockMovement.test.ts`, `minStockAlert.test.ts`
+- `e2e/producao-lignum.spec.ts` — kanban → start OP → materiais; RBAC vendedor
+
+## Baseline conhecido
+
+- `tests/api/routes.test.ts` — 25 testes 401 com `RUN_DB_TESTS=true` (mock sessão); não bloqueia Lignum
+- `e2e/navigation.spec.ts` — 2 testes «rotas removidas» falham (catch-all `[[...slug]]` devolve 200)
+- `e2e/smoke-full.spec.ts` — import helper quebrado; não executar até corrigir
 
 - Upload produtivo com Vercel Blob enquanto o endpoint permanecer desativado.
 - Testes de carga e performance intensiva.

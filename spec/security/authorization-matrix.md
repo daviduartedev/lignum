@@ -26,29 +26,29 @@ Single-tenant (ADR-0006). **Sem tenant isolation.** Escopo por **papel** + `owne
 | `/api/users`, `/api/users/[id]` | admin | admin PATCH | — | 403 | sem `passwordHash` |
 | `POST /api/users/[id]/reset-password` | — | admin | — | 403 | revoga sessão |
 | `/api/audit-logs` | admin | — | — | 403 | paginado |
-| `/api/dashboard/summary`, `/api/crm-summary` | allStaffRead | — | — | — | |
 | `/api/clients/**` | allStaffRead | commercialWrite | — | 404 IDOR | |
-| `/api/sales/**`, `/api/contracts/**` | allStaffRead | commercialWrite | — | 404 | |
 | `/api/leads/**` | allStaffRead | commercialWrite | — | 404 | |
-| `/api/vehicles/**` GET | allStaffRead | — | — | 404 | legado Movix |
-| `/api/vehicles/**` POST/PUT | — | commercialWrite | — | | |
-| `/api/vehicles/[id]` DELETE, restore | — | admin | — | 404 | |
-| `/api/service-orders/**` | allStaffRead | productionWrite | — | 404 | vendedor read-only |
-| `/api/payables/**`, `/api/promissory-notes/**` | allStaffRead | financeWrite | — | 404 | |
+| `/api/quotes/**`, `/api/body-models/**` | allStaffRead | commercialWrite | — | 404 | convert → OP |
+| `/api/production-orders/**` | allStaffRead | productionWrite | — | 404 | start/complete/cancel |
+| `/api/materials/**`, `/api/stock-movements/**` | allStaffRead | productionWrite | — | 404 | |
+| `/api/used-bodies/**` GET | allStaffRead | — | — | 404 | |
+| `/api/used-bodies/**` POST/PUT | — | commercialWrite | — | 404 | status `em_reforma` → productionWrite |
+| `/api/used-bodies/[id]` DELETE | — | admin | — | 404 | |
+| `/api/employees/**` | allStaffRead | admin (mutations) | — | 404 | |
+| `/api/payables/**` | allStaffRead | financeWrite | — | 404 | |
 | `/api/finance/dispatch-notifications` | — | financeWrite | — | 403 | |
 | `/api/erp-setting` | allStaffRead | PUT admin | singleton id=1 | 403 | audit PUT |
-| `/api/senatran/lookup` POST | — | commercialWrite | — | — | |
-| `/api/senatran/usage` | admin | — | — | 403 | |
 | `/api/document-lookup` POST | — | commercialWrite | — | — | CNPJ only |
 | `/api/document-lookup/usage` | admin | — | — | 403 | |
 | `/api/user-notifications/**` | allStaffRead | staffPreferencesWrite / admin | ownerUserId | 404 | |
 | `/api/user/inbox-preferences` | allStaffRead | staffPreferencesWrite | session.user.id | 401 | |
-| `/api/upload` POST | — | commercialWrite | — | — | backend desactivado |
-| `/api/suppliers/**`, `/api/warranties/**`, `/api/evaluations/**`, `/api/purchase-evaluations/**` | allStaffRead | commercialWrite | — | 404 | legado |
-| `/api/sellers` GET | allStaffRead | — | — | | lista vendedores |
-| `/api/sellers` POST | — | admin | — | 403 | cria `vendedor` |
+| `/api/inbox/summary` | allStaffRead | — | — | — | materialLowStock |
+| `/api/upload` POST | — | commercialWrite | — | — | fotos carrocerias |
+| `/api/suppliers/**` | allStaffRead | commercialWrite | — | 404 | |
 
-**Evidência:** `tests/authorization.test.ts`, `tests/api/routes.test.ts` (`RUN_DB_TESTS=true`), `e2e/auth-rbac.spec.ts`.
+**Removido (0720):** `/api/vehicles/**`, `/api/service-orders/**`, `/api/sales/**`, `/api/contracts/**`, `/api/evaluations/**`, `/api/warranties/**`, `/api/promissory-notes/**`, `/api/senatran/**`, `/api/dashboard/summary`, `/api/inbox/stock-attention`, `/api/sellers`.
+
+**Evidência:** `tests/authorization.test.ts`, `e2e/auth-rbac.spec.ts`, `e2e/producao-lignum.spec.ts`.
 
 ### Regras gerais (0629)
 

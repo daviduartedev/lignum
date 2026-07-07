@@ -13,9 +13,9 @@ Single-tenant Lignum (ADR-0006). Sem `Tenant`, `tenantId`, `super_admin` nem `/p
 | Papel | Descrição |
 |-------|-----------|
 | `admin` | Acesso total; gestão de utilizadores e auditoria |
-| `vendedor` | Comercial: clientes, vendas, contratos, leads, veículos (legado Movix) |
-| `financeiro` | Financeiro: payables, promissórias, dispatch financeiro |
-| `producao` | Produção: OS (R/W), dashboard, notificações próprias |
+| `vendedor` | Comercial: clientes, leads, orçamentos, **carrocerias usadas** |
+| `financeiro` | Financeiro: payables, dispatch financeiro |
+| `producao` | Produção: ordens de produção, materiais, alertas estoque; carrocerias `em_reforma` |
 | `read_only` | Leitura nas rotas operacionais permitidas; sem mutações |
 
 Grupos RBAC em `@/lib/apiRoles`: `allStaffReadRoles`, `commercialWriteRoles`, `financeWriteRoles`, `productionWriteRoles`, `adminOnlyRoles`. Matriz rota-a-rota: [`security/authorization-matrix.md`](security/authorization-matrix.md).
