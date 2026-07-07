@@ -1,23 +1,10 @@
 import {
-  ContractStatus,
-  ContractType,
-  FuelType,
-  PaymentMethod,
   PayableOrigin,
   PayableStatus,
   PersonType,
-  PromissoryNoteStatus,
-  PurchaseEvaluationOutcome,
-  PurchaseEvaluationReason,
-  ServiceOrderStatus,
-  ServiceOrderType,
-  TransmissionType,
-  VehicleCautelar,
-  VehicleCategoryKind,
-  VehicleLegalSituation,
-  VehicleStatus,
-  WarrantyStatus,
-  WarrantyType,
+  UsedBodyCondition,
+  UsedBodyStatus,
+  MaterialCategory,
 } from "@prisma/client";
 import { z } from "zod";
 import { zDecimal } from "@/lib/decimal";
@@ -29,74 +16,6 @@ import {
   zTextNoHtmlOptional,
   zTitleNoHtml,
 } from "@/lib/zodHelpers";
-import { isValidChassis } from "@/lib/senatran/normalize";
-
-const partLine = z.object({
-  descricao: zTextNoHtmlBounded(2000),
-  quantidade: z.number(),
-  valor_unit: z.number(),
-  valor_total: z.number(),
-});
-
-const laborLine = z.object({
-  descricao: zTextNoHtmlBounded(2000),
-  horas: z.number(),
-  valor_hora: z.number(),
-  valor_total: z.number(),
-});
-
-export const vehicleCreateSchema = z.object({
-  documentId: z.string().optional(),
-  plate: z.string().min(1),
-  brand: z.string().min(1),
-  model: z.string().min(1),
-  version: z.string().optional(),
-  yearManufacture: z.number().int().optional().default(() => new Date().getFullYear()),
-  yearModel: z.number().int().optional().default(() => new Date().getFullYear()),
-  mileage: z.number().int().optional().default(0),
-  color: z.string().optional(),
-  fuel: z.nativeEnum(FuelType).optional(),
-  transmission: z.nativeEnum(TransmissionType).optional(),
-  fipePrice: zDecimal.optional(),
-  purchasePrice: zDecimal.optional().default(0),
-  estimatedMaintenanceCost: zDecimal.optional(),
-  sellingPrice: zDecimal.optional(),
-  minimumSellingPrice: zDecimal.optional(),
-  status: z.nativeEnum(VehicleStatus),
-  observations: zTextNoHtmlOptional(32_000),
-  mainPhotoUrl: zSafeHttpUrlOrEmpty().optional(),
-  galleryUrls: zSafeHttpUrlArrayOptional(),
-  attachmentUrls: zSafeHttpUrlArrayOptional(),
-  buyerId: z.number().int().positive().optional().nullable(),
-  doorsCount: z.union([z.literal(2), z.literal(4)]).optional().nullable(),
-  lastLicensingDate: z.string().optional().nullable(),
-  purchaseEntryAt: z.string().optional().nullable(),
-  purchaseEntryMileage: z.number().int().min(0).optional().nullable(),
-  purchaseSupplierId: z.number().int().positive().optional().nullable(),
-  purchasePaymentJson: z.unknown().optional().nullable(),
-  renavam: z.union([z.literal(""), z.string().regex(/^\d{9,11}$/)]).optional().default(""),
-  chassis: z
-    .string()
-    .optional()
-    .default("")
-    .refine((s) => !s || (s.length === 17 && isValidChassis(s)), { message: "Chassi inválido (17 caracteres, sem I, O nem Q)." }),
-  legalSituation: z.nativeEnum(VehicleLegalSituation),
-  categoryKind: z.nativeEnum(VehicleCategoryKind),
-  cautelar: z.nativeEnum(VehicleCautelar),
-  speciesCategory: z.string().optional(),
-  registrationCity: z.string().optional(),
-  registrationUf: z.string().max(2).optional(),
-  listingTitle: z.string().optional(),
-  showInStorefront: z.boolean().optional(),
-  officialExtraFields: z.record(z.string(), z.string()).optional(),
-  senatranFieldProvenance: z.record(z.string(), z.enum(["senatran", "manual"])).optional(),
-});
-export const vehicleUpdateSchema = vehicleCreateSchema.partial();
-
-/** Restaurar veículo removido (apenas admin na rota). */
-export const vehicleRestoreSchema = z.object({
-  status: z.nativeEnum(VehicleStatus),
-});
 
 export const clientCreateSchema = z.object({
   documentId: z.string().optional(),
@@ -143,150 +62,12 @@ export const clientDocumentCreateSchema = clientDocumentBaseSchema.superRefine((
 });
 export const clientDocumentUpdateSchema = clientDocumentBaseSchema.partial();
 
-export const promissoryPlanSchema = z.object({
-  totalInstallments: z.number().int().min(1).max(120),
-  installmentAmount: zDecimal,
-  firstDueDate: z.string().min(1),
-  intervalMonths: z.number().int().min(1).max(12),
-});
-
 export const payableInstallmentPlanSchema = z.object({
   totalInstallments: z.number().int().min(1).max(120),
   installmentAmount: zDecimal,
   firstDueDate: z.string().min(1),
   intervalMonths: z.number().int().min(1).max(12),
 });
-
-const saleCreateBaseSchema = z.object({
-  documentId: z.string().optional(),
-  saleDate: z.string().min(1),
-  finalPrice: zDecimal,
-  paymentMethod: z.nativeEnum(PaymentMethod).optional(),
-  financingBank: zTextNoHtmlOptional(255),
-  notes: zTextNoHtmlOptional(16_000),
-  vehicleId: z.number().int().positive(),
-  clientId: z.number().int().positive(),
-  sellerUserId: z.number().int().positive().optional(),
-  sellerName: zTitleNoHtml(255).optional(),
-  promissoryPlan: promissoryPlanSchema.optional(),
-});
-
-export const saleCreateSchema = saleCreateBaseSchema.superRefine((data, ctx) => {
-  if (data.paymentMethod === PaymentMethod.promissoria && !data.promissoryPlan) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "Informe o plano de promissória (parcelas e vencimentos).",
-      path: ["promissoryPlan"],
-    });
-  }
-});
-export const saleUpdateSchema = saleCreateBaseSchema.partial();
-
-export const contractCreateSchema = z.object({
-  documentId: z.string().optional(),
-  contractType: z.nativeEnum(ContractType),
-  contractValue: zDecimal,
-  contractDate: z.string().min(1),
-  status: z.nativeEnum(ContractStatus),
-  specialClauses: zTextNoHtmlOptional(32_000),
-  witness1Name: zTextNoHtmlOptional(255),
-  witness1Document: z.string().optional(),
-  witness2Name: zTextNoHtmlOptional(255),
-  witness2Document: z.string().optional(),
-  vehicleId: z.number().int().positive(),
-  clientId: z.number().int().positive(),
-});
-export const contractUpdateSchema = contractCreateSchema.partial();
-
-export const evaluationCreateSchema = z.object({
-  documentId: z.string().optional(),
-  score: z.number().optional(),
-  observations: zTextNoHtmlOptional(32_000),
-  technicalNotes: zTextNoHtmlOptional(32_000),
-  checklistJson: z.unknown().nullable().optional(),
-  photoUrls: zSafeHttpUrlArrayOptional(),
-  vehicleId: z.number().int().positive(),
-});
-export const evaluationUpdateSchema = evaluationCreateSchema.partial();
-
-const purchaseEvaluationBaseSchema = z.object({
-  documentId: z.string().optional(),
-  vehicleId: z.number().int().positive(),
-  clientId: z.number().int().positive().optional().nullable(),
-  outcome: z.nativeEnum(PurchaseEvaluationOutcome),
-  reasonCode: z.nativeEnum(PurchaseEvaluationReason).optional().nullable(),
-  reasonDetail: z
-    .string()
-    .max(8000)
-    .nullable()
-    .optional()
-    .refine((s) => s === undefined || s === null || !/<\/?[a-zA-Z!]/.test(s), {
-      message: "HTML não é permitido neste campo.",
-    }),
-});
-
-export const purchaseEvaluationCreateSchema = purchaseEvaluationBaseSchema.superRefine((data, ctx) => {
-  if (data.outcome === PurchaseEvaluationOutcome.nao_comprado && !data.reasonCode) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "Selecione o motivo da não compra.",
-      path: ["reasonCode"],
-    });
-  }
-  if (data.reasonCode === PurchaseEvaluationReason.outro && !String(data.reasonDetail ?? "").trim()) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "Descreva o motivo.",
-      path: ["reasonDetail"],
-    });
-  }
-});
-export const purchaseEvaluationUpdateSchema = purchaseEvaluationBaseSchema.omit({ vehicleId: true }).partial();
-
-export const serviceOrderCreateSchema = z.object({
-  documentId: z.string().optional(),
-  workshopName: zTitleNoHtml(255),
-  serviceType: z.nativeEnum(ServiceOrderType),
-  serviceTypeOtherText: zTextNoHtmlOptional(255),
-  status: z.nativeEnum(ServiceOrderStatus),
-  entryDate: z.string().min(1),
-  dueDate: z.string().optional().nullable(),
-  responsible: zTextNoHtmlOptional(255),
-  description: zTextNoHtmlOptional(16_000),
-  partsJson: z.array(partLine).nullable().optional(),
-  laborJson: z.array(laborLine).nullable().optional(),
-  totalAmount: zDecimal,
-  photoUrls: zSafeHttpUrlArrayOptional(),
-  vehicleId: z.number().int().positive(),
-});
-export const serviceOrderUpdateSchema = serviceOrderCreateSchema.partial();
-
-export const warrantyCreateSchema = z.object({
-  documentId: z.string().optional(),
-  warrantyType: z.nativeEnum(WarrantyType),
-  startDate: z.string().min(1),
-  endDate: z.string().min(1),
-  coverageValue: zDecimal,
-  status: z.nativeEnum(WarrantyStatus),
-  notes: zTextNoHtmlOptional(16_000),
-  vehicleId: z.number().int().positive(),
-  clientId: z.number().int().positive(),
-});
-export const warrantyUpdateSchema = warrantyCreateSchema.partial();
-
-export const promissoryNoteCreateSchema = z.object({
-  documentId: z.string().optional(),
-  installmentNumber: z.number().int().positive(),
-  totalInstallments: z.number().int().positive(),
-  dueDate: z.string().min(1),
-  amount: zDecimal,
-  status: z.nativeEnum(PromissoryNoteStatus),
-  paymentDate: z.string().optional().nullable(),
-  notes: zTextNoHtmlOptional(16_000),
-  clientId: z.number().int().positive(),
-  vehicleId: z.number().int().positive(),
-});
-export const promissoryNoteUpdateSchema = promissoryNoteCreateSchema.partial();
 
 export const payableCreateSchema = z.object({
   documentId: z.string().optional(),
@@ -297,7 +78,6 @@ export const payableCreateSchema = z.object({
   status: z.nativeEnum(PayableStatus).optional(),
   paymentDate: z.string().optional().nullable(),
   notes: zTextNoHtmlOptional(16_000),
-  vehicleId: z.number().int().positive().optional().nullable(),
   supplierId: z.number().int().positive().optional().nullable(),
   installmentPlan: payableInstallmentPlanSchema.optional(),
 });
@@ -376,11 +156,6 @@ export const erpSettingUpdateSchema = z.object({
   companyZip: z.string().optional(),
   companyPhone: z.string().optional(),
   companyEmail: z.union([z.string().email(), z.literal("")]).optional(),
-  alertGiroEnabled: z.boolean().optional(),
-  alertGiroWarnDays: z.number().int().optional(),
-  alertGiroCritDays: z.number().int().optional(),
-  alertPromEnabled: z.boolean().optional(),
-  alertPromDaysBefore: z.number().int().optional(),
   alertDocsEnabled: z.boolean().optional(),
   alertEmailDigestEnabled: z.boolean().optional(),
   financeEventNotifyDaysBefore: z.number().int().min(0).max(30).optional(),
@@ -445,11 +220,6 @@ export const bodyModelUpdateSchema = bodyModelCreateSchema
   .partial()
   .refine((data) => Object.keys(data).length > 0, { message: "Nenhum campo para actualizar." });
 
-export const inboxStockActionSchema = z.object({
-  vehicleId: z.number().int().positive(),
-  action: z.enum(["dismiss", "snooze"]),
-});
-
 export const userInboxPreferencesBodySchema = z.object({
   showDashboardAttentionStripe: z.boolean(),
   financeEventNotifyDaysBeforeOverride: z.number().int().min(0).max(30).optional().nullable(),
@@ -484,3 +254,77 @@ export const sellerCreateSchema = z.object({
   password: z.string().min(8),
   name: zTitleNoHtml(255),
 });
+
+const usedBodyFields = z.object({
+  documentId: z.string().optional(),
+  title: zTitleNoHtml(255),
+  lengthM: zDecimal,
+  widthM: zDecimal,
+  heightM: zDecimal.optional().nullable(),
+  condition: z.nativeEnum(UsedBodyCondition),
+  entryValue: zDecimal,
+  saleValue: zDecimal.optional().nullable(),
+  status: z.nativeEnum(UsedBodyStatus).optional(),
+  observations: zTextNoHtmlOptional(8000),
+  mainPhotoUrl: zSafeHttpUrlOrEmpty().optional(),
+  galleryUrls: zSafeHttpUrlArrayOptional(),
+  supplierId: z.number().int().positive().optional().nullable(),
+});
+
+export const usedBodyCreateSchema = usedBodyFields.extend({
+  status: z.nativeEnum(UsedBodyStatus).optional().default("disponivel"),
+});
+
+export const usedBodyUpdateSchema = usedBodyFields.partial();
+
+export const usedBodyStatusChangeSchema = z.object({
+  status: z.nativeEnum(UsedBodyStatus),
+  notes: zTextNoHtmlOptional(2000),
+});
+
+export const materialCreateSchema = z.object({
+  documentId: z.string().optional(),
+  sku: z.string().min(1).max(32).regex(/^[A-Z0-9-]+$/i, "SKU inválido."),
+  name: zTitleNoHtml(255),
+  category: z.nativeEnum(MaterialCategory),
+  unit: z.string().min(1).max(16),
+  minStock: zDecimal.optional().default(0),
+  avgCost: zDecimal.optional().default(0),
+  supplierId: z.number().int().positive().optional().nullable(),
+});
+
+export const materialUpdateSchema = materialCreateSchema.partial().omit({ sku: true });
+
+export const stockMovementCreateSchema = z
+  .object({
+    materialId: z.number().int().positive(),
+    type: z.enum(["entrada", "saida"]),
+    quantity: zDecimal,
+    unitCost: zDecimal.optional(),
+    notes: zTextNoHtmlOptional(2000),
+  })
+  .superRefine((data, ctx) => {
+    if (Number(data.quantity) <= 0) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Quantidade deve ser positiva.", path: ["quantity"] });
+    }
+    if (data.type === "entrada" && data.unitCost != null && Number(data.unitCost) < 0) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Custo unitário inválido.", path: ["unitCost"] });
+    }
+  });
+
+export const productionOrderUpdateSchema = z.object({
+  notes: zTextNoHtmlOptional(8000),
+  photoUrls: zSafeHttpUrlArrayOptional(),
+  employeeIds: z.array(z.number().int().positive()).optional(),
+});
+
+export const employeeCreateSchema = z.object({
+  documentId: z.string().optional(),
+  name: zTitleNoHtml(255),
+  roleTitle: zTitleNoHtml(120),
+  commissionPct: zDecimal.optional().nullable(),
+  isActive: z.boolean().optional().default(true),
+  userId: z.number().int().positive().optional().nullable(),
+});
+
+export const employeeUpdateSchema = employeeCreateSchema.partial();

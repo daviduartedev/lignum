@@ -4,36 +4,47 @@ import { cn } from "@/components/ui/utils";
 type ListingStatCellProps = {
   label: string;
   value: ReactNode;
-  /** Oculta o label interno quando o `<th>` já identifica a coluna. */
   hideLabel?: boolean;
   className?: string;
   valueClassName?: string;
 };
 
-/** Cabeçalho de coluna estatística - alinhar com células `ListingStatCell`. */
+// ─── Constantes de célula ────────────────────────────────────────────────────
+// Padrão: py-3.5 garante linhas confortáveis; px-4 no meio, px-6 nas bordas via first/last.
+
 export const listingThStat =
-  "pb-3 px-2 text-xs font-medium uppercase tracking-wider text-muted-foreground text-center align-bottom whitespace-nowrap";
+  "py-3 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground text-center align-bottom whitespace-nowrap first:pl-6 last:pr-6";
 
-/** Célula estatística - conteúdo centrado sob o cabeçalho. */
-export const listingTdStat = "py-3 px-2 align-middle text-center";
+export const listingTdStat =
+  "py-3.5 px-4 align-middle text-center text-sm first:pl-6 last:pr-6";
 
-/** Coluna de texto livre (nome, veículo, descrição). */
 export const listingThText =
-  "pb-3 px-3 text-xs font-medium uppercase tracking-wider text-muted-foreground text-left align-bottom";
+  "py-3 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground text-left align-bottom first:pl-6 last:pr-6";
 
-export const listingTdText = "py-3 px-3 align-middle text-left";
+export const listingTdText =
+  "py-3.5 px-4 align-middle text-left text-sm first:pl-6 last:pr-6";
 
 export const listingThActions =
-  "pb-3 px-3 text-xs font-medium uppercase tracking-wider text-muted-foreground text-right align-bottom min-w-[8.5rem]";
+  "py-3 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground text-right align-bottom whitespace-nowrap last:pr-6";
 
-export const listingTdActions = "py-3 px-3 align-middle text-right whitespace-nowrap";
+export const listingTdActions =
+  "py-3.5 px-4 align-middle text-right whitespace-nowrap last:pr-6";
 
-/** Label acima, valor centralizado abaixo - padrão de listagens (referência: `/estoque`). */
-export function ListingStatCell({ label, value, hideLabel, className, valueClassName }: ListingStatCellProps) {
+// ─── Componente composto ──────────────────────────────────────────────────────
+
+export function ListingStatCell({
+  label,
+  value,
+  hideLabel,
+  className,
+  valueClassName,
+}: ListingStatCellProps) {
   return (
     <div className={cn("mx-auto flex w-full flex-col items-center text-center min-w-0", className)}>
       {!hideLabel ? (
-        <span className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground leading-none">{label}</span>
+        <span className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground leading-none">
+          {label}
+        </span>
       ) : null}
       <div
         className={cn(

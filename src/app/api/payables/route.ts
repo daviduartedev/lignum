@@ -27,15 +27,11 @@ export const GET = withRole(allStaffReadRoles, async (req: NextRequest) => {
   const { skip, take, page, pageSize } = parsePagination(searchParams);
   const statusFilter = searchParams.get("status");
   const origin = searchParams.get("origin");
-  const vehicleId = searchParams.get("vehicleId");
   const supplierId = searchParams.get("supplierId");
   const q = searchParams.get("q")?.trim();
 
   const parts: Prisma.PayableWhereInput[] = [];
 
-  if (vehicleId && Number.isFinite(Number(vehicleId))) {
-    parts.push({ vehicleId: Number(vehicleId) });
-  }
   if (supplierId && Number.isFinite(Number(supplierId))) {
     parts.push({ supplierId: Number(supplierId) });
   }
@@ -99,7 +95,6 @@ export const POST = withRole(financeWriteRoles, async (req: NextRequest) => {
             status: d.status ?? "aberta",
             paymentDate: parseOptionalDate(d.paymentDate ?? undefined),
             notes: d.notes,
-            vehicleId: d.vehicleId ?? undefined,
             supplierId: d.supplierId ?? undefined,
           },
         });
@@ -121,7 +116,6 @@ export const POST = withRole(financeWriteRoles, async (req: NextRequest) => {
       status: d.status ?? "aberta",
       paymentDate: parseOptionalDate(d.paymentDate ?? undefined),
       notes: d.notes,
-      vehicleId: d.vehicleId ?? undefined,
       supplierId: d.supplierId ?? undefined,
     },
   });

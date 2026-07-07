@@ -1,6 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import { hash } from "bcryptjs";
 import { ERP_SETTING_DEFAULTS } from "../src/lib/erpSettingDefaults";
+import { BOM_CATALOG_SEED } from "../src/lib/materials/bomCatalogSeed";
+import { recordStockMovement } from "../src/lib/materials/stockMovement";
 import { DEFAULT_QUOTE_PRICING } from "../src/lib/quotes/quotePricingDefaults";
 
 const prisma = new PrismaClient();
@@ -57,11 +59,6 @@ async function main() {
       companyZip: d.company_zip,
       companyPhone: d.company_phone,
       companyEmail: d.company_email,
-      alertGiroEnabled: d.alert_giro_enabled,
-      alertGiroWarnDays: d.alert_giro_warn_days,
-      alertGiroCritDays: d.alert_giro_crit_days,
-      alertPromEnabled: d.alert_prom_enabled,
-      alertPromDaysBefore: d.alert_prom_days_before,
       alertDocsEnabled: d.alert_docs_enabled,
       alertEmailDigestEnabled: d.alert_email_digest_enabled,
       financeEventNotifyDaysBefore: d.finance_event_notify_days_before,
@@ -90,6 +87,146 @@ async function main() {
     const existing = await prisma.bodyModel.findFirst({ where: { name: m.name } });
     if (!existing) {
       await prisma.bodyModel.create({ data: m });
+    }
+  }
+
+  const usedBodiesSeed = [
+    {
+      title: "Graneleira padrão 8,50m",
+      lengthM: 8.5,
+      widthM: 2.45,
+      condition: "excelente" as const,
+      entryValue: 4200,
+      saleValue: 18500,
+      status: "disponivel" as const,
+      observations: "Estrutura em bom estado, pronta para revenda.",
+    },
+    {
+      title: "Carga seca Scania R440",
+      lengthM: 7.2,
+      widthM: 2.4,
+      condition: "bom" as const,
+      entryValue: 3500,
+      saleValue: 15200,
+      status: "reservada" as const,
+    },
+    {
+      title: "Plataforma metálica 7,00m",
+      lengthM: 7,
+      widthM: 2.5,
+      heightM: 0.6,
+      condition: "regular" as const,
+      entryValue: 2800,
+      saleValue: 9800,
+      status: "disponivel" as const,
+    },
+    {
+      title: "Baú frigorífico usado",
+      lengthM: 6.8,
+      widthM: 2.45,
+      condition: "bom" as const,
+      entryValue: 12000,
+      saleValue: 28500,
+      status: "em_reforma" as const,
+      observations: "Aguardando troca de isolamento térmico.",
+    },
+    {
+      title: "Sider seminovo",
+      lengthM: 8.2,
+      widthM: 2.48,
+      condition: "excelente" as const,
+      entryValue: 5100,
+      saleValue: 22000,
+      status: "vendida" as const,
+    },
+  ];
+
+  for (const item of usedBodiesSeed) {
+    const exists = await prisma.usedBody.findFirst({ where: { title: item.title } });
+    if (exists) continue;
+    const created = await prisma.usedBody.create({
+      data: {
+        title: item.title,
+        lengthM: item.lengthM,
+        widthM: item.widthM,
+        heightM: "heightM" in item ? item.heightM : undefined,
+        condition: item.condition,
+        entryValue: item.entryValue,
+        saleValue: item.saleValue,
+        status: item.status,
+        observations: item.observations,
+      },
+    });
+    await prisma.usedBodyStatusHistory.create({
+      data: {
+        usedBodyId: created.id,
+        fromStatus: null,
+        toStatus: item.status,
+        notes: "Seed inicial",
+      },
+    });
+  }
+
+  for (const item of BOM_CATALOG_SEED) {
+    const exists = await prisma.material.findUnique({ where: { sku: item.sku } });
+    if (exists) continue;
+
+    const material = await prisma.material.create({
+      data: {
+        sku: item.sku,
+        name: item.name,
+        category: item.category,
+        unit: item.unit,
+        minStock: item.minStock,
+        avgCost: item.avgCost,
+        currentStock: 0,
+      },
+    });
+
+    if (item.initialStock > 0) {
+      await recordStockMovement({
+        materialId: material.id,
+        type: "entrada",
+        quantity: item.initialStock,
+        unitCost: item.avgCost,
+        notes: "Seed inicial",
+      });
+    }
+  }
+
+  // Material deliberadamente abaixo do mínimo para testar alertas
+  const lowSku = "EST-PER";
+  const lowMat = await prisma.material.findUnique({ where: { sku: lowSku } });
+  if (lowMat) {
+    const current = Number(lowMat.currentStock);
+    const min = Number(lowMat.minStock);
+    if (current >= min) {
+      await recordStockMovement({
+        materialId: lowMat.id,
+        type: "saida",
+        quantity: Math.max(1, current - min + 1),
+        notes: "Seed: forçar abaixo do mínimo",
+      });
+    }
+  }
+
+  const employeesSeed = [
+    { name: "Roberto Silva", roleTitle: "Marceneiro", commissionPct: 2.5 },
+    { name: "Ana Costa", roleTitle: "Pintora", commissionPct: 2 },
+    { name: "Carlos Mendes", roleTitle: "Soldador", commissionPct: 2.5 },
+    { name: "Juliana Rocha", roleTitle: "Montadora", commissionPct: 2 },
+  ];
+  for (const emp of employeesSeed) {
+    const exists = await prisma.employee.findFirst({ where: { name: emp.name } });
+    if (!exists) {
+      await prisma.employee.create({
+        data: {
+          name: emp.name,
+          roleTitle: emp.roleTitle,
+          commissionPct: emp.commissionPct,
+          isActive: true,
+        },
+      });
     }
   }
 

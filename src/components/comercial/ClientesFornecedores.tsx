@@ -28,7 +28,6 @@ import { EntityAvatar, StitchKpiCard, StitchPageHeader, StitchTableShell } from 
 import { cn } from "@/components/ui/utils";
 import { useClient, useClientsPage, useCreateClient, useDeleteClient, useUpdateClient } from "@/hooks/useClients";
 import { useCrmSummary } from "@/hooks/useCrmSummary";
-import { useSales } from "@/hooks/useSales";
 import { FornecedoresPanel } from "@/components/comercial/FornecedoresPanel";
 import {
   ClientFormFields,
@@ -50,7 +49,6 @@ export function ClientesFornecedores() {
   const deferredSearch = useDeferredValue(search.trim());
   const { data: pageData, isLoading, isError, refetch } = useClientsPage(page, { q: deferredSearch });
   const { data: crm, isLoading: loadingCrm } = useCrmSummary();
-  const { data: rawSales = [] } = useSales();
   const deleteMutation = useDeleteClient();
   const createMutation = useCreateClient();
   const updateMutation = useUpdateClient();
@@ -81,17 +79,7 @@ export function ClientesFornecedores() {
   const normalizedClients = useMemo(() => {
     return rawClients.map((c: Client) => {
       const a = clientAttrs(c);
-      const sales = rawSales.filter((s) => s.attributes.client?.data?.id === c.id);
-      const totalGasto = sales.reduce((acc, s) => acc + (Number(s.attributes.final_price) || 0), 0);
-      const compras = sales.length;
-      const sortedSales = [...sales].sort(
-        (x, y) =>
-          new Date(y.attributes.sale_date).getTime() - new Date(x.attributes.sale_date).getTime(),
-      );
-      let ultimaCompra = "-";
-      if (sortedSales.length > 0 && sortedSales[0].attributes.sale_date) {
-        ultimaCompra = new Date(`${sortedSales[0].attributes.sale_date}T12:00:00`).toLocaleDateString("pt-BR");
-      }
+      const cadastro = a.createdAt ? new Date(a.createdAt).toLocaleDateString("pt-BR") : "-";
       return {
         id: c.documentId || String(c.id),
         routeId: String(c.documentId ?? c.id),
@@ -102,12 +90,10 @@ export function ClientesFornecedores() {
         cidade: a.city || "-",
         personType: a.person_type,
         createdAt: a.createdAt,
-        compras,
-        totalGasto,
-        ultimaCompra,
+        cadastro,
       };
     });
-  }, [rawClients, rawSales]);
+  }, [rawClients]);
 
   const kpis = useMemo(
     () => ({
@@ -293,7 +279,7 @@ export function ClientesFornecedores() {
                   <th className={`${listingThText} text-xs uppercase tracking-wider text-muted-foreground`}>Telefone</th>
                   <th className={`${listingThText} text-xs uppercase tracking-wider text-muted-foreground`}>Cidade</th>
                   <th className={`${listingThText} text-xs uppercase tracking-wider text-muted-foreground`}>Tipo</th>
-                  <th className={`${listingThStat} text-xs uppercase tracking-wider text-muted-foreground`}>Última compra</th>
+                  <th className={`${listingThStat} text-xs uppercase tracking-wider text-muted-foreground`}>Cadastro</th>
                   <th className={`${listingThActions} text-xs uppercase tracking-wider text-muted-foreground`}>Ações</th>
                 </tr>
               </thead>
@@ -323,7 +309,7 @@ export function ClientesFornecedores() {
                           {c.personType === "PJ" ? "PJ" : c.personType === "PF" ? "PF" : "Cliente"}
                         </Badge>
                       </td>
-                      <td className={`${listingTdStat} py-4 text-sm tabular-nums text-muted-foreground`}>{c.ultimaCompra}</td>
+                      <td className={`${listingTdStat} py-4 text-sm tabular-nums text-muted-foreground`}>{c.cadastro}</td>
                       <td className={`${listingTdActions} py-4`}>
                         <Button variant="ghost" size="sm" onClick={() => openEditDialog(c.routeId)}>
                           Editar

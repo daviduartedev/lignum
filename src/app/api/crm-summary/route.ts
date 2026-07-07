@@ -1,9 +1,8 @@
 import type { NextRequest } from "next/server";
-import { allStaffReadRoles, commercialWriteRoles } from "@/lib/apiRoles";
+import { allStaffReadRoles } from "@/lib/apiRoles";
 import { ok } from "@/lib/jsonResponse";
-import type { RouteContext } from "@/lib/withRole";
-import { withRole } from "@/lib/withRole";
 import { prisma } from "@/lib/db";
+import { withRole } from "@/lib/withRole";
 
 export const GET = withRole(allStaffReadRoles, async (_req: NextRequest) => {
   const now = new Date();
@@ -11,12 +10,12 @@ export const GET = withRole(allStaffReadRoles, async (_req: NextRequest) => {
   const sixMonthsAgo = new Date(now);
   sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
-  const [totalClients, clientsNewThisMonth, activeSaleGroups, totalSuppliers] = await prisma.$transaction([
+  const [totalClients, clientsNewThisMonth, activeQuoteGroups, totalSuppliers] = await prisma.$transaction([
     prisma.client.count(),
     prisma.client.count({ where: { createdAt: { gte: monthStart } } }),
-    prisma.sale.groupBy({
+    prisma.quote.groupBy({
       by: ["clientId"],
-      where: { saleDate: { gte: sixMonthsAgo } },
+      where: { createdAt: { gte: sixMonthsAgo } },
       orderBy: { clientId: "asc" },
     }),
     prisma.supplier.count(),
@@ -25,7 +24,7 @@ export const GET = withRole(allStaffReadRoles, async (_req: NextRequest) => {
   return ok({
     totalClients,
     clientsNewThisMonth,
-    clientsActiveLast6Months: activeSaleGroups.length,
+    clientsActiveLast6Months: activeQuoteGroups.length,
     totalSuppliers,
   });
 });

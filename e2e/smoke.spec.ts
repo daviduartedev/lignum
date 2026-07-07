@@ -8,9 +8,6 @@ test.describe("Smoke (sessão admin, seed mínimo)", () => {
     await page.goto("/clientes");
     await expect(page.getByRole("heading", { name: /Clientes/i }).first()).toBeVisible();
 
-    await page.goto("/os");
-    await expect(page.getByRole("heading", { name: /Ordens de serviço|Ordem de serviço/i }).first()).toBeVisible();
-
     await page.goto("/configuracoes");
     await expect(page.getByRole("heading", { name: /Configurações/i }).first()).toBeVisible();
   });

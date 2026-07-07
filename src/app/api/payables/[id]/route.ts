@@ -45,7 +45,6 @@ export const PUT = withRole(financeWriteRoles, async (req: NextRequest, ctx: Rou
     ...(d.status !== undefined ? { status: d.status } : {}),
     ...(d.paymentDate !== undefined ? { paymentDate: parseOptionalDate(d.paymentDate ?? undefined) } : {}),
     ...(d.notes !== undefined ? { notes: d.notes } : {}),
-    ...(d.vehicleId !== undefined ? { vehicleId: d.vehicleId ?? null } : {}),
     ...(d.supplierId !== undefined ? { supplierId: d.supplierId ?? null } : {}),
   } as Record<string, unknown>);
 

@@ -1,6 +1,5 @@
 // Lignum Gestão — schema Prisma (single-tenant)
-// Fonte de campos: frontend/src/types/index.ts + patches em strapi/patches/
-// Media Strapi → URLs armazenadas (Vercel Blob) em campos String / String[] / Json
+// Media → URLs armazenadas (Vercel Blob) em campos String / String[] / Json
 
 generator client {
   provider = "prisma-client-js"
@@ -31,73 +30,51 @@ enum AuditAction {
   erp_setting_updated
 }
 
-enum VehicleStatus {
-  disponivel
-  repasse
-  reservado
-  vendido
-  removido
-  /** Avaliação de compra concluída como não comprado, fora do estoque ativo */
-  standby_nao_compra
-}
-
-enum FuelType {
-  flex
-  gasolina
-  diesel
-  eletrico
-  hibrido
-}
-
-enum TransmissionType {
-  manual
-  automatico
-  cvt
-}
-
-enum PaymentMethod {
-  financiamento
-  a_vista
-  cartao
-  troca
-  pix
-  promissoria
-}
-
-enum PurchaseEvaluationOutcome {
-  pendente
-  nao_comprado
-  comprado
-}
-
-enum PurchaseEvaluationReason {
-  preco
-  estado
-  documentacao
-  desistencia
-  outro
-}
-
-enum ContractType {
-  compra_venda
-  financiamento
-  consorcio
-  locacao
-}
-
-enum ContractStatus {
-  rascunho
-  pendente_assinatura
-  assinado
-  cancelado
-}
-
 enum QuoteStatus {
   rascunho
   enviado
   aprovado
   convertido
   cancelado
+}
+
+enum UsedBodyStatus {
+  disponivel
+  reservada
+  vendida
+  em_reforma
+}
+
+enum UsedBodyCondition {
+  excelente
+  bom
+  regular
+  ruim
+}
+
+enum MaterialCategory {
+  madeira
+  ferragens
+  tintas
+  estrutura
+  tampa
+  assoalho
+  acabamento
+  consumivel
+  opcional
+}
+
+enum StockMovementType {
+  entrada
+  saida
+  estorno
+}
+
+enum ProductionOrderStatus {
+  aguardando
+  andamento
+  concluida
+  cancelada
 }
 
 enum BodyCoverStyle {
@@ -118,45 +95,6 @@ enum BodyFinishType {
   lamina_natural
 }
 
-enum ServiceOrderType {
-  manutencao
-  revisao
-  funilaria
-  eletrica
-  mecanica
-  estetica
-  outros
-}
-
-enum ServiceOrderStatus {
-  aguardando
-  andamento
-  concluida
-  cancelada
-}
-
-enum WarrantyType {
-  motor_cambio
-  completa
-  motor
-  acessorios
-  outros
-}
-
-enum WarrantyStatus {
-  ativa
-  vencendo
-  expirada
-  cancelada
-}
-
-enum PromissoryNoteStatus {
-  aberta
-  paga
-  vencida
-  cancelada
-}
-
 enum PayableStatus {
   aberta
   paga
@@ -171,39 +109,14 @@ enum PersonType {
 
 enum PayableOrigin {
   manual
-  compra_veiculo
   outro
 }
 
 enum FinanceEventType {
-  promissory_note_due
   payable_due
 }
 
-/// Situação legal na fonte consultada (não confundir com VehicleStatus de estoque).
-enum VehicleLegalSituation {
-  regular
-  irregular
-  com_restricao
-}
-
-enum VehicleCategoryKind {
-  carro
-  moto
-  onibus
-  jet_ski
-  outros
-}
-
-enum VehicleCautelar {
-  nao
-  leilao
-  sinistro
-  leilao_sinistro
-  outras_restricoes
-}
-
-/// Utilizador da aplicação (substitui users-permissions do Strapi).
+/// Utilizador da aplicação.
 model User {
   id                           Int       @id @default(autoincrement())
   email                        String    @unique
@@ -220,13 +133,13 @@ model User {
   updatedAt                    DateTime  @updatedAt @map("updated_at")
 
   notifications              UserNotification[]
-  senatranLookupAudits       SenatranLookupAudit[]
   documentLookupAudits       DocumentLookupAudit[]
   auditLogs                  AuditLog[]
-  stockAttentionPreferences  UserStockAttentionPreference[]
   financeNotificationDispatches FinanceNotificationDispatch[]
-  sales                      Sale[] @relation("SaleSeller")
   quotesCreated              Quote[] @relation("QuoteCreator")
+  usedBodyStatusChanges      UsedBodyStatusHistory[]
+  stockMovementsCreated      StockMovement[]         @relation("StockMovementCreator")
+  employee                   Employee?
 
   @@map("users")
 }
@@ -245,89 +158,6 @@ model AuditLog {
   @@index([action, createdAt])
   @@index([resourceType, createdAt])
   @@map("audit_logs")
-}
-
-model Vehicle {
-  id                         Int                @id @default(autoincrement())
-  documentId                 String?            @unique @map("document_id")
-  plate                      String
-  brand                      String
-  model                      String
-  version                    String?
-  yearManufacture            Int                @map("year_manufacture")
-  yearModel                  Int                @map("year_model")
-  mileage                    Int
-  color                      String?
-  fuel                       FuelType?
-  transmission               TransmissionType?
-  fipePrice                  Decimal?           @map("fipe_price") @db.Decimal(14, 2)
-  purchasePrice              Decimal            @map("purchase_price") @db.Decimal(14, 2)
-  estimatedMaintenanceCost   Decimal?           @map("estimated_maintenance_cost") @db.Decimal(14, 2)
-  sellingPrice               Decimal?           @map("selling_price") @db.Decimal(14, 2)
-  minimumSellingPrice        Decimal?           @map("minimum_selling_price") @db.Decimal(14, 2)
-  status                     VehicleStatus
-  observations               String?
-
-  /** Campos operacionais de compra (opcionais). */
-  doorsCount                 Int?               @map("doors_count")
-  lastLicensingDate          DateTime?          @map("last_licensing_date") @db.Date
-  purchaseEntryAt            DateTime?          @map("purchase_entry_at")
-  purchaseEntryMileage       Int?               @map("purchase_entry_mileage")
-  purchaseSupplierId         Int?               @map("purchase_supplier_id")
-  purchaseSupplier           Supplier?          @relation("VehiclePurchaseSupplier", fields: [purchaseSupplierId], references: [id], onDelete: SetNull)
-  purchasePaymentJson        Json?              @map("purchase_payment_json")
-
-  mainPhotoUrl               String?            @map("main_photo_url")
-  galleryUrls                String[]           @default([]) @map("gallery_urls")
-  attachmentUrls             String[]           @default([]) @map("attachment_urls")
-  buyerId                    Int?               @map("buyer_id")
-  buyer                      Client?            @relation("VehicleBuyer", fields: [buyerId], references: [id])
-  renavam                    String             @default("")
-  chassis                    String             @default("")
-  legalSituation             VehicleLegalSituation @default(regular) @map("legal_situation")
-  categoryKind               VehicleCategoryKind @default(carro) @map("category_kind")
-  cautelar                   VehicleCautelar    @default(nao)
-  speciesCategory            String?            @map("species_category")
-  registrationCity           String?            @map("registration_city")
-  registrationUf             String?            @map("registration_uf")
-  listingTitle               String?            @map("listing_title")
-  officialExtraFields        Json?              @map("official_extra_fields")
-  senatranFieldProvenance    Json?              @map("senatran_field_provenance")
-  createdAt                  DateTime           @default(now()) @map("created_at")
-  updatedAt                  DateTime           @updatedAt @map("updated_at")
-
-  sale           Sale?
-  contracts      Contract[]
-  evaluations    Evaluation[]
-  purchaseEvaluations PurchaseEvaluation[]
-  serviceOrders  ServiceOrder[]
-  warranties     Warranty[]
-  promissoryNotes             PromissoryNote[]
-  payables                   Payable[]
-  stockAttentionPreferences   UserStockAttentionPreference[]
-  storefrontLeads            StorefrontLead[]
-
-  @@index([status])
-  @@index([plate])
-  @@index([buyerId])
-  @@index([purchaseSupplierId])
-  @@map("vehicles")
-}
-
-model UserStockAttentionPreference {
-  id           Int       @id @default(autoincrement())
-  userId       Int       @map("user_id")
-  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  vehicleId    Int       @map("vehicle_id")
-  vehicle      Vehicle   @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
-  snoozedUntil DateTime? @map("snoozed_until")
-  dismissed    Boolean   @default(false)
-  createdAt    DateTime  @default(now()) @map("created_at")
-  updatedAt    DateTime  @updatedAt @map("updated_at")
-
-  @@unique([userId, vehicleId])
-  @@index([userId])
-  @@map("user_stock_attention_preferences")
 }
 
 model Client {
@@ -354,13 +184,7 @@ model Client {
   createdAt          DateTime    @default(now()) @map("created_at")
   updatedAt          DateTime    @updatedAt @map("updated_at")
 
-  boughtVehicles Vehicle[]      @relation("VehicleBuyer")
-  sales          Sale[]
-  contracts      Contract[]
-  warranties     Warranty[]
-  promissoryNotes PromissoryNote[]
   documents      ClientDocument[]
-  purchaseEvaluations PurchaseEvaluation[]
   quotes         Quote[]
 
   @@index([document])
@@ -384,159 +208,6 @@ model ClientDocument {
   @@map("client_documents")
 }
 
-model Sale {
-  id             Int            @id @default(autoincrement())
-  documentId     String?        @unique @map("document_id")
-  saleDate       DateTime       @map("sale_date") @db.Date
-  finalPrice     Decimal        @map("final_price") @db.Decimal(14, 2)
-  paymentMethod  PaymentMethod? @map("payment_method")
-  financingBank  String?        @map("financing_bank")
-  notes          String?
-  vehicleId      Int            @unique @map("vehicle_id")
-  vehicle        Vehicle        @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
-  clientId       Int            @map("client_id")
-  client         Client         @relation(fields: [clientId], references: [id], onDelete: Restrict)
-  sellerUserId   Int?           @map("seller_user_id")
-  sellerUser     User?          @relation("SaleSeller", fields: [sellerUserId], references: [id], onDelete: SetNull)
-  sellerName     String?        @map("seller_name")
-  createdAt      DateTime       @default(now()) @map("created_at")
-  updatedAt      DateTime       @updatedAt @map("updated_at")
-
-  @@index([clientId])
-  @@index([sellerUserId])
-  @@index([saleDate])
-  @@map("sales")
-}
-
-model Contract {
-  id                 Int            @id @default(autoincrement())
-  documentId         String?        @unique @map("document_id")
-  contractType       ContractType   @map("contract_type")
-  contractValue      Decimal        @map("contract_value") @db.Decimal(14, 2)
-  contractDate       DateTime       @map("contract_date") @db.Date
-  status             ContractStatus
-  specialClauses     String?        @map("special_clauses")
-  witness1Name       String?        @map("witness_1_name")
-  witness1Document   String?        @map("witness_1_document")
-  witness2Name       String?        @map("witness_2_name")
-  witness2Document   String?        @map("witness_2_document")
-  vehicleId          Int            @map("vehicle_id")
-  vehicle            Vehicle        @relation(fields: [vehicleId], references: [id], onDelete: Restrict)
-  clientId           Int            @map("client_id")
-  client             Client         @relation(fields: [clientId], references: [id], onDelete: Restrict)
-  createdAt          DateTime       @default(now()) @map("created_at")
-  updatedAt          DateTime       @updatedAt @map("updated_at")
-
-  @@index([vehicleId])
-  @@index([clientId])
-  @@index([status])
-  @@map("contracts")
-}
-
-model Evaluation {
-  id              Int       @id @default(autoincrement())
-  documentId      String?   @unique @map("document_id")
-  score           Float?
-  observations    String?
-  technicalNotes  String?   @map("technical_notes")
-  checklistJson   Json?     @map("checklist_json")
-  photoUrls       String[]  @default([]) @map("photo_urls")
-  vehicleId       Int       @map("vehicle_id")
-  vehicle         Vehicle   @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
-  createdAt       DateTime  @default(now()) @map("created_at")
-  updatedAt       DateTime  @updatedAt @map("updated_at")
-
-  @@index([vehicleId])
-  @@map("evaluations")
-}
-
-model PurchaseEvaluation {
-  id             Int                       @id @default(autoincrement())
-  documentId     String?                   @unique @map("document_id")
-  vehicleId      Int                       @map("vehicle_id")
-  vehicle        Vehicle                   @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
-  clientId       Int?                      @map("client_id")
-  client         Client?                   @relation(fields: [clientId], references: [id], onDelete: SetNull)
-  outcome        PurchaseEvaluationOutcome
-  reasonCode     PurchaseEvaluationReason? @map("reason_code")
-  reasonDetail   String?                   @map("reason_detail")
-  createdAt      DateTime                  @default(now()) @map("created_at")
-  updatedAt      DateTime                  @updatedAt @map("updated_at")
-
-  @@index([vehicleId])
-  @@index([clientId])
-  @@map("purchase_evaluations")
-}
-
-model ServiceOrder {
-  id            Int                 @id @default(autoincrement())
-  documentId    String?             @unique @map("document_id")
-  workshopName  String              @map("workshop_name")
-  serviceType   ServiceOrderType    @map("service_type")
-  serviceTypeOtherText String?      @map("service_type_other_text")
-  status        ServiceOrderStatus
-  entryDate     DateTime            @map("entry_date") @db.Date
-  dueDate       DateTime?           @map("due_date") @db.Date
-  responsible   String?
-  description   String?
-  partsJson     Json?               @map("parts_json")
-  laborJson     Json?               @map("labor_json")
-  totalAmount   Decimal             @map("total_amount") @db.Decimal(14, 2)
-  photoUrls     String[]            @default([]) @map("photo_urls")
-  vehicleId     Int                 @map("vehicle_id")
-  vehicle       Vehicle             @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
-  createdAt     DateTime            @default(now()) @map("created_at")
-  updatedAt     DateTime            @updatedAt @map("updated_at")
-
-  @@index([vehicleId])
-  @@index([status])
-  @@map("service_orders")
-}
-
-model Warranty {
-  id             Int             @id @default(autoincrement())
-  documentId     String?         @unique @map("document_id")
-  warrantyType   WarrantyType    @map("warranty_type")
-  startDate      DateTime        @map("start_date") @db.Date
-  endDate        DateTime        @map("end_date") @db.Date
-  coverageValue  Decimal         @map("coverage_value") @db.Decimal(14, 2)
-  status         WarrantyStatus
-  notes          String?
-  vehicleId      Int             @map("vehicle_id")
-  vehicle        Vehicle         @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
-  clientId       Int             @map("client_id")
-  client         Client          @relation(fields: [clientId], references: [id], onDelete: Restrict)
-  createdAt      DateTime        @default(now()) @map("created_at")
-  updatedAt      DateTime        @updatedAt @map("updated_at")
-
-  @@index([vehicleId])
-  @@index([clientId])
-  @@map("warranties")
-}
-
-model PromissoryNote {
-  id                  Int                   @id @default(autoincrement())
-  documentId        String?               @unique @map("document_id")
-  installmentNumber   Int                   @map("installment_number")
-  totalInstallments   Int                   @map("total_installments")
-  dueDate             DateTime              @map("due_date") @db.Date
-  amount              Decimal               @db.Decimal(14, 2)
-  status              PromissoryNoteStatus
-  paymentDate         DateTime?             @map("payment_date") @db.Date
-  notes               String?
-  clientId            Int                   @map("client_id")
-  client              Client                @relation(fields: [clientId], references: [id], onDelete: Restrict)
-  vehicleId           Int                   @map("vehicle_id")
-  vehicle             Vehicle               @relation(fields: [vehicleId], references: [id], onDelete: Restrict)
-  createdAt           DateTime              @default(now()) @map("created_at")
-  updatedAt           DateTime              @updatedAt @map("updated_at")
-
-  @@index([clientId])
-  @@index([vehicleId])
-  @@index([dueDate])
-  @@map("promissory_notes")
-}
-
 model Supplier {
   id                  Int       @id @default(autoincrement())
   documentId          String?   @unique @map("document_id")
@@ -555,8 +226,9 @@ model Supplier {
   createdAt           DateTime  @default(now()) @map("created_at")
   updatedAt           DateTime  @updatedAt @map("updated_at")
 
-  purchasedVehicles Vehicle[] @relation("VehiclePurchaseSupplier")
-  payables     Payable[]
+  payables          Payable[]
+  usedBodies        UsedBody[]
+  materials         Material[]
 
   @@index([companyName])
   @@map("suppliers")
@@ -573,8 +245,6 @@ model Payable {
   paymentDate DateTime?    @map("payment_date") @db.Date
   notes       String?
 
-  vehicleId   Int?         @map("vehicle_id")
-  vehicle     Vehicle?     @relation(fields: [vehicleId], references: [id], onDelete: SetNull)
   supplierId  Int?         @map("supplier_id")
   supplier    Supplier?    @relation(fields: [supplierId], references: [id], onDelete: SetNull)
 
@@ -584,12 +254,11 @@ model Payable {
   @@index([dueDate])
   @@index([status])
   @@index([origin])
-  @@index([vehicleId])
   @@index([supplierId])
   @@map("payables")
 }
 
-/// Notificações in-app (owner_user_id no Strapi → FK para User).
+/// Notificações in-app.
 model UserNotification {
   id           Int       @id @default(autoincrement())
   documentId   String?   @unique @map("document_id")
@@ -640,11 +309,6 @@ model ErpSetting {
   companyZip               String   @default("") @map("company_zip")
   companyPhone             String   @default("") @map("company_phone")
   companyEmail             String   @default("") @map("company_email")
-  alertGiroEnabled         Boolean  @default(true) @map("alert_giro_enabled")
-  alertGiroWarnDays        Int      @default(30) @map("alert_giro_warn_days")
-  alertGiroCritDays        Int      @default(45) @map("alert_giro_crit_days")
-  alertPromEnabled         Boolean  @default(true) @map("alert_prom_enabled")
-  alertPromDaysBefore      Int      @default(7) @map("alert_prom_days_before")
   alertDocsEnabled         Boolean  @default(true) @map("alert_docs_enabled")
   alertEmailDigestEnabled  Boolean  @default(true) @map("alert_email_digest_enabled")
   financeEventNotifyDaysBefore Int  @default(1) @map("finance_event_notify_days_before")
@@ -703,6 +367,7 @@ model Quote {
   createdBy       User?           @relation("QuoteCreator", fields: [createdByUserId], references: [id], onDelete: SetNull)
   items           QuoteItem[]
   technicalSheet  TechnicalSheet?
+  productionOrder ProductionOrder?
   createdAt       DateTime        @default(now()) @map("created_at")
   updatedAt       DateTime        @updatedAt @map("updated_at")
 
@@ -737,33 +402,14 @@ model TechnicalSheet {
   sheetNumber String?  @map("sheet_number")
   bomJson     Json     @map("bom_json")
   notes       String?
+  productionOrder ProductionOrder?
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
   @@map("technical_sheets")
 }
 
-/// Auditoria de consultas SENATRAN (snapshot completo; acesso administrativo).
-model SenatranLookupAudit {
-  id              Int      @id @default(autoincrement())
-  userId          Int      @map("user_id")
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  plateNormalized String   @map("plate_normalized")
-  renavamQuery    String?  @map("renavam_query")
-  provider        String
-  cost            Decimal  @db.Decimal(14, 4)
-  success         Boolean
-  errorCode       String?  @map("error_code")
-  cachedResponse  Boolean  @default(false) @map("cached_response")
-  snapshotJson    Json     @map("snapshot_json")
-  createdAt       DateTime @default(now()) @map("created_at")
-
-  @@index([userId, createdAt])
-  @@index([createdAt])
-  @@map("senatran_lookup_audits")
-}
-
-/// Auditoria de consultas CNPJ cadastrais (snapshot completo; acesso administrativo).
+/// Auditoria de consultas CNPJ cadastrais.
 model DocumentLookupAudit {
   id                 Int      @id @default(autoincrement())
   userId             Int      @map("user_id")
@@ -783,6 +429,146 @@ model DocumentLookupAudit {
   @@map("document_lookup_audits")
 }
 
+/// Carroceria seminova/usada (domínio Lignum).
+model UsedBody {
+  id           Int               @id @default(autoincrement())
+  documentId   String?           @unique @map("document_id")
+  title        String
+  lengthM      Decimal           @map("length_m") @db.Decimal(8, 2)
+  widthM       Decimal           @map("width_m") @db.Decimal(8, 2)
+  heightM      Decimal?          @map("height_m") @db.Decimal(8, 2)
+  condition    UsedBodyCondition
+  entryValue   Decimal           @map("entry_value") @db.Decimal(14, 2)
+  saleValue    Decimal?          @map("sale_value") @db.Decimal(14, 2)
+  status       UsedBodyStatus    @default(disponivel)
+  observations String?
+  mainPhotoUrl String?           @map("main_photo_url")
+  galleryUrls  String[]          @default([]) @map("gallery_urls")
+  supplierId   Int?              @map("supplier_id")
+  supplier     Supplier?         @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+  createdAt    DateTime          @default(now()) @map("created_at")
+  updatedAt    DateTime          @updatedAt @map("updated_at")
+
+  statusHistory UsedBodyStatusHistory[]
+
+  @@index([status])
+  @@map("used_bodies")
+}
+
+/// Histórico de transições de status de carroceria usada.
+model UsedBodyStatusHistory {
+  id              Int             @id @default(autoincrement())
+  usedBodyId      Int             @map("used_body_id")
+  usedBody        UsedBody        @relation(fields: [usedBodyId], references: [id], onDelete: Cascade)
+  fromStatus      UsedBodyStatus? @map("from_status")
+  toStatus        UsedBodyStatus  @map("to_status")
+  changedByUserId Int?            @map("changed_by_user_id")
+  changedBy       User?           @relation(fields: [changedByUserId], references: [id], onDelete: SetNull)
+  notes           String?
+  createdAt       DateTime        @default(now()) @map("created_at")
+
+  @@index([usedBodyId])
+  @@map("used_body_status_history")
+}
+
+/// Matéria-prima / insumo de produção.
+model Material {
+  id           Int              @id @default(autoincrement())
+  documentId   String?          @unique @map("document_id")
+  sku          String           @unique
+  name         String
+  category     MaterialCategory
+  unit         String
+  minStock     Decimal          @default(0) @map("min_stock") @db.Decimal(14, 4)
+  avgCost      Decimal          @default(0) @map("avg_cost") @db.Decimal(14, 2)
+  currentStock Decimal          @default(0) @map("current_stock") @db.Decimal(14, 4)
+  supplierId   Int?             @map("supplier_id")
+  supplier     Supplier?        @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+  movements    StockMovement[]
+  createdAt    DateTime         @default(now()) @map("created_at")
+  updatedAt    DateTime         @updatedAt @map("updated_at")
+
+  @@index([category])
+  @@index([sku])
+  @@map("materials")
+}
+
+/// Movimentação de estoque (entrada, saída manual ou automática, estorno).
+model StockMovement {
+  id                Int               @id @default(autoincrement())
+  materialId        Int               @map("material_id")
+  material          Material          @relation(fields: [materialId], references: [id], onDelete: Cascade)
+  type              StockMovementType
+  quantity          Decimal           @db.Decimal(14, 4)
+  unitCost          Decimal?          @map("unit_cost") @db.Decimal(14, 2)
+  productionOrderId Int?              @map("production_order_id")
+  productionOrder   ProductionOrder?  @relation(fields: [productionOrderId], references: [id], onDelete: SetNull)
+  notes             String?
+  createdByUserId   Int?              @map("created_by_user_id")
+  createdBy         User?             @relation("StockMovementCreator", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  createdAt         DateTime          @default(now()) @map("created_at")
+
+  @@index([materialId])
+  @@index([createdAt])
+  @@index([productionOrderId])
+  @@map("stock_movements")
+}
+
+/// Ordem de produção vinculada a orçamento convertido.
+model ProductionOrder {
+  id               Int                   @id @default(autoincrement())
+  documentId       String?               @unique @map("document_id")
+  orderNumber      String?               @unique @map("order_number")
+  quoteId          Int                   @unique @map("quote_id")
+  quote            Quote                 @relation(fields: [quoteId], references: [id], onDelete: Restrict)
+  technicalSheetId Int                   @unique @map("technical_sheet_id")
+  technicalSheet   TechnicalSheet        @relation(fields: [technicalSheetId], references: [id], onDelete: Restrict)
+  status           ProductionOrderStatus @default(aguardando)
+  startedAt        DateTime?             @map("started_at")
+  completedAt      DateTime?             @map("completed_at")
+  cancelledAt      DateTime?             @map("cancelled_at")
+  photoUrls        String[]              @default([]) @map("photo_urls")
+  notes            String?
+  employees        ProductionOrderEmployee[]
+  stockMovements   StockMovement[]
+  createdAt        DateTime              @default(now()) @map("created_at")
+  updatedAt        DateTime              @updatedAt @map("updated_at")
+
+  @@index([status])
+  @@map("production_orders")
+}
+
+/// Vínculo N:N ordem de produção ↔ funcionário.
+model ProductionOrderEmployee {
+  productionOrderId Int             @map("production_order_id")
+  productionOrder   ProductionOrder @relation(fields: [productionOrderId], references: [id], onDelete: Cascade)
+  employeeId        Int             @map("employee_id")
+  employee          Employee        @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  assignedAt        DateTime        @default(now()) @map("assigned_at")
+
+  @@id([productionOrderId, employeeId])
+  @@index([employeeId])
+  @@map("production_order_employees")
+}
+
+/// Funcionário da produção (pode vincular a utilizador do sistema).
+model Employee {
+  id             Int       @id @default(autoincrement())
+  documentId     String?   @unique @map("document_id")
+  name           String
+  roleTitle      String    @map("role_title")
+  commissionPct  Decimal?  @map("commission_pct") @db.Decimal(5, 2)
+  isActive       Boolean   @default(true) @map("is_active")
+  userId         Int?      @unique @map("user_id")
+  user           User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  productionOrders ProductionOrderEmployee[]
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  @@index([isActive])
+  @@map("employees")
+}
+
 /// Lead CRM (single-tenant).
 model StorefrontLead {
   id          Int       @id @default(autoincrement())
@@ -790,15 +576,12 @@ model StorefrontLead {
   email       String
   phone       String
   message     String?
-  vehicleId   Int?      @map("vehicle_id")
-  vehicle     Vehicle?  @relation(fields: [vehicleId], references: [id], onDelete: SetNull)
   source      String    @default("crm")
   consentText String    @map("consent_text")
   consentAt   DateTime  @map("consent_at")
   readAt      DateTime? @map("read_at")
   createdAt   DateTime  @default(now()) @map("created_at")
 
-  @@index([vehicleId])
   @@index([createdAt])
   @@index([readAt])
   @@map("storefront_leads")

@@ -56,13 +56,13 @@ export function Painel() {
       <PainelRecentQuotesTable />
 
       <Link
-        href="/os/nova"
+        href="/producao"
         className="group fixed bottom-8 right-8 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform hover:scale-110 active:scale-95"
-        aria-label="Nova ordem de serviço"
+        aria-label="Ir para produção"
       >
         <Plus className="h-7 w-7" aria-hidden />
         <span className="pointer-events-none absolute right-16 whitespace-nowrap rounded-lg bg-[#333] px-3 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
-          Nova Ordem de Serviço
+          Produção
         </span>
       </Link>
     </div>

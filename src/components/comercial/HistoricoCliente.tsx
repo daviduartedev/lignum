@@ -3,28 +3,13 @@
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  ArrowLeft,
-  ShoppingCart,
-  FileText,
-  DollarSign,
-  TrendingUp,
-  Loader2,
-  AlertCircle,
-  Plus,
-} from "lucide-react";
+import { ArrowLeft, FileText, Loader2, AlertCircle } from "lucide-react";
 import { useClient } from "@/hooks/useClients";
-import { useSalesForClient } from "@/hooks/useSales";
 import { useMemo } from "react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { EntityAvatar, StitchKpiCard, StitchSectionCard } from "@/components/ui/stitch";
 import { ClientDocumentsSection } from "@/components/comercial/ClientDocumentsSection";
-import { MercosulPlate } from "@/components/ui/MercosulPlate";
-import { ListingStatCell, listingTdStat, listingTdText, listingThStat, listingThText } from "@/components/ui/ListingStatCell";
-import { VehicleListingCell } from "@/components/ui/VehicleListingCell";
-import { clientAttrs, vehicleAttrs, type Vehicle } from "@/types";
+import { clientAttrs } from "@/types";
 
 export function HistoricoCliente() {
   const router = useRouter();
@@ -33,9 +18,6 @@ export function HistoricoCliente() {
 
   const { data: rawClient, isLoading: loadingClient, isError: errorClient } = useClient(id);
   const clientId = rawClient?.id;
-  const { data: rawSales = [], isLoading: loadingSales } = useSalesForClient(clientId);
-
-  const isLoading = loadingClient || (clientId != null && loadingSales);
 
   const cliente = useMemo(() => {
     if (!rawClient) return null;
@@ -50,106 +32,17 @@ export function HistoricoCliente() {
     };
   }, [rawClient]);
 
-  const vendas = useMemo(() => {
-    return rawSales
-      .map((s) => {
-        const a = s.attributes;
-        const v = a.vehicle?.data;
-        const vAttrs = v ? vehicleAttrs(v) : null;
-        const rawDate = a.sale_date || a.createdAt;
-        return {
-          id: s.id,
-          vehicle: v as Vehicle | undefined,
-          veiculo: vAttrs ? `${vAttrs.brand} ${vAttrs.model}`.trim() : "-",
-          placa: vAttrs?.plate || "-",
-          valor: Number(a.final_price) || 0,
-          rawDate,
-          data: a.sale_date
-            ? new Date(`${a.sale_date}T12:00:00`).toLocaleDateString("pt-BR")
-            : "-",
-          pagamento: String(a.payment_method || "-").replace(/_/g, " ").toUpperCase(),
-        };
-      })
-      .sort((x, y) => new Date(y.rawDate).getTime() - new Date(x.rawDate).getTime());
-  }, [rawSales]);
-
   const kpiData = useMemo(() => {
-    const totalGasto = vendas.reduce((acc, v) => acc + v.valor, 0);
-    const veiculosComprados = vendas.length;
-    const ticketMedio = veiculosComprados > 0 ? totalGasto / veiculosComprados : 0;
-
-    let ultimaCompraStr = "-";
-    if (vendas.length > 0 && vendas[0].rawDate) {
-      const msDiff = new Date().getTime() - new Date(vendas[0].rawDate).getTime();
-      const dias = Math.floor(msDiff / (1000 * 60 * 60 * 24));
-      if (dias === 0) ultimaCompraStr = "Hoje";
-      else if (dias === 1) ultimaCompraStr = "Há 1 dia";
-      else ultimaCompraStr = `Há ${dias} dias`;
-    }
-
+    if (!cliente) return [];
     return [
-      {
-        label: "Total gasto",
-        valor: totalGasto.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }),
-        icon: DollarSign,
-        cor: "blue",
-      },
-      {
-        label: "Veículos comprados",
-        valor: veiculosComprados.toString(),
-        icon: ShoppingCart,
-        cor: "green",
-      },
-      {
-        label: "Ticket médio",
-        valor: ticketMedio.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }),
-        icon: TrendingUp,
-        cor: "purple",
-      },
-      {
-        label: "Última compra",
-        valor: ultimaCompraStr,
-        icon: FileText,
-        cor: "amber",
-      },
+      { label: "Cliente desde", valor: cliente.cadastro, icon: FileText, cor: "blue" },
+      { label: "E-mail", valor: cliente.email, icon: FileText, cor: "green" },
+      { label: "Telefone", valor: cliente.telefone, icon: FileText, cor: "purple" },
+      { label: "Documento", valor: cliente.cpf, icon: FileText, cor: "amber" },
     ];
-  }, [vendas]);
+  }, [cliente]);
 
-  const timeline = useMemo(() => {
-    const events: { data: string; evento: string; tipo: string; rawDateMs: number }[] = [];
-    vendas.forEach((v) => {
-      events.push({
-        data: v.data,
-        evento: `Compra, ${v.veiculo}`,
-        tipo: "compra",
-        rawDateMs: new Date(v.rawDate).getTime(),
-      });
-      if (v.valor > 0) {
-        events.push({
-          data: v.data,
-          evento: `Pagamento (${v.pagamento.toLowerCase()}), ${v.valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}`,
-          tipo: "pagamento",
-          rawDateMs: new Date(v.rawDate).getTime() - 1,
-        });
-      }
-    });
-
-    if (cliente?.cadastro && cliente.cadastro !== "-") {
-      const partes = cliente.cadastro.split("/");
-      const dateCad =
-        partes.length === 3 ? new Date(`${partes[2]}-${partes[1]}-${partes[0]}T12:00:00`) : new Date(0);
-      events.push({
-        data: cliente.cadastro,
-        evento: "Cliente cadastrado",
-        tipo: "cadastro",
-        rawDateMs: dateCad.getTime(),
-      });
-    }
-
-    return events.sort((a, b) => b.rawDateMs - a.rawDateMs);
-  }, [vendas, cliente]);
-
-  if (isLoading) {
+  if (loadingClient) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-gray-400">
         <Loader2 className="w-10 h-10 mb-4 animate-spin text-primary" />
@@ -238,140 +131,10 @@ export function HistoricoCliente() {
           </div>
         </StitchSectionCard>
 
-        <StitchSectionCard title="Linha do tempo" className="xl:col-span-2">
-          <div className="space-y-4 max-h-[300px] overflow-y-auto pr-2">
-            {timeline.length === 0 ? (
-              <p className="text-sm text-muted-foreground italic">Sem eventos registrados.</p>
-            ) : (
-              timeline.map((item, index) => (
-                <div key={index} className="flex gap-4">
-                  <div className="flex flex-col items-center">
-                    <div
-                      className={`w-2.5 h-2.5 rounded-full ring-4 ring-card ${
-                        item.tipo === "compra" ? "bg-primary" : item.tipo === "pagamento" ? "bg-accent" : "bg-muted-foreground"
-                      }`}
-                    />
-                    {index < timeline.length - 1 ? <div className="w-0.5 h-full bg-border my-1" /> : null}
-                  </div>
-                  <div className="flex-1 pb-4">
-                    <div className="text-sm font-medium text-foreground">{item.evento}</div>
-                    <div className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mt-1">{item.data}</div>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
+        <StitchSectionCard title="Documentos" className="xl:col-span-2">
+          {clientId != null ? <ClientDocumentsSection clientId={clientId} /> : null}
         </StitchSectionCard>
       </div>
-
-      <StitchSectionCard>
-        <Tabs defaultValue="compras" className="w-full">
-          <TabsList className="bg-gray-100 p-1 mb-4">
-            <TabsTrigger value="compras" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">
-              Compras
-            </TabsTrigger>
-            <TabsTrigger value="promissorias" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">
-              Promissórias
-            </TabsTrigger>
-            <TabsTrigger value="documentos" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">
-              Documentos
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="compras" className="mt-0">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-[#E5E7EB]">
-                    <th className={`${listingThText} text-[#6B7280] font-semibold`}>Veículo</th>
-                    <th className={`${listingThStat} text-[#6B7280] font-semibold`}>Placa</th>
-                    <th className={`${listingThStat} text-[#6B7280] font-semibold`}>Valor</th>
-                    <th className={`${listingThStat} text-[#6B7280] font-semibold`}>Data</th>
-                    <th className={`${listingThStat} text-[#6B7280] font-semibold`}>Pagamento</th>
-                    <th className={`${listingThStat} text-[#6B7280] font-semibold`}>Estado</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {vendas.length === 0 ? (
-                    <tr>
-                      <td colSpan={6} className="py-8 text-center text-sm text-gray-400">
-                        Nenhuma compra registrada para este cliente.
-                      </td>
-                    </tr>
-                  ) : (
-                    vendas.map((compra) => (
-                      <tr key={compra.id} className="border-b border-[#E5E7EB] last:border-0 hover:bg-[#F9FAFB]">
-                        <td className={listingTdText}>
-                          {compra.vehicle ? (
-                            <VehicleListingCell vehicle={compra.vehicle} />
-                          ) : (
-                            <span className="text-sm font-semibold text-[#111827]">{compra.veiculo}</span>
-                          )}
-                        </td>
-                        <td className={listingTdStat}>
-                          <ListingStatCell hideLabel
-                            label="Placa"
-                            value={
-                              compra.placa && compra.placa !== "-" ? (
-                                <MercosulPlate plate={compra.placa} />
-                              ) : (
-                                "-"
-                              )
-                            }
-                            valueClassName="font-normal"
-                          />
-                        </td>
-                        <td className={listingTdStat}>
-                          <ListingStatCell hideLabel
-                            label="Valor"
-                            value={compra.valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
-                            valueClassName="text-green-700 font-black"
-                          />
-                        </td>
-                        <td className={listingTdStat}>
-                          <ListingStatCell hideLabel label="Data" value={compra.data} valueClassName="font-medium" />
-                        </td>
-                        <td className={listingTdStat}>
-                          <ListingStatCell hideLabel label="Pagamento" value={compra.pagamento} valueClassName="font-semibold" />
-                        </td>
-                        <td className={listingTdStat}>
-                          <ListingStatCell hideLabel
-                            label="Estado"
-                            value={
-                              <Badge className="bg-[#DCFCE7] text-[#15803D] hover:bg-[#DCFCE7] border-0">
-                                Concluído
-                              </Badge>
-                            }
-                            valueClassName="font-normal"
-                          />
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="promissorias" className="mt-0">
-            <div className="py-10 text-center space-y-4">
-              <p className="text-sm text-muted-foreground">
-                Promissórias integradas com o módulo financeiro (próxima fase da migração).
-              </p>
-              <Link href="/financeiro?tab=receber">
-                <Button>
-                  <Plus className="w-4 h-4" />
-                  Nova promissória
-                </Button>
-              </Link>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="documentos" className="mt-0">
-            {clientId != null ? <ClientDocumentsSection clientId={clientId} /> : null}
-          </TabsContent>
-        </Tabs>
-      </StitchSectionCard>
     </div>
   );
 }

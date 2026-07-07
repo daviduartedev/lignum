@@ -10,11 +10,12 @@ export function navItemsForRole(role: Role | undefined): NavItem[] {
   const allMain: NavItem[] = [
     { path: "/", label: "Painel" },
     { path: "/orcamentos", label: "Orçamentos" },
-    { path: "/os", label: "OS" },
-    { path: "/contratos", label: "Contratos" },
+    { path: "/carrocerias-usadas", label: "Carrocerias usadas" },
+    { path: "/estoque/materiais", label: "Estoque de materiais" },
+    { path: "/producao", label: "Produção" },
+    { path: "/funcionarios", label: "Funcionários" },
     { path: "/clientes", label: "Clientes e fornecedores" },
     { path: "/financeiro", label: "Financeiro" },
-    { path: "/garantias", label: "Garantias" },
   ];
 
   const allSecondary: NavItem[] = [
@@ -45,7 +46,10 @@ export function navItemsForRole(role: Role | undefined): NavItem[] {
     case "producao":
       return [
         { path: "/", label: "Painel" },
-        { path: "/os", label: "OS" },
+        { path: "/producao", label: "Produção" },
+        { path: "/funcionarios", label: "Funcionários" },
+        { path: "/estoque/materiais", label: "Estoque de materiais" },
+        { path: "/carrocerias-usadas", label: "Carrocerias usadas" },
         { path: "/documentos", label: "Documentos" },
         { path: "/notificacoes", label: "Notificações" },
       ];

@@ -6,7 +6,8 @@ import { Loader2, MoreVertical } from "lucide-react";
 import { PAINEL_MOCK_QUOTES } from "@/components/painel/painelMockData";
 import { useQuotesPage } from "@/hooks/useQuotes";
 import { formatBRL } from "@/lib/pdf/format";
-import { quoteAttrs, type Quote, type QuoteStatus } from "@/types/quotes";
+import { quoteStatusShortBadgeClass, quoteStatusShortLabel } from "@/lib/quoteLabels";
+import { quoteAttrs, type Quote } from "@/types/quotes";
 import { cn } from "@/components/ui/utils";
 
 type QuoteRow = {
@@ -32,32 +33,18 @@ function formatQuoteDate(iso: string): string {
   return d.toLocaleDateString("pt-BR");
 }
 
-function statusDisplay(status: QuoteStatus): { label: string; className: string } {
-  if (status === "aprovado" || status === "convertido") {
-    return { label: "Aprovado", className: "bg-green-100 text-green-700" };
-  }
-  if (status === "enviado") {
-    return { label: "Em Análise", className: "bg-blue-100 text-blue-700" };
-  }
-  if (status === "rascunho") {
-    return { label: "Pendente", className: "bg-orange-100 text-orange-700" };
-  }
-  return { label: "Recusado", className: "bg-red-100 text-red-700" };
-}
-
 function mapQuote(q: Quote): QuoteRow {
   const a = quoteAttrs(q);
   const client = a.client?.data?.attributes.full_name ?? "Cliente";
   const model = a.body_model?.data?.attributes.name ?? "Carroceria paramétrica";
-  const st = statusDisplay(a.status);
   const routeId = q.documentId ?? String(q.id);
   return {
     initials: initialsFromName(client),
     client,
     model,
     value: formatBRL(a.total),
-    status: st.label,
-    statusClass: st.className,
+    status: quoteStatusShortLabel(a.status),
+    statusClass: quoteStatusShortBadgeClass(a.status),
     date: formatQuoteDate(a.createdAt),
     href: `/orcamentos/${routeId}`,
   };

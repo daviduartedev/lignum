@@ -17,22 +17,17 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { ChevronLeft, ChevronRight, Loader2, Bell } from "lucide-react";
-import { usePromissoryNotes } from "@/hooks/usePromissoryNotes";
-import { useServiceOrders } from "@/hooks/useServiceOrders";
-import { useWarranties } from "@/hooks/useWarranties";
 import { useOpenPayables } from "@/hooks/usePayables";
 import { useUserNotifications, useCreateReminderNotification } from "@/hooks/useUserNotifications";
-import { vehicleDisplayName, type PromissoryNote, type ServiceOrder, type Vehicle, type Warranty } from "@/types";
 import type { UserNotification } from "@/types";
 
-type TipoEv = "vencimento" | "pagar" | "os" | "garantia" | "lembrete";
+type TipoEv = "pagar" | "lembrete";
 
 interface CalEvent {
   dia: number;
   tipo: TipoEv;
   titulo: string;
   valor?: string;
-  oficina?: string;
   link?: string;
   notifId?: string;
   horaLabel?: string;
@@ -75,9 +70,6 @@ export function CalendarioHub() {
   const [corpoLembrete, setCorpoLembrete] = useState("");
   const [dataHoraLembrete, setDataHoraLembrete] = useState(defaultReminderDatetime);
 
-  const { data: promData = [], isLoading: lp } = usePromissoryNotes();
-  const { data: osData = [], isLoading: lo } = useServiceOrders();
-  const { data: warData = [], isLoading: lw } = useWarranties();
   const { data: notifData = [], isLoading: ln } = useUserNotifications();
   const { data: payData = [], isLoading: lpay } = useOpenPayables();
   const createReminder = useCreateReminderNotification();
@@ -105,61 +97,6 @@ export function CalendarioHub() {
     const m = mesAtual.getMonth();
     const out: CalEvent[] = [];
 
-    const prom = Array.isArray(promData) ? (promData as PromissoryNote[]) : [];
-    prom.forEach((p) => {
-      const a = p.attributes;
-      if (a.status !== "aberta") return;
-      const due = new Date(String(a.due_date || ""));
-      if (due.getFullYear() !== y || due.getMonth() !== m) return;
-      const amount = Number(a.amount) || 0;
-      const id = String(p.documentId ?? p.id);
-      const cli = a.client?.data;
-      const nome = cli ? cli.attributes.full_name : "Cliente";
-      out.push({
-        dia: due.getDate(),
-        tipo: "vencimento",
-        titulo: `Promissória ${nome}`,
-        valor: amount.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }),
-        link: "/financeiro?tab=receber",
-      });
-    });
-
-    const orders = Array.isArray(osData) ? (osData as ServiceOrder[]) : [];
-    orders.forEach((o) => {
-      const a = o.attributes;
-      if (!a.due_date) return;
-      const due = new Date(String(a.due_date));
-      if (due.getFullYear() !== y || due.getMonth() !== m) return;
-      const st = String(a.status || "");
-      if (st === "concluida" || st === "cancelada") return;
-      const id = String(o.documentId ?? o.id);
-      out.push({
-        dia: due.getDate(),
-        tipo: "os",
-        titulo: String(a.workshop_name || "OS"),
-        oficina: String(a.service_type || ""),
-        link: id ? `/os/${id}` : "/os",
-      });
-    });
-
-    const wars = Array.isArray(warData) ? (warData as Warranty[]) : [];
-    wars.forEach((w) => {
-      const a = w.attributes;
-      const end = new Date(String(a.end_date || ""));
-      if (end.getFullYear() !== y || end.getMonth() !== m) return;
-      const st = String(a.status || "");
-      if (st === "expirada" || st === "cancelada") return;
-      const id = String(w.documentId ?? w.id);
-      const veh = a.vehicle?.data;
-      const titulo = veh ? `Garantia · ${vehicleDisplayName(veh as Vehicle)}` : "Garantia";
-      out.push({
-        dia: end.getDate(),
-        tipo: "garantia",
-        titulo,
-        link: id ? `/garantias/${id}` : "/garantias",
-      });
-    });
-
     out.push(...mergeReminderEvents(Array.isArray(notifData) ? notifData : [], y, m));
 
     const payables = Array.isArray(payData) ? payData : [];
@@ -175,13 +112,13 @@ export function CalendarioHub() {
         tipo: "pagar",
         titulo: `A pagar · ${String(p.description || "Conta")}`,
         valor: amount.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }),
-        link: "/financeiro?tab=pagar",
+        link: "/financeiro",
       });
     });
 
     out.sort((a, b) => a.dia - b.dia || a.titulo.localeCompare(b.titulo));
     return out;
-  }, [promData, osData, warData, notifData, payData, mesAtual]);
+  }, [notifData, payData, mesAtual]);
 
   const getDiasDoMes = () => {
     const ano = mesAtual.getFullYear();
@@ -213,7 +150,7 @@ export function CalendarioHub() {
     })
     .slice(0, 8);
 
-  const loading = lp || lo || lw || ln || lpay;
+  const loading = ln || lpay;
 
   const handleSalvarLembrete = async () => {
     const t = tituloLembrete.trim();
@@ -242,8 +179,7 @@ export function CalendarioHub() {
       <div>
         <h1 className="mb-1 text-2xl font-semibold text-[#111827]">Calendário</h1>
         <p className="text-sm text-[#6B7280]">
-          Vencimentos, prazos de OS, garantias e lembretes livres (qualquer assunto), gravados na central de
-          notificações
+          Vencimentos de contas a pagar e lembretes livres gravados na central de notificações
         </p>
       </div>
 
@@ -315,13 +251,9 @@ export function CalendarioHub() {
                             key={`${evento.tipo}-${evento.titulo}-${i}`}
                             href={evento.link || "#"}
                             className={`block truncate rounded p-1 text-[10px] ${
-                              evento.tipo === "vencimento"
+                              evento.tipo === "pagar"
                                 ? "bg-amber-50 text-amber-800 hover:bg-amber-100"
-                                : evento.tipo === "os"
-                                  ? "bg-blue-50 text-blue-800 hover:bg-blue-100"
-                                  : evento.tipo === "lembrete"
-                                    ? "bg-emerald-50 text-emerald-900 hover:bg-emerald-100"
-                                    : "bg-purple-50 text-purple-800 hover:bg-purple-100"
+                                : "bg-emerald-50 text-emerald-900 hover:bg-emerald-100"
                             }`}
                           >
                             {evento.titulo.length > 22 ? `${evento.titulo.slice(0, 22)}…` : evento.titulo}
@@ -361,13 +293,7 @@ export function CalendarioHub() {
                     <div className="mb-2 flex items-start gap-2">
                       <div
                         className={`mt-1 h-2 w-2 shrink-0 rounded-full ${
-                          evento.tipo === "vencimento"
-                            ? "bg-amber-500"
-                            : evento.tipo === "os"
-                              ? "bg-blue-500"
-                              : evento.tipo === "lembrete"
-                                ? "bg-emerald-500"
-                                : "bg-purple-500"
+                          evento.tipo === "pagar" ? "bg-amber-500" : "bg-emerald-500"
                         }`}
                       />
                       <div className="min-w-0 flex-1">
@@ -376,27 +302,16 @@ export function CalendarioHub() {
                           <div className="mt-1 text-xs text-[#6B7280]">Às {evento.horaLabel}</div>
                         )}
                         {evento.valor && <div className="mt-1 text-xs text-[#6B7280]">{evento.valor}</div>}
-                        {evento.oficina && <div className="mt-1 text-xs text-[#6B7280]">{evento.oficina}</div>}
                       </div>
                     </div>
                     <Badge
                       className={
-                        evento.tipo === "vencimento"
+                        evento.tipo === "pagar"
                           ? "border-0 bg-amber-100 text-xs text-amber-800"
-                          : evento.tipo === "os"
-                            ? "border-0 bg-blue-100 text-xs text-blue-800"
-                            : evento.tipo === "lembrete"
-                              ? "border-0 bg-emerald-100 text-xs text-emerald-900"
-                              : "border-0 bg-purple-100 text-xs text-purple-800"
+                          : "border-0 bg-emerald-100 text-xs text-emerald-900"
                       }
                     >
-                      {evento.tipo === "vencimento"
-                        ? "Promissória"
-                        : evento.tipo === "os"
-                          ? "OS"
-                          : evento.tipo === "lembrete"
-                            ? "Lembrete"
-                            : "Garantia"}
+                      {evento.tipo === "pagar" ? "A pagar" : "Lembrete"}
                     </Badge>
                   </Link>
                 ))
@@ -444,8 +359,7 @@ export function CalendarioHub() {
           <DialogHeader>
             <DialogTitle>Novo lembrete</DialogTitle>
             <DialogDescription className="text-left leading-relaxed">
-              Pode ser qualquer assunto (reunião, ligação, tarefa), <strong>não precisa</strong> estar ligado a
-              OS, promissória ou outro módulo. Ao confirmar, o registro vai para{" "}
+              Pode ser qualquer assunto (reunião, ligação, tarefa). Ao confirmar, o registro vai para{" "}
               <Link href="/notificacoes" className="font-medium text-emerald-800 underline underline-offset-2">
                 Notificações
               </Link>{" "}

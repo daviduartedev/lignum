@@ -1,6 +1,6 @@
 import type { PrismaClient } from "@prisma/client";
-import { loadPontosAtencaoCore } from "@/lib/dashboard/pontosAtencaoCore";
-import type { DashboardPontosAtencaoItem } from "@/lib/dashboard/summaryTypes";
+import { dec, materialBelowMinimum } from "@/lib/materials/stockMovement";
+import { materialAlertLink } from "@/lib/materials/minStockAlert";
 import { listCommitmentsInPreWindow } from "@/lib/inbox/commitmentWindow";
 
 const ERP_ID = 1;
@@ -11,16 +11,21 @@ function clampInt(n: number, min: number, max: number, fallback: number): number
   return Math.trunc(n);
 }
 
-function diasParado(createdAt: Date, now: Date): number {
-  return Math.floor((now.getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24));
-}
-
 export type InboxVirtualAlert = {
-  kind: "giro" | "promissora" | "documentos";
+  kind: "documentos";
   title: string;
   body: string;
   href: string;
   count: number;
+};
+
+export type InboxMaterialLowStockItem = {
+  materialId: number;
+  sku: string;
+  name: string;
+  currentStock: number;
+  minStock: number;
+  href: string;
 };
 
 export type InboxSummaryPayload = {
@@ -35,15 +40,42 @@ export type InboxSummaryPayload = {
     remindAt: string | null;
     createdAt: string;
   }[];
-  stockAttention: {
-    diasMin: number;
+  materialLowStock: {
     openCount: number;
-    items: DashboardPontosAtencaoItem[];
+    items: InboxMaterialLowStockItem[];
   };
   virtualAlerts: InboxVirtualAlert[];
   commitmentsInPreWindow: { id: string; title: string; remindAt: string }[];
   totalActionable: number;
 };
+
+async function loadMaterialLowStock(
+  prisma: PrismaClient,
+  role: string | undefined,
+): Promise<{ openCount: number; items: InboxMaterialLowStockItem[] }> {
+  if (role !== "admin" && role !== "producao") {
+    return { openCount: 0, items: [] };
+  }
+
+  const materials = await prisma.material.findMany({
+    orderBy: { sku: "asc" },
+    take: 500,
+    select: { id: true, sku: true, name: true, currentStock: true, minStock: true },
+  });
+
+  const belowMin = materials.filter((m) => materialBelowMinimum(m));
+  return {
+    openCount: belowMin.length,
+    items: belowMin.slice(0, 8).map((m) => ({
+      materialId: m.id,
+      sku: m.sku,
+      name: m.name,
+      currentStock: dec(m.currentStock),
+      minStock: dec(m.minStock),
+      href: materialAlertLink(m.id),
+    })),
+  };
+}
 
 export async function buildInboxSummary(
   prisma: PrismaClient,
@@ -54,7 +86,7 @@ export async function buildInboxSummary(
 
   const notifWhere = role === "admin" ? {} : { ownerUserId: userId };
 
-  const [erp, userRow, unreadCount, notifPreviews, pontosBlock, stockPrefs, giroVehicles, docsPending, allUnreadForWindow] =
+  const [erp, userRow, unreadCount, notifPreviews, materialLowStock, docsPending, allUnreadForWindow] =
     await Promise.all([
       prisma.erpSetting.findUnique({ where: { id: ERP_ID } }),
       prisma.user.findUnique({
@@ -68,13 +100,7 @@ export async function buildInboxSummary(
         take: 8,
         select: { id: true, title: true, body: true, link: true, remindAt: true, createdAt: true, read: true },
       }),
-      loadPontosAtencaoCore(prisma, now),
-      prisma.userStockAttentionPreference.findMany({ where: { userId } }),
-      prisma.vehicle.findMany({
-        where: { status: { in: ["disponivel", "reservado"] } },
-        select: { id: true, createdAt: true },
-        take: 5000,
-      }),
+      loadMaterialLowStock(prisma, role),
       prisma.clientDocument.count({
         where: { documentFileUrl: null, externalUrl: null },
       }),
@@ -88,63 +114,9 @@ export async function buildInboxSummary(
   const preEventPopupMinutes = clampInt(preRaw, 1, 1440, 30);
 
   const showStripe = userRow?.showDashboardAttentionStripe ?? true;
-
-  const prefByVehicle = new Map(stockPrefs.map((p) => [p.vehicleId, p]));
-  const stockItemsFiltered = pontosBlock.pontosAtencaoFull.filter((item) => {
-    const p = prefByVehicle.get(item.vehicleId);
-    if (!p) return true;
-    if (p.dismissed) return false;
-    if (p.snoozedUntil && p.snoozedUntil > now) return false;
-    return true;
-  });
-  const stockOpenCount = stockItemsFiltered.length;
-  const stockPreview = stockItemsFiltered.slice(0, 8);
-
-  const warnDays = erp?.alertGiroWarnDays ?? 30;
-  const critDays = erp?.alertGiroCritDays ?? 45;
-  let giroAction = 0;
-  if (erp?.alertGiroEnabled) {
-    for (const v of giroVehicles) {
-      const d = diasParado(v.createdAt, now);
-      if (d >= warnDays) giroAction += 1;
-    }
-  }
-
-  let promCount = 0;
-  if (erp?.alertPromEnabled) {
-    const daysBefore = erp.alertPromDaysBefore ?? 7;
-    const end = new Date(now);
-    end.setHours(23, 59, 59, 999);
-    end.setDate(end.getDate() + daysBefore);
-    const start = new Date(now);
-    start.setHours(0, 0, 0, 0);
-    promCount = await prisma.promissoryNote.count({
-      where: {
-        status: { in: ["aberta", "vencida"] },
-        dueDate: { gte: start, lte: end },
-      },
-    });
-  }
+  const materialOpenCount = materialLowStock.openCount;
 
   const virtualAlerts: InboxVirtualAlert[] = [];
-  if (erp?.alertGiroEnabled && giroAction > 0) {
-    virtualAlerts.push({
-      kind: "giro",
-      title: "Análise de giro",
-      body: `${giroAction} veículo(s) em disponível ou reservado acima dos limiares de atenção configurados.`,
-      href: "/giro",
-      count: giroAction,
-    });
-  }
-  if (erp?.alertPromEnabled && promCount > 0) {
-    virtualAlerts.push({
-      kind: "promissora",
-      title: "Promissórias",
-      body: `${promCount} parcela(s) com vencimento no período configurado.`,
-      href: "/financeiro?tab=receber",
-      count: promCount,
-    });
-  }
   if (erp?.alertDocsEnabled && docsPending > 0) {
     virtualAlerts.push({
       kind: "documentos",
@@ -158,7 +130,7 @@ export async function buildInboxSummary(
   const commitmentsInPreWindow = listCommitmentsInPreWindow(now, preEventPopupMinutes, allUnreadForWindow);
 
   const virtualSum = virtualAlerts.reduce((s, v) => s + Math.min(v.count, 99), 0);
-  const totalActionable = unreadCount + stockOpenCount + virtualSum;
+  const totalActionable = unreadCount + materialOpenCount + virtualSum;
 
   return {
     showDashboardAttentionStripe: showStripe,
@@ -172,11 +144,7 @@ export async function buildInboxSummary(
       remindAt: n.remindAt ? n.remindAt.toISOString() : null,
       createdAt: n.createdAt.toISOString(),
     })),
-    stockAttention: {
-      diasMin: pontosBlock.diasMin,
-      openCount: stockOpenCount,
-      items: stockPreview,
-    },
+    materialLowStock,
     virtualAlerts,
     commitmentsInPreWindow,
     totalActionable,

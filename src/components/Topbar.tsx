@@ -13,30 +13,22 @@ import { emitInboxDrawerClosed, emitInboxDrawerOpened } from "@/lib/postLoginNot
 
 const breadcrumbMap: Record<string, string[]> = {
   "/": ["Painel"],
-  "/estoque": ["Estoque", "Lista"],
-  "/veiculo/novo": ["Estoque", "Novo veículo"],
-  "/fipe": ["Consulta", "FIPE"],
-  "/giro": ["Estoque", "Análise de giro"],
-  "/avaliacao": ["Estoque", "Avaliação técnica"],
-  "/venda": ["Estoque", "Venda"],
-  "/contratos": ["Contratos", "Lista"],
-  "/contratos/novo": ["Contratos", "Novo contrato"],
-  "/os": ["Serviços", "Ordens de serviço"],
-  "/os/nova": ["Serviços", "Nova ordem de serviço"],
   "/calendario": ["Calendário"],
-  "/garantias": ["Garantias", "Lista"],
-  "/garantias/nova": ["Garantias", "Nova garantia"],
   "/documentos": ["Documentos"],
   "/financeiro": ["Financeiro", "Visão geral"],
-  "/relatorios/mensal": ["Relatórios", "Mensal"],
   "/clientes": ["Clientes e fornecedores", "Lista"],
   "/clientes/novo": ["Clientes e fornecedores", "Novo cadastro"],
-  "/site": ["Site", "Loja virtual"],
   "/notificacoes": ["Notificações"],
   "/relatorios": ["Relatórios"],
   "/configuracoes": ["Configurações"],
   "/orcamentos": ["Orçamentos", "Lista"],
   "/orcamentos/novo": ["Orçamentos", "Novo orçamento"],
+  "/producao": ["Produção", "Kanban"],
+  "/funcionarios": ["Funcionários", "Equipe"],
+  "/estoque/materiais": ["Estoque", "Materiais"],
+  "/carrocerias-usadas": ["Carrocerias usadas", "Catálogo"],
+  "/carrocerias-usadas/nova": ["Carrocerias usadas", "Nova"],
+  "/leads": ["Leads"],
 };
 
 export function Topbar() {
@@ -49,28 +41,19 @@ export function Topbar() {
   const getBreadcrumb = (): string[] => {
     const p = pathname;
 
-    if (p === "/documentacao/senatran") return ["Documentação", "Integração SENATRAN (cliente)"];
-
-    if (/^\/veiculo\/[^/]+\/editar$/.test(p)) return ["Estoque", "Editar veículo"];
-    if (/^\/veiculo\/[^/]+$/.test(p)) return ["Estoque", "Detalhe do veículo"];
-
-    if (/^\/venda\/.+/.test(p)) return ["Estoque", "Registrar venda"];
-
-    if (p.startsWith("/avaliacao/")) return ["Estoque", "Avaliação técnica"];
-
     if (/^\/clientes\/[^/]+\/editar$/.test(p)) return ["Clientes e fornecedores", "Editar cadastro"];
     if (/^\/clientes\/[^/]+$/.test(p) && p !== "/clientes/novo") return ["Clientes e fornecedores", "Prontuário"];
 
-    if (/^\/os\/[^/]+$/.test(p) && p !== "/os/nova") return ["Serviços", "Ordem de serviço"];
-
-    if (/^\/contratos\/[^/]+$/.test(p) && p !== "/contratos/novo") return ["Contratos", "Editar contrato"];
-
-    if (/^\/garantias\/[^/]+$/.test(p) && p !== "/garantias/nova") {
-      return ["Garantias", "Editar garantia"];
-    }
-
     if (/^\/orcamentos\/[^/]+$/.test(p) && p !== "/orcamentos/novo") {
       return ["Orçamentos", "Detalhe"];
+    }
+
+    if (/^\/producao\/[^/]+$/.test(p)) {
+      return ["Produção", "Detalhe da OP"];
+    }
+
+    if (/^\/carrocerias-usadas\/[^/]+\/editar$/.test(p)) {
+      return ["Carrocerias usadas", "Editar"];
     }
 
     const sorted = Object.entries(breadcrumbMap).sort((a, b) => b[0].length - a[0].length);
@@ -155,7 +138,7 @@ export function Topbar() {
                 </DialogHeader>
                 <div className="px-5 py-4">
                   {inboxQuery.data ? (
-                    <InboxAlertsContent data={inboxQuery.data} showStockActions />
+                    <InboxAlertsContent data={inboxQuery.data} />
                   ) : (
                     <div className="flex justify-center py-12 text-muted-foreground">
                       <Loader2 className="h-8 w-8 animate-spin" aria-hidden />

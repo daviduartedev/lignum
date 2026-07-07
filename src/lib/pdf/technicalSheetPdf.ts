@@ -3,7 +3,7 @@ import { renderToBuffer } from "@react-pdf/renderer";
 import { ensureFontsRegistered } from "@/lib/pdf/registerFonts";
 import { TechnicalSheetDocument } from "@/lib/pdf/templates/TechnicalSheetDocument";
 import type { TechnicalSheetPdfViewModel } from "@/lib/pdf/templates/types";
-import type { IssuerSettings } from "@/lib/pdf/contractPdf";
+import type { IssuerSettings } from "@/lib/pdf/issuerSettings";
 import type { BomLine } from "@/lib/quotes/bomBuilder";
 import { COVER_STYLE_LABELS, type BodyCoverStyle } from "@/types/quotes";
 

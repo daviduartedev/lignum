@@ -4,14 +4,13 @@ import { DEFAULT_PAGE_SIZE, type PaginationMeta } from "@/lib/pagination";
 export type PayableRow = {
   id: number;
   documentId: string | null;
-  origin: "manual" | "compra_veiculo" | "outro";
+  origin: "manual" | "outro";
   description: string;
   dueDate: string;
   amount: string | number;
   status: "aberta" | "paga" | "vencida" | "cancelada";
   paymentDate: string | null;
   notes: string | null;
-  vehicleId: number | null;
   supplierId: number | null;
   createdAt: string;
   updatedAt: string;

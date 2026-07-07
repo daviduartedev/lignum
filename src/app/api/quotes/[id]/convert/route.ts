@@ -8,6 +8,10 @@ import { withRole } from "@/lib/withRole";
 import { prisma } from "@/lib/db";
 import { buildBomFromQuote } from "@/lib/quotes/bomBuilder";
 import { loadQuotePricingSettings } from "@/lib/quotes/quoteService";
+import {
+  buildProductionOrderNumber,
+  productionOrderInclude,
+} from "@/lib/production/orderTransitions";
 
 export const POST = withRole(commercialWriteRoles, async (_req: NextRequest, ctx: RouteContext) => {
   const idStr = await segmentId(ctx.params);
@@ -17,13 +21,13 @@ export const POST = withRole(commercialWriteRoles, async (_req: NextRequest, ctx
 
   const quote = await prisma.quote.findUnique({
     where: { id: internalId },
-    include: { items: true, technicalSheet: true },
+    include: { items: true, technicalSheet: true, productionOrder: true },
   });
   if (!quote) return fail("NOT_FOUND", 404);
   if (quote.status !== "aprovado") {
     return fail("CONFLICT", 409, { message: "Apenas orçamentos aprovados podem ser convertidos." });
   }
-  if (quote.technicalSheet) {
+  if (quote.technicalSheet || quote.productionOrder) {
     return fail("CONFLICT", 409, { message: "Orçamento já convertido." });
   }
 
@@ -32,16 +36,32 @@ export const POST = withRole(commercialWriteRoles, async (_req: NextRequest, ctx
   const year = new Date().getFullYear();
   const sheetNumber = `FT-${year}-${String(quote.id).padStart(4, "0")}`;
 
-  const [sheet, updated] = await prisma.$transaction([
-    prisma.technicalSheet.create({
+  const result = await prisma.$transaction(async (tx) => {
+    const sheet = await tx.technicalSheet.create({
       data: {
         quoteId: quote.id,
         sheetNumber,
         bomJson: bom,
         notes: quote.notes,
       },
-    }),
-    prisma.quote.update({
+    });
+
+    const provisional = await tx.productionOrder.create({
+      data: {
+        quoteId: quote.id,
+        technicalSheetId: sheet.id,
+        status: "aguardando",
+      },
+    });
+
+    const orderNumber = buildProductionOrderNumber(provisional.id);
+    const productionOrder = await tx.productionOrder.update({
+      where: { id: provisional.id },
+      data: { orderNumber },
+      include: productionOrderInclude,
+    });
+
+    const updated = await tx.quote.update({
       where: { id: quote.id },
       data: { status: "convertido", convertedAt: new Date() },
       include: {
@@ -49,9 +69,12 @@ export const POST = withRole(commercialWriteRoles, async (_req: NextRequest, ctx
         bodyModel: { select: { id: true, name: true, basePrice: true } },
         items: { orderBy: { sortOrder: "asc" } },
         technicalSheet: true,
+        productionOrder: true,
       },
-    }),
-  ]);
+    });
 
-  return ok({ quote: updated, technicalSheet: sheet });
+    return { quote: updated, technicalSheet: sheet, productionOrder };
+  });
+
+  return ok(result);
 });

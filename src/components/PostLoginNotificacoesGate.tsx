@@ -131,7 +131,7 @@ export function PostLoginNotificacoesGate() {
                           : `${inbox.totalActionable} itens requerem a sua atenção.`}
                     </p>
                     <div className="max-h-[min(50vh,24rem)] overflow-y-auto pr-1 -mr-1">
-                      <InboxAlertsContent data={inbox} showStockActions />
+                      <InboxAlertsContent data={inbox} />
                     </div>
                   </>
                 ) : (

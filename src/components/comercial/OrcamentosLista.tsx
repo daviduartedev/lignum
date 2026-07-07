@@ -15,12 +15,12 @@ import {
   listingThStat,
   listingThText,
 } from "@/components/ui/ListingStatCell";
-import { StitchKpiCard, StitchPageHeader, StitchSectionCard, StitchTableShell } from "@/components/ui/stitch";
+import { StitchKpiCard, StitchPageHeader, StitchSectionCard } from "@/components/ui/stitch";
 import { useQuotesPage } from "@/hooks/useQuotes";
 import { formatBRL } from "@/lib/pdf/format";
 import { cn } from "@/components/ui/utils";
+import { quoteStatusBadgeClass, quoteStatusLabel } from "@/lib/quoteLabels";
 import {
-  QUOTE_STATUS_LABELS,
   quoteAttrs,
   type Quote,
   type QuoteStatus,
@@ -33,13 +33,6 @@ import {
   RefreshCw,
   Search,
 } from "lucide-react";
-
-function statusBadgeClass(s: QuoteStatus): string {
-  if (s === "aprovado" || s === "convertido") return "bg-[#DCFCE7] text-[#15803D] border-0";
-  if (s === "enviado") return "bg-[#DBEAFE] text-[#1D4ED8] border-0";
-  if (s === "rascunho") return "bg-[#FEF9C3] text-[#A16207] border-0";
-  return "bg-[#FEE2E2] text-[#B91C1C] border-0";
-}
 
 export function OrcamentosLista() {
   const [page, setPage] = useState(1);
@@ -107,10 +100,11 @@ export function OrcamentosLista() {
         <StitchKpiCard label="Aprovados / convertidos" value={String(kpis.aprovado)} tone="success" solid />
       </div>
 
-      <StitchSectionCard title="Lista de orçamentos">
-        <StitchTableShell
-          toolbar={
-          <div className="relative w-full max-w-sm">
+      <StitchSectionCard
+        title="Lista de orçamentos"
+        noPadding
+        headerEnd={
+          <div className="relative w-64">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               className="pl-9"
@@ -122,17 +116,19 @@ export function OrcamentosLista() {
         }
       >
         {isError ? (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Erro ao carregar</AlertTitle>
-            <AlertDescription className="flex items-center gap-2">
-              Não foi possível listar os orçamentos.
-              <Button variant="outline" size="sm" onClick={() => void refetch()}>
-                <RefreshCw className="mr-1 h-3 w-3" />
-                Tentar novamente
-              </Button>
-            </AlertDescription>
-          </Alert>
+          <div className="p-6">
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Erro ao carregar</AlertTitle>
+              <AlertDescription className="flex items-center gap-2">
+                Não foi possível listar os orçamentos.
+                <Button variant="outline" size="sm" onClick={() => void refetch()}>
+                  <RefreshCw className="mr-1 h-3 w-3" />
+                  Tentar novamente
+                </Button>
+              </AlertDescription>
+            </Alert>
+          </div>
         ) : isLoading ? (
           <div className="flex items-center justify-center py-16 text-muted-foreground gap-2">
             <Loader2 className="h-5 w-5 animate-spin" />
@@ -143,7 +139,7 @@ export function OrcamentosLista() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b text-left text-muted-foreground">
+                  <tr className="border-b bg-muted/30 text-left">
                     <th className={listingThStat}>Nº</th>
                     <th className={listingThText}>Cliente</th>
                     <th className={listingThStat}>Total</th>
@@ -152,7 +148,7 @@ export function OrcamentosLista() {
                     <th className={listingThActions} />
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-border">
                   {rows.length === 0 ? (
                     <tr>
                       <td colSpan={6} className="py-12 text-center text-muted-foreground">
@@ -161,7 +157,7 @@ export function OrcamentosLista() {
                     </tr>
                   ) : (
                     rows.map((row) => (
-                      <tr key={row.routeId} className="border-b last:border-0 hover:bg-muted/30">
+                      <tr key={row.routeId} className="hover:bg-muted/30 transition-colors">
                         <td className={listingTdStat}>
                           <Link
                             href={`/orcamentos/${row.routeId}`}
@@ -173,8 +169,8 @@ export function OrcamentosLista() {
                         <td className={listingTdText}>{row.client}</td>
                         <td className={listingTdStat}>{formatBRL(row.total)}</td>
                         <td className={listingTdStat}>
-                          <Badge className={cn("font-normal", statusBadgeClass(row.status))}>
-                            {QUOTE_STATUS_LABELS[row.status]}
+                          <Badge className={cn("font-normal", quoteStatusBadgeClass(row.status))}>
+                            {quoteStatusLabel(row.status)}
                           </Badge>
                         </td>
                         <td className={listingTdStat}>{row.updated}</td>
@@ -190,7 +186,7 @@ export function OrcamentosLista() {
               </table>
             </div>
             {meta && meta.totalPages > 1 ? (
-              <div className="mt-4 flex justify-center">
+              <div className="px-6 py-4 border-t border-border flex justify-center">
                 <Pagination
                   page={page}
                   totalPages={meta.totalPages}
@@ -202,7 +198,6 @@ export function OrcamentosLista() {
             ) : null}
           </>
         )}
-        </StitchTableShell>
       </StitchSectionCard>
     </div>
   );

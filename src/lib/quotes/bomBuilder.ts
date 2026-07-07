@@ -148,17 +148,6 @@ export function buildBomFromQuote(
     });
   }
 
-  for (const item of quote.items.filter((i) => i.itemType === "material")) {
-    if (lines.some((l) => l.description === item.description)) continue;
-    lines.push({
-      sku: `ITM-${item.id}`,
-      description: item.description,
-      quantity: dec(item.quantity),
-      unit: item.unit,
-      category: "consumivel",
-    });
-  }
-
   return lines;
 }
 

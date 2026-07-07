@@ -6,13 +6,10 @@ import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import {
   LayoutDashboard,
-  FileText,
   Users,
   LogOut,
   ChevronRight,
-  Wrench,
   Wallet,
-  Shield,
   FolderOpen,
   BarChart3,
   Calendar,
@@ -29,11 +26,8 @@ import { navItemsForRole, splitNavForSidebar } from "@/lib/navVisibility";
 const ICON_BY_PATH: Record<string, ComponentType<{ className?: string }>> = {
   "/": LayoutDashboard,
   "/orcamentos": Calculator,
-  "/os": Wrench,
-  "/contratos": FileText,
   "/clientes": Users,
   "/financeiro": Wallet,
-  "/garantias": Shield,
   "/documentos": FolderOpen,
   "/relatorios": BarChart3,
   "/calendario": Calendar,
@@ -124,7 +118,7 @@ export function Sidebar() {
 
       <div className="border-t border-sidebar-border bg-sidebar-accent/50 px-4 py-3">
         <p className="mb-4 px-1 text-[10px] leading-relaxed text-sidebar-foreground/50">
-          Busca global na barra superior (carrocerias, clientes, OS e contratos).
+          Busca global na barra superior (carrocerias, clientes e orçamentos).
         </p>
 
         <div className="flex items-center gap-2">

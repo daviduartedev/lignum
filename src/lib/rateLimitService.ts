@@ -5,46 +5,11 @@ import { fail } from "@/lib/jsonResponse";
 import { getOptionalRedis } from "@/lib/redisOptional";
 import { SlidingWindowMemory } from "@/lib/slidingWindowMemory";
 
-const memSenatranUser = new SlidingWindowMemory(60 * 1000);
-const memSenatranResource = new SlidingWindowMemory(60 * 1000);
 const memDocumentLookupUser = new SlidingWindowMemory(60 * 1000);
 const memDocumentLookupResource = new SlidingWindowMemory(60 * 1000);
 
-let rlSenatranUser: Ratelimit | null | undefined;
-let rlSenatranResource: Ratelimit | null | undefined;
 let rlDocumentLookupUser: Ratelimit | null | undefined;
 let rlDocumentLookupResource: Ratelimit | null | undefined;
-
-function senatranUserLimiter(): Ratelimit | null {
-  if (rlSenatranUser !== undefined) return rlSenatranUser;
-  const redis = getOptionalRedis();
-  if (!redis) {
-    rlSenatranUser = null;
-    return null;
-  }
-  rlSenatranUser = new Ratelimit({
-    redis,
-    limiter: Ratelimit.slidingWindow(5, "1 m"),
-    prefix: "rl:senatran:user",
-  });
-  return rlSenatranUser;
-}
-
-/** 1 consulta / minuto por placa ou chave de recurso (ex.: RENAVAM). */
-function senatranResourceLimiter(): Ratelimit | null {
-  if (rlSenatranResource !== undefined) return rlSenatranResource;
-  const redis = getOptionalRedis();
-  if (!redis) {
-    rlSenatranResource = null;
-    return null;
-  }
-  rlSenatranResource = new Ratelimit({
-    redis,
-    limiter: Ratelimit.slidingWindow(1, "1 m"),
-    prefix: "rl:senatran:res",
-  });
-  return rlSenatranResource;
-}
 
 const memRegister = new SlidingWindowMemory(10 * 60 * 1000);
 const memPost = new SlidingWindowMemory(60 * 1000);
@@ -186,43 +151,10 @@ export function __resetRateLimitStateForTests(): void {
   memRegister.clear();
   memPost.clear();
   memGetAll.clear();
-  memSenatranUser.clear();
-  memSenatranResource.clear();
   memDocumentLookupUser.clear();
   memDocumentLookupResource.clear();
   rlRegister = rlPost = rlGetAll = undefined;
-  rlSenatranUser = rlSenatranResource = undefined;
   rlDocumentLookupUser = rlDocumentLookupResource = undefined;
-}
-
-/**
- * Consulta SENATRAN: 5 req/min por usuário e 1 req/min por placa/RENAVAM (chave `resourceKey`).
- */
-export async function assertSenatranLookupRateLimit(
-  req: NextRequest,
-  userId: string,
-  resourceKey: string,
-): Promise<Response | null> {
-  if (isRateLimitDisabled()) return null;
-  const uLim = senatranUserLimiter();
-  const userKey = userId;
-  if (uLim) {
-    const { success } = await uLim.limit(userKey);
-    if (!success) return rateLimitedResponse();
-  } else if (!memSenatranUser.hit(`senatran:user:${userKey}`, 5).allowed) {
-    return rateLimitedResponse();
-  }
-
-  const rLim = senatranResourceLimiter();
-  const resKey = resourceKey.slice(0, 200);
-  if (rLim) {
-    const { success } = await rLim.limit(resKey);
-    if (!success) return rateLimitedResponse();
-  } else if (!memSenatranResource.hit(`senatran:res:${resKey}`, 1).allowed) {
-    return rateLimitedResponse();
-  }
-
-  return null;
 }
 
 function documentLookupUserLimiter(): Ratelimit | null {

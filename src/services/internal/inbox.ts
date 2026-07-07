@@ -17,13 +17,3 @@ export async function saveUserInboxPreferences(body: {
     body: JSON.stringify(body),
   });
 }
-
-export async function postInboxStockAttention(body: {
-  vehicleId: number;
-  action: "dismiss" | "snooze";
-}): Promise<{ ok: boolean }> {
-  return apiFetch<{ ok: boolean }>("/api/inbox/stock-attention", {
-    method: "POST",
-    body: JSON.stringify(body),
-  });
-}

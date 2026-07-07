@@ -11,7 +11,7 @@ import {
   listingThActions,
   listingThText,
 } from "@/components/ui/ListingStatCell";
-import { Loader2, Mail, Phone, Car, CheckCheck, Inbox } from "lucide-react";
+import { Loader2, Mail, Phone, CheckCheck, Inbox } from "lucide-react";
 import { apiFetch } from "@/lib/apiClient";
 import { toast } from "@/lib/toast";
 
@@ -20,15 +20,12 @@ import { toast } from "@/lib/toast";
  * Lista os leads recebidos pelo formulário público e permite marcar como lido.
  */
 
-type LeadVehicle = { id: number; brand: string; model: string; plate: string } | null;
-
 type LeadRow = {
   id: number;
   name: string;
   email: string;
   phone: string;
   message?: string | null;
-  vehicle?: LeadVehicle;
   source: string;
   consentAt?: string;
   readAt?: string | null;
@@ -99,7 +96,6 @@ export function LeadsHub() {
                 <tr className="border-b border-[#E5E7EB]">
                   <th className={`${listingThText} text-[#6B7280]`}>Contato</th>
                   <th className={`${listingThText} text-[#6B7280]`}>Mensagem</th>
-                  <th className={`${listingThText} text-[#6B7280]`}>Veículo</th>
                   <th className={`${listingThText} text-[#6B7280]`}>Recebido</th>
                   <th className={`${listingThActions} text-[#6B7280]`} />
                 </tr>
@@ -130,16 +126,6 @@ export function LeadsHub() {
                     </td>
                     <td className={`${listingTdText} text-[#6B7280] max-w-[280px]`}>
                       <span className="line-clamp-3 break-words">{l.message || "—"}</span>
-                    </td>
-                    <td className={`${listingTdText} text-[#6B7280]`}>
-                      {l.vehicle ? (
-                        <span className="inline-flex items-center gap-1">
-                          <Car className="w-3.5 h-3.5" />
-                          {l.vehicle.brand} {l.vehicle.model}
-                        </span>
-                      ) : (
-                        "—"
-                      )}
                     </td>
                     <td className={`${listingTdText} text-[#6B7280]`}>{fmtDate(l.createdAt)}</td>
                     <td className={listingTdActions}>

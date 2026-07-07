@@ -10,11 +10,6 @@ export type ErpSettingFlat = {
   company_zip: string;
   company_phone: string;
   company_email: string;
-  alert_giro_enabled: boolean;
-  alert_giro_warn_days: number;
-  alert_giro_crit_days: number;
-  alert_prom_enabled: boolean;
-  alert_prom_days_before: number;
   alert_docs_enabled: boolean;
   alert_email_digest_enabled: boolean;
   finance_event_notify_days_before: number;
@@ -34,11 +29,6 @@ export const ERP_SETTING_DEFAULTS: ErpSettingFlat = {
   company_zip: "01310-100",
   company_phone: "(11) 3456-7890",
   company_email: "contato@lignum.local",
-  alert_giro_enabled: true,
-  alert_giro_warn_days: 30,
-  alert_giro_crit_days: 45,
-  alert_prom_enabled: true,
-  alert_prom_days_before: 7,
   alert_docs_enabled: true,
   alert_email_digest_enabled: true,
   finance_event_notify_days_before: 1,
@@ -77,11 +67,6 @@ export function mapErpApiRowToFlat(row: Record<string, unknown>): ErpSettingFlat
     company_zip: str(row.companyZip, ERP_SETTING_DEFAULTS.company_zip),
     company_phone: str(row.companyPhone, ERP_SETTING_DEFAULTS.company_phone),
     company_email: str(row.companyEmail, ERP_SETTING_DEFAULTS.company_email),
-    alert_giro_enabled: bool(row.alertGiroEnabled, ERP_SETTING_DEFAULTS.alert_giro_enabled),
-    alert_giro_warn_days: num(row.alertGiroWarnDays, ERP_SETTING_DEFAULTS.alert_giro_warn_days),
-    alert_giro_crit_days: num(row.alertGiroCritDays, ERP_SETTING_DEFAULTS.alert_giro_crit_days),
-    alert_prom_enabled: bool(row.alertPromEnabled, ERP_SETTING_DEFAULTS.alert_prom_enabled),
-    alert_prom_days_before: num(row.alertPromDaysBefore, ERP_SETTING_DEFAULTS.alert_prom_days_before),
     alert_docs_enabled: bool(row.alertDocsEnabled, ERP_SETTING_DEFAULTS.alert_docs_enabled),
     alert_email_digest_enabled: bool(
       row.alertEmailDigestEnabled,
@@ -132,11 +117,6 @@ export function flatToErpPutBody(f: ErpSettingFlat): Record<string, unknown> {
     companyZip: f.company_zip,
     companyPhone: f.company_phone,
     companyEmail: f.company_email,
-    alertGiroEnabled: f.alert_giro_enabled,
-    alertGiroWarnDays: f.alert_giro_warn_days,
-    alertGiroCritDays: f.alert_giro_crit_days,
-    alertPromEnabled: f.alert_prom_enabled,
-    alertPromDaysBefore: f.alert_prom_days_before,
     alertDocsEnabled: f.alert_docs_enabled,
     alertEmailDigestEnabled: f.alert_email_digest_enabled,
     financeEventNotifyDaysBefore: f.finance_event_notify_days_before,

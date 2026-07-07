@@ -1,14 +1,12 @@
-import { vehicleDisplayName, type PromissoryNote, type ServiceOrder, type Vehicle, type Warranty } from "@/types";
 import type { UserNotification } from "@/types";
 
-export type TipoEv = "vencimento" | "os" | "garantia" | "lembrete";
+export type TipoEv = "pagar" | "lembrete";
 
 export interface CalEvent {
   dia: number;
   tipo: TipoEv;
   titulo: string;
   valor?: string;
-  oficina?: string;
   link?: string;
   notifId?: string;
   horaLabel?: string;
@@ -34,69 +32,30 @@ function mergeReminderEvents(notifs: UserNotification[], y: number, m: number): 
 }
 
 export function buildCalendarMonthEvents(args: {
-  promData: unknown;
-  osData: unknown;
-  warData: unknown;
+  payData: unknown;
   notifData: unknown;
   monthAnchor: Date;
 }): CalEvent[] {
-  const { promData, osData, warData, notifData, monthAnchor } = args;
+  const { payData, notifData, monthAnchor } = args;
   const y = monthAnchor.getFullYear();
   const m = monthAnchor.getMonth();
   const out: CalEvent[] = [];
 
-  const prom = Array.isArray(promData) ? (promData as PromissoryNote[]) : [];
-  prom.forEach((p) => {
-    const a = p.attributes;
-    if (a.status !== "aberta") return;
-    const due = new Date(String(a.due_date || ""));
+  const payables = Array.isArray(payData) ? payData : [];
+  payables.forEach((p) => {
+    const row = p as { dueDate?: string | Date; status?: string; amount?: unknown; description?: string };
+    if (!row?.dueDate) return;
+    const due = new Date(String(row.dueDate));
+    if (Number.isNaN(due.getTime())) return;
     if (due.getFullYear() !== y || due.getMonth() !== m) return;
-    const amount = Number(a.amount) || 0;
-    const id = String(p.documentId ?? p.id);
-    const cli = a.client?.data;
-    const nome = cli ? cli.attributes.full_name : "Cliente";
+    if (String(row.status || "") !== "aberta") return;
+    const amount = Number(row.amount) || 0;
     out.push({
       dia: due.getDate(),
-      tipo: "vencimento",
-      titulo: `Promissória ${nome}`,
+      tipo: "pagar",
+      titulo: `A pagar · ${String(row.description || "Conta")}`,
       valor: amount.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }),
-      link: id ? `/promissorias/${id}` : "/promissorias",
-    });
-  });
-
-  const orders = Array.isArray(osData) ? (osData as ServiceOrder[]) : [];
-  orders.forEach((o) => {
-    const a = o.attributes;
-    if (!a.due_date) return;
-    const due = new Date(String(a.due_date));
-    if (due.getFullYear() !== y || due.getMonth() !== m) return;
-    const st = String(a.status || "");
-    if (st === "concluida" || st === "cancelada") return;
-    const id = String(o.documentId ?? o.id);
-    out.push({
-      dia: due.getDate(),
-      tipo: "os",
-      titulo: String(a.workshop_name || "OS"),
-      oficina: String(a.service_type || ""),
-      link: id ? `/os/${id}` : "/os",
-    });
-  });
-
-  const wars = Array.isArray(warData) ? (warData as Warranty[]) : [];
-  wars.forEach((w) => {
-    const a = w.attributes;
-    const end = new Date(String(a.end_date || ""));
-    if (end.getFullYear() !== y || end.getMonth() !== m) return;
-    const st = String(a.status || "");
-    if (st === "expirada" || st === "cancelada") return;
-    const id = String(w.documentId ?? w.id);
-    const veh = a.vehicle?.data;
-    const titulo = veh ? `Garantia · ${vehicleDisplayName(veh as Vehicle)}` : "Garantia";
-    out.push({
-      dia: end.getDate(),
-      tipo: "garantia",
-      titulo,
-      link: id ? `/garantias/${id}` : "/garantias",
+      link: "/financeiro",
     });
   });
 
@@ -120,4 +79,3 @@ export function selectUpcomingWindow(args: { events: CalEvent[]; monthAnchor: Da
     })
     .slice(0, limit);
 }
-

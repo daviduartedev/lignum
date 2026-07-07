@@ -37,7 +37,6 @@ import {
 import { CheckCircle, Loader2, Plus } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { ListingStatCell, listingTdActions, listingTdStat, listingTdText, listingThActions, listingThStat, listingThText } from "@/components/ui/ListingStatCell";
-import { PromissoriasLista } from "@/components/backoffice/PromissoriasLista";
 import { useConfirmPayablePayment, useCreatePayable, usePayablesPage } from "@/hooks/usePayables";
 import { Pagination } from "@/components/ui/pagination";
 import { parseBRLMoney } from "@/lib/masks";
@@ -46,35 +45,14 @@ import { toast } from "@/lib/toast";
 import { z } from "zod";
 
 export function FinanceiroHub() {
-  const [tab, setTab] = useState<"receber" | "pagar">("receber");
-
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold text-[#111827] mb-1">Financeiro</h1>
-        <p className="text-sm text-[#6B7280]">A Pagar e A Receber, vencimentos, parcelas e despesas</p>
+        <p className="text-sm text-[#6B7280]">Contas a pagar, vencimentos e despesas</p>
       </div>
 
-      <div className="inline-flex rounded-lg border border-[#E5E7EB] bg-white p-1 w-fit">
-        <Button
-          type="button"
-          variant={tab === "receber" ? "default" : "ghost"}
-          className={tab === "receber" ? "bg-[#22C55E] hover:bg-[#16A34A] text-white" : ""}
-          onClick={() => setTab("receber")}
-        >
-          A Receber
-        </Button>
-        <Button
-          type="button"
-          variant={tab === "pagar" ? "default" : "ghost"}
-          className={tab === "pagar" ? "bg-[#22C55E] hover:bg-[#16A34A] text-white" : ""}
-          onClick={() => setTab("pagar")}
-        >
-          A Pagar
-        </Button>
-      </div>
-
-      {tab === "receber" ? <PromissoriasLista /> : <PayablesLista />}
+      <PayablesLista />
     </div>
   );
 }
@@ -83,7 +61,7 @@ const PAYABLE_DESCRIPTION_MAX = 2000;
 const PAYABLE_NOTES_MAX = 16_000;
 
 const createPayableSchema = z.object({
-  origin: z.enum(["manual", "compra_veiculo", "outro"]),
+  origin: z.enum(["manual", "outro"]),
   description: z
     .string()
     .min(1, "Informe a descrição.")
@@ -98,7 +76,6 @@ const createPayableSchema = z.object({
 
 const PAYABLE_ORIGIN_LABELS: Record<string, string> = {
   manual: "Manual",
-  compra_veiculo: "Compra veículo",
   outro: "Outro",
 };
 
@@ -162,7 +139,7 @@ function PayablesLista() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [confirmId, setConfirmId] = useState<number | null>(null);
   const [form, setForm] = useState({
-    origin: "manual" as "manual" | "compra_veiculo" | "outro",
+    origin: "manual" as "manual" | "outro",
     description: "",
     dueDate: "",
     amount: "",
@@ -268,7 +245,7 @@ function PayablesLista() {
             onChange={(e) => setStatusFilter(e.target.value)}
           />
           <Input
-            placeholder="Origem (todos|manual|compra_veiculo|outro)"
+            placeholder="Origem (todos|manual|outro)"
             className="w-72"
             value={origin}
             onChange={(e) => setOrigin(e.target.value)}
@@ -369,7 +346,7 @@ function PayablesLista() {
               <Select
                 value={form.origin}
                 onValueChange={(v) =>
-                  setForm((s) => ({ ...s, origin: v as "manual" | "compra_veiculo" | "outro" }))
+                  setForm((s) => ({ ...s, origin: v as "manual" | "outro" }))
                 }
               >
                 <SelectTrigger>
@@ -377,7 +354,6 @@ function PayablesLista() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="manual">Manual</SelectItem>
-                  <SelectItem value="compra_veiculo">Compra veículo</SelectItem>
                   <SelectItem value="outro">Outro</SelectItem>
                 </SelectContent>
               </Select>

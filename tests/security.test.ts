@@ -21,7 +21,6 @@ import { parsePagination } from "@/lib/pagination";
 import { redactSensitive } from "@/lib/secureLogger";
 import { uploadFile, UPLOAD_DISABLED_MESSAGE } from "@/lib/upload";
 import { validateUploadFilename } from "@/lib/uploadValidation";
-import { vehicleCreateSchema } from "@/lib/zodSchemas";
 import { corsHeaders } from "@/lib/cors";
 import { isSessionRevocationSchemaMissing } from "@/lib/sessionRevocation";
 import { securityHeaderEntries } from "@/lib/securityHeaders";
@@ -201,47 +200,5 @@ describe("paginação", () => {
     const r = parsePagination(p);
     expect(r.page).toBe(1);
     expect(r.pageSize).toBeGreaterThan(0);
-  });
-});
-
-describe("validação Zod (veículo)", () => {
-  it("rejeita mainPhotoUrl com esquema javascript:", () => {
-    const parsed = vehicleCreateSchema.safeParse({
-      plate: "ABC1D23",
-      brand: "X",
-      model: "Y",
-      yearManufacture: 2020,
-      yearModel: 2020,
-      mileage: 0,
-      purchasePrice: "1000",
-      status: "disponivel",
-      mainPhotoUrl: "javascript:alert(1)",
-      renavam: "12345678901",
-      chassis: "9BWZZZ377VT004251",
-      legalSituation: "regular",
-      categoryKind: "carro",
-      cautelar: "nao",
-    });
-    expect(parsed.success).toBe(false);
-  });
-
-  it("rejeita observações com marcação HTML", () => {
-    const parsed = vehicleCreateSchema.safeParse({
-      plate: "ABC1D23",
-      brand: "X",
-      model: "Y",
-      yearManufacture: 2020,
-      yearModel: 2020,
-      mileage: 0,
-      purchasePrice: "1000",
-      status: "disponivel",
-      observations: "<script>x</script>",
-      renavam: "12345678901",
-      chassis: "9BWZZZ377VT004251",
-      legalSituation: "regular",
-      categoryKind: "carro",
-      cautelar: "nao",
-    });
-    expect(parsed.success).toBe(false);
   });
 });

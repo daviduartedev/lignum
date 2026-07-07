@@ -21,13 +21,12 @@ import {
 import { formatBRL } from "@/lib/pdf/format";
 import { quotePdfUrl, technicalSheetPdfUrl } from "@/services/internal/quotes";
 import { cn } from "@/components/ui/utils";
+import { quoteStatusBadgeClass, quoteStatusLabel } from "@/lib/quoteLabels";
 import {
   COVER_STYLE_LABELS,
   FINISH_TYPE_LABELS,
   FLOOR_TYPE_LABELS,
-  QUOTE_STATUS_LABELS,
   quoteAttrs,
-  type QuoteStatus,
 } from "@/types/quotes";
 import type { BomLine } from "@/lib/quotes/bomBuilder";
 import {
@@ -39,13 +38,6 @@ import {
   Send,
   Trash2,
 } from "lucide-react";
-
-function statusBadgeClass(s: QuoteStatus): string {
-  if (s === "aprovado" || s === "convertido") return "bg-[#DCFCE7] text-[#15803D] border-0";
-  if (s === "enviado") return "bg-[#DBEAFE] text-[#1D4ED8] border-0";
-  if (s === "rascunho") return "bg-[#FEF9C3] text-[#A16207] border-0";
-  return "bg-[#FEE2E2] text-[#B91C1C] border-0";
-}
 
 export function OrcamentoDetalhe({ routeId }: { routeId: string }) {
   const { data: quote, isLoading, isError } = useQuote(routeId);
@@ -150,8 +142,8 @@ export function OrcamentoDetalhe({ routeId }: { routeId: string }) {
       />
 
       <div className="flex flex-wrap items-center gap-3">
-        <Badge className={cn("font-normal", statusBadgeClass(a.status))}>
-          {QUOTE_STATUS_LABELS[a.status]}
+        <Badge className={cn("font-normal", quoteStatusBadgeClass(a.status))}>
+          {quoteStatusLabel(a.status)}
         </Badge>
         <span className="inline-flex items-baseline gap-2 rounded-lg bg-primary px-4 py-2 text-primary-foreground shadow-sm">
           <span className="text-xs font-medium text-primary-foreground/80">Total</span>

@@ -3,7 +3,7 @@ import { renderToBuffer } from "@react-pdf/renderer";
 import { ensureFontsRegistered } from "@/lib/pdf/registerFonts";
 import { QuoteDocument } from "@/lib/pdf/templates/QuoteDocument";
 import type { QuotePdfViewModel } from "@/lib/pdf/templates/types";
-import type { IssuerSettings } from "@/lib/pdf/contractPdf";
+import type { IssuerSettings } from "@/lib/pdf/issuerSettings";
 import {
   COVER_STYLE_LABELS,
   FINISH_TYPE_LABELS,

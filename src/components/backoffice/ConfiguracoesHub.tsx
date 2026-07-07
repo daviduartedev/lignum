@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,20 +14,13 @@ import { cn } from "@/components/ui/utils";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Building2, Bell, Users, Loader2, AlertCircle, RefreshCw, FileText, Calculator } from "lucide-react";
+import { Building2, Bell, Users, Loader2, AlertCircle, RefreshCw, Calculator } from "lucide-react";
 import { useErpSettingQuery, useErpSettingSave } from "@/hooks/useErpSettings";
 import { ERP_SETTING_DEFAULTS, type ErpSettingFlat } from "@/lib/erpSettingDefaults";
-import { fetchSenatranUsage } from "@/services/internal/senatranLookup";
 
 export function ConfiguracoesHub() {
   const { data: session } = useSession();
   const isAdmin = session?.user?.role === "admin";
-  const senatranUsage = useQuery({
-    queryKey: ["senatran", "usage"],
-    queryFn: fetchSenatranUsage,
-    enabled: isAdmin,
-    staleTime: 60_000,
-  });
   const { data, isLoading, isError, error, refetch } = useErpSettingQuery();
   const saveMutation = useErpSettingSave();
   const [form, setForm] = useState<ErpSettingFlat>(() => ({ ...ERP_SETTING_DEFAULTS }));
@@ -88,46 +80,6 @@ export function ConfiguracoesHub() {
           ) : null
         }
       />
-
-      <Card className="p-4 border border-border bg-card">
-        <div className="flex items-start gap-3">
-          <FileText className="h-5 w-5 shrink-0 text-primary mt-0.5" aria-hidden />
-          <div className="min-w-0 flex-1">
-            <p className="text-sm font-medium text-foreground">Documentação · integração SENATRAN</p>
-            <p className="text-xs text-muted-foreground mt-1">
-              Material para compartilhar com o cliente (imprimir ou salvar como PDF).
-            </p>
-            <Button asChild variant="outline" size="sm" className="mt-3">
-              <Link href="/documentacao/senatran">Abrir documento</Link>
-            </Button>
-          </div>
-        </div>
-      </Card>
-
-      {isAdmin ? (
-        <Card className="p-4 border border-border bg-muted/30">
-          <p className="text-sm font-medium text-foreground">Custo acumulado · consultas SENATRAN (mês corrente)</p>
-          {senatranUsage.isLoading ? (
-            <p className="text-sm text-muted-foreground mt-2">Carregando…</p>
-          ) : senatranUsage.isError ? (
-            <p className="text-sm text-destructive mt-2">Não foi possível carregar o uso.</p>
-          ) : (
-            <>
-              <p className="text-2xl font-semibold text-foreground mt-1 tabular-nums">
-                {Number(senatranUsage.data?.monthTotal ?? 0).toLocaleString("pt-BR", {
-                  style: "currency",
-                  currency: "BRL",
-                })}
-              </p>
-              {senatranUsage.data?.isDemo ? (
-                <p className="text-xs text-muted-foreground mt-2">Modo demonstração (mock), custo zero.</p>
-              ) : (
-                <p className="text-xs text-muted-foreground mt-2">Provedor: {senatranUsage.data?.provider ?? "-"}</p>
-              )}
-            </>
-          )}
-        </Card>
-      ) : null}
 
       {isError && (
         <Alert variant="destructive">
@@ -362,70 +314,6 @@ export function ConfiguracoesHub() {
           ) : (
             <StitchSectionCard title="Alertas do sistema">
               <div className="max-w-2xl space-y-6">
-              <div className="flex items-center justify-between p-4 bg-muted/40 rounded-lg">
-                <div>
-                  <div className="text-sm font-medium text-foreground">Alertas de Giro</div>
-                  <div className="text-xs text-muted-foreground">Notificar quando veículos ultrapassarem prazo</div>
-                </div>
-                <Switch
-                  checked={form.alert_giro_enabled}
-                  onCheckedChange={(v) => setForm((f) => ({ ...f, alert_giro_enabled: v }))}
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="al-warn">Dias para Alerta de Atenção</Label>
-                <Input
-                  id="al-warn"
-                  type="number"
-                  min={1}
-                  value={form.alert_giro_warn_days}
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, alert_giro_warn_days: Math.max(1, parseInt(e.target.value, 10) || 30) }))
-                  }
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="al-crit">Dias para Alerta Crítico</Label>
-                <Input
-                  id="al-crit"
-                  type="number"
-                  min={1}
-                  value={form.alert_giro_crit_days}
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, alert_giro_crit_days: Math.max(1, parseInt(e.target.value, 10) || 45) }))
-                  }
-                />
-              </div>
-
-              <div className="flex items-center justify-between p-4 bg-muted/40 rounded-lg">
-                <div>
-                  <div className="text-sm font-medium text-foreground">Alertas de Promissórias</div>
-                  <div className="text-xs text-muted-foreground">Notificar sobre vencimentos</div>
-                </div>
-                <Switch
-                  checked={form.alert_prom_enabled}
-                  onCheckedChange={(v) => setForm((f) => ({ ...f, alert_prom_enabled: v }))}
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="al-prom">Dias de Antecedência para Alerta</Label>
-                <Input
-                  id="al-prom"
-                  type="number"
-                  min={1}
-                  value={form.alert_prom_days_before}
-                  onChange={(e) =>
-                    setForm((f) => ({
-                      ...f,
-                      alert_prom_days_before: Math.max(1, parseInt(e.target.value, 10) || 7),
-                    }))
-                  }
-                />
-              </div>
-
               <div className="flex items-center justify-between p-4 bg-muted/40 rounded-lg">
                 <div>
                   <div className="text-sm font-medium text-foreground">Alertas de Documentação</div>

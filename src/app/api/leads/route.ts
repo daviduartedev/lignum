@@ -26,9 +26,6 @@ export const GET = withRole(allStaffReadRoles, async (req: NextRequest) => {
       orderBy: { id: "desc" },
       skip,
       take,
-      include: {
-        vehicle: { select: { id: true, brand: true, model: true, plate: true } },
-      },
     }),
   ]);
 
