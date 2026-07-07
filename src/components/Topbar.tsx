@@ -35,6 +35,8 @@ const breadcrumbMap: Record<string, string[]> = {
   "/notificacoes": ["Notificações"],
   "/relatorios": ["Relatórios"],
   "/configuracoes": ["Configurações"],
+  "/orcamentos": ["Orçamentos", "Lista"],
+  "/orcamentos/novo": ["Orçamentos", "Novo orçamento"],
 };
 
 export function Topbar() {
@@ -65,6 +67,10 @@ export function Topbar() {
 
     if (/^\/garantias\/[^/]+$/.test(p) && p !== "/garantias/nova") {
       return ["Garantias", "Editar garantia"];
+    }
+
+    if (/^\/orcamentos\/[^/]+$/.test(p) && p !== "/orcamentos/novo") {
+      return ["Orçamentos", "Detalhe"];
     }
 
     const sorted = Object.entries(breadcrumbMap).sort((a, b) => b[0].length - a[0].length);

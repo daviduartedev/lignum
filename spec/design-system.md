@@ -168,7 +168,7 @@ permissoes`, `04-cliente-detalhe`, `08-ficha-tecnica`, `10-os-detalhe`.
 
 | Tela (pasta em `design/stitch/`) | Cycle |
 |---|---|
-| `00-login`, `01-painel-dashboard` | 0623-fundacao-rebrand-core |
+| `00-login`, `01-painel-dashboard` | 0623 (login); **0713** shell Painel Stitch 01 em `/` (KPIs mock até 0727) |
 | `02-usuarios-permissoes` | 0629-auth-usuarios-permissoes |
 | `03-clientes`, `04-cliente-detalhe`, `05-empresa-configuracoes` | 0706-cadastros-clientes-cpf-cnpj |
 | `06-orcamentos-lista`, `07-orcamento-novo`, `08-ficha-tecnica` | 0713-orcamentos-fichas-pdf |

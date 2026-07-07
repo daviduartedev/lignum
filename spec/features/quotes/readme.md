@@ -33,15 +33,33 @@ Orçamento paramétrico de carroceria: medidas, tampa, assoalho, acabamento, opc
 ## UI
 
 - `/orcamentos` — lista (Stitch 06): KPIs sólidos por status
-- `/orcamentos/novo` — formulário paramétrico + total ao vivo (Stitch 07)
+- `/orcamentos/novo` — formulário paramétrico + resumo ao vivo (Stitch 07)
 - `/orcamentos/[id]` — detalhe, transições de status, BOM (Stitch 08)
 
 Componentes reutilizáveis: `src/components/ui/stitch/` (`StitchPageHeader`, `StitchKpiCard`, `StitchSectionCard`, `StitchTableShell`, `EntityAvatar`).
 
-### Cálculo ao vivo (`/orcamentos/novo`)
+Componentes do formulário (Stitch 07): `QuoteFormSummary`, `QuoteFormFooter` em `src/components/comercial/`.
+
+### Novo orçamento (`/orcamentos/novo`, Stitch 07)
+
+Layout em duas colunas (form 7 / resumo 5) com scroll interno e **footer fixo** na base da página (fora da área de scroll):
+
+| Secção | Conteúdo |
+|--------|----------|
+| Breadcrumb + ID | `Orçamentos > Criação de Orçamento Paramétrico`; ID provisório `ORC-{ano}-novo` até salvar |
+| Identificação do Cliente | Select + subtexto documento/localização |
+| Dimensões e Estrutura | Medidas, modelo, tampa, assoalho; acabamento em **radio cards** (Padrão Fábrica / Personalizada) |
+| Itens Opcionais | Checkboxes em grid |
+| Condições comerciais | Secção colapsável (desconto, prazo, pagamento, observações) |
+| Resumo da Configuração | Cabeçalho azul; grupos Estrutura Base + Acessórios; subtotal + mão de obra; caixa **Valor Total Estimado**; aviso de prazo |
+| Footer | Descartar · Salvar Rascunho · Gerar PDF · Enviar ao Cliente |
+
+**Gerar PDF:** persiste rascunho, abre PDF em nova aba, redirecciona ao detalhe.
+
+### Cálculo ao vivo
 
 - `POST /api/quotes/calculate` com debounce ~350 ms ao alterar medidas/opcionais/desconto.
-- Card lateral **Total estimado**: cabeçalho azul royal sólido com valor; lista de itens + subtotais abaixo.
+- Painel lateral **Resumo da Configuração** (não confundir com `/` Painel): grupos de linhas, subtotal, mão de obra separada, total estimado.
 - Estado inicial calcula com medidas default (4,20 × 2,10 × 1,80 m); não deve entrar em loop de loading.
 
 ### Copy e tipografia (P0)

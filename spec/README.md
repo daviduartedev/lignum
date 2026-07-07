@@ -28,7 +28,7 @@ Este diretorio e o **hub de especificacao** do repositorio: descreve o comportam
 
 | Feature | Pasta | Resumo |
 |--------|--------|--------|
-| Painel (dashboard da revenda) | [features/dashboard](features/dashboard/readme.md) | KPIs compactos; quadro de veiculos parados; ranking de marcas; resumo de vendas por mes. |
+| Painel (dashboard Lignum) | [features/dashboard](features/dashboard/readme.md) | Stitch 01 em `/`; KPIs mock; tabela de orçamentos reais; KPIs financeiros reais pós-0727. |
 | Centro de alertas (inbox unificado) | [features/inbox-centro-alertas](features/inbox-centro-alertas/readme.md) | Popup pos-login, drawer do sininho, agregacao `inbox/summary`, snooze e dispensar. |
 | Calendario (operacional) | [features/calendario](features/calendario/readme.md) | Rota unica `/calendario`: recebiveis, contas a pagar, OS, garantias e lembretes. |
 | Financeiro (A pagar / A receber) | [features/financeiro](features/financeiro/readme.md) | Hub `/financeiro` com recebiveis, despesas e notificacoes. |

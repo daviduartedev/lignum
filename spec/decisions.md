@@ -139,4 +139,4 @@
 
 **Decisão.** UI por cycle de domínio (não transversal); a partir do 0713 paridade Stitch na última stage de produto; interpretação híbrida (domínio novo = fluxo+UI; core = skin; legado veículo = não reskinar).
 
-**Consequências.** Stage 1 do 0713 = polish 0706 + Painel honesto; Stage 7 = paridade 06–08; Painel completo pós-0727.
+**Consequências.** Stage 1 do 0713 = polish 0706 + Painel Stitch 01 (shell mock); Stage 7 = paridade 06–08 + 07; KPIs e gráficos do Painel com dados reais pós-0727.
