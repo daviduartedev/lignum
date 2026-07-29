@@ -17,7 +17,7 @@ export function InboxAlertsContent({ data }: Props) {
     <div className="space-y-6 text-left">
       {empty ? (
         <div className="rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50/90 to-background px-6 py-10 text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-100 text-primary">
             <CheckCircle2 className="h-9 w-9" aria-hidden />
           </div>
           <p className="mt-4 text-base font-semibold text-foreground">Tudo em dia</p>
@@ -39,14 +39,14 @@ export function InboxAlertsContent({ data }: Props) {
         ) : (
           <ul className="list-none space-y-2 m-0 p-0">
             {data.notificationPreviews.map((n) => (
-              <li key={n.id} className="rounded-lg border border-border/80 px-3 py-3 bg-muted/20">
+              <li key={n.id} className="rounded-lg border border-border/80 px-3 py-3 bg-muted">
                 <p className="text-sm font-medium text-foreground">{n.title}</p>
                 {n.body ? (
                   <p className="whitespace-pre-wrap text-xs leading-relaxed text-muted-foreground mt-1">{n.body}</p>
                 ) : null}
                 <div className="flex flex-wrap gap-x-2 gap-y-1 mt-2 text-[11px] text-muted-foreground">
                   {n.remindAt ? (
-                    <span className="font-medium text-emerald-800">
+                    <span className="font-medium text-primary">
                       Compromisso: {new Date(n.remindAt).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}
                     </span>
                   ) : null}
@@ -82,7 +82,7 @@ export function InboxAlertsContent({ data }: Props) {
                     <p className="text-xs text-amber-900/90 mt-1">
                       SKU <strong>{row.sku}</strong> — saldo {row.currentStock} (mín. {row.minStock})
                     </p>
-                    <Link href={row.href} className="text-xs font-medium text-emerald-800 hover:underline mt-2 inline-block">
+                    <Link href={row.href} className="text-xs font-medium text-primary hover:underline mt-2 inline-block">
                       Ver material
                     </Link>
                   </div>
@@ -102,13 +102,13 @@ export function InboxAlertsContent({ data }: Props) {
         ) : (
           <ul className="list-none space-y-2 m-0 p-0">
             {data.virtualAlerts.map((v) => (
-              <li key={v.kind} className="rounded-lg border border-border/80 px-3 py-3 bg-muted/15">
+              <li key={v.kind} className="rounded-lg border border-border/80 px-3 py-3 bg-muted">
                 <div className="flex items-start gap-2">
                   <LayoutDashboard className="h-4 w-4 shrink-0 text-muted-foreground mt-0.5" aria-hidden />
                   <div className="min-w-0">
                     <p className="text-sm font-medium">{v.title}</p>
                     <p className="text-xs text-muted-foreground mt-1">{v.body}</p>
-                    <Link href={v.href} className="text-xs font-medium text-emerald-800 hover:underline mt-2 inline-block">
+                    <Link href={v.href} className="text-xs font-medium text-primary hover:underline mt-2 inline-block">
                       Abrir seção
                     </Link>
                   </div>

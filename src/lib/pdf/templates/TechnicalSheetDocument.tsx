@@ -1,5 +1,6 @@
 import React from "react";
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
+import { LignumPdfMark } from "@/lib/pdf/LignumPdfMark";
 import { BASE_FONT_FAMILY, BASE_FONT_FAMILY_BOLD } from "@/lib/pdf/registerFonts";
 import { formatDateLong, orDash } from "@/lib/pdf/format";
 import type { TechnicalSheetPdfViewModel } from "@/lib/pdf/templates/types";
@@ -60,7 +61,10 @@ export function TechnicalSheetDocument({ vm }: { vm: TechnicalSheetPdfViewModel 
       <Page size="A4" style={styles.page}>
         <View style={styles.header}>
           <View>
-            <Text style={styles.issuerName}>{vm.issuer.companyName}</Text>
+            <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 4 }}>
+              <LignumPdfMark size={22} />
+              <Text style={[styles.issuerName, { marginLeft: 6 }]}>{vm.issuer.companyName}</Text>
+            </View>
             <Text>CNPJ: {orDash(vm.issuer.companyTaxId)}</Text>
           </View>
           <View>

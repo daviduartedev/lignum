@@ -15,13 +15,15 @@ const breadcrumbMap: Record<string, string[]> = {
   "/": ["Painel"],
   "/calendario": ["Calendário"],
   "/documentos": ["Documentos"],
-  "/financeiro": ["Financeiro", "Visão geral"],
+  "/financeiro": ["Controle financeiro"],
+  "/nota-fiscal": ["Emissão de nota fiscal (NFS)"],
   "/clientes": ["Clientes e fornecedores", "Lista"],
   "/clientes/novo": ["Clientes e fornecedores", "Novo cadastro"],
   "/notificacoes": ["Notificações"],
   "/relatorios": ["Relatórios"],
   "/configuracoes": ["Configurações"],
   "/orcamentos": ["Orçamentos", "Lista"],
+  "/configurador-3d": ["Configurador 3D"],
   "/orcamentos/novo": ["Orçamentos", "Novo orçamento"],
   "/producao": ["Produção", "Kanban"],
   "/funcionarios": ["Funcionários", "Equipe"],
@@ -72,7 +74,7 @@ export function Topbar() {
   const breadcrumb = getBreadcrumb();
 
   return (
-    <header className="h-14 border-b border-border/80 bg-card px-8 flex items-center gap-6 print:hidden shadow-sm">
+    <header className="h-14 border-b border-border/80 bg-card px-8 flex items-center gap-6 print:hidden shadow-[var(--shadow-card)]">
       <div className="flex items-center gap-2 text-sm" aria-label="Localização na aplicação">
         {breadcrumb.map((crumb, index) => (
           <div key={`${crumb}-${index}`} className="flex items-center gap-2">
@@ -130,7 +132,7 @@ export function Topbar() {
               >
                 <DialogHeader className="border-b border-border/80 px-5 py-4 text-left">
                   <DialogTitle className="flex items-center gap-2 text-base">
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/12 text-primary">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-secondary text-primary">
                       <Bell className="h-5 w-5" aria-hidden />
                     </span>
                     Centro de alertas

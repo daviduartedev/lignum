@@ -84,7 +84,7 @@ function EmployeeProductivityDrawer({
               </div>
               <div className="rounded-lg border bg-surface-container-low p-3 text-center">
                 <p className="text-xs text-muted-foreground">Concluídas</p>
-                <p className="text-xl font-bold text-emerald-700">{data.completedCount}</p>
+                <p className="text-xl font-bold text-primary">{data.completedCount}</p>
               </div>
               <div className="rounded-lg border bg-surface-container-low p-3 text-center">
                 <p className="text-xs text-muted-foreground">Em andamento</p>
@@ -259,7 +259,7 @@ export function FuncionariosLista() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b bg-muted/30">
+                  <tr className="border-b bg-muted">
                     <th className={listingThText}>Funcionário</th>
                     <th className={listingThText}>Cargo</th>
                     <th className={listingThStat}>OPs</th>
@@ -280,12 +280,12 @@ export function FuncionariosLista() {
                     items.map((emp) => (
                       <tr
                         key={emp.id}
-                        className="cursor-pointer hover:bg-muted/30 transition-colors"
+                        className="cursor-pointer hover:bg-muted transition-colors"
                         onClick={() => setDrawerEmployee(emp)}
                       >
                         <td className={listingTdText}>
                           <div className="flex items-center gap-3">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary/10 text-xs font-bold text-secondary shrink-0">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-xs font-bold text-secondary shrink-0">
                               {employeeInitials(emp.name)}
                             </div>
                             <span className="font-medium">{emp.name}</span>

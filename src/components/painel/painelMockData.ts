@@ -97,7 +97,5 @@ export const PAINEL_MOCK_QUOTES = [
   },
 ] as const;
 
-export const FACTORY_IMAGE_URL =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuA8zMKMb_oh-FdR53iVfIsOV3gEnBybWNGixM9QNSZJKA1naXcC-infMawfl11OjE2ajNfrSsqmwIF__THA-tKkhCLrkY-pTlIKUXKlqWoHGZ_bf4SGzR8EcjmSCaY5WqjVhqdA9DHuxrKJDzi57w_tC3czDWpkyg79CmUWIEWOIyYFHto5OcP1EEQBWi-awBg2HAmql5qYjxRstkgfFFjlKOkdS8ll583ugDBNo0RGF6ccDgW2-088KqQYR5syo90XBWSvmq4s1fIS";
 
 export const PRODUCTION_BAR_HEIGHTS = [60, 75, 45, 90, 65, 80] as const;

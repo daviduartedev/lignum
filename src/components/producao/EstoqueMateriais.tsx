@@ -168,7 +168,7 @@ export function EstoqueMateriais() {
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
                 <thead>
-                  <tr className="border-b bg-muted/30 text-xs uppercase tracking-wider text-muted-foreground">
+                  <tr className="border-b bg-muted text-xs uppercase tracking-wider text-muted-foreground">
                     <th className="pl-6 pr-4 py-3 font-medium">Material</th>
                     <th className="px-4 py-3 font-medium">Unidade</th>
                     <th className="px-4 py-3 text-right font-medium">Saldo</th>
@@ -184,7 +184,7 @@ export function EstoqueMateriais() {
                     <tr
                       key={m.id}
                       className={cn(
-                        "transition-colors hover:bg-muted/30",
+                        "transition-colors hover:bg-muted",
                         m.belowMinimum && "bg-red-50/60 hover:bg-red-50/80",
                       )}
                     >

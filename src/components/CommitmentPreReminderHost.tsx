@@ -39,7 +39,7 @@ export function CommitmentPreReminderHost() {
           <p className="mt-1 text-xs text-muted-foreground">Às {when}</p>
           <button
             type="button"
-            className="mt-3 rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-emerald-700"
+            className="mt-3 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-white hover:bg-accent"
             onClick={() => {
               sessionStorage.setItem(key, "1");
               rt.dismiss(tid);

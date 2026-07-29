@@ -5,11 +5,11 @@ const MONTHS = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun"] as const;
 
 export function PainelRevenueChart() {
   return (
-    <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+    <div className="rounded-xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
       <div className="mb-6 flex items-center justify-between gap-4">
         <h3 className="text-lg font-semibold text-foreground">Faturamento x Lucro (6 meses)</h3>
         <select
-          className="rounded-lg border-0 bg-muted/60 px-3 py-1.5 text-xs text-foreground focus:ring-2 focus:ring-primary/20"
+          className="rounded-lg border-0 bg-muted px-3 py-1.5 text-xs text-foreground focus:ring-2 focus:ring-primary/20"
           defaultValue="semestre"
           aria-label="Período do gráfico"
         >
@@ -65,7 +65,7 @@ export function PainelRevenueChart() {
 
 export function PainelProductionChart() {
   return (
-    <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+    <div className="rounded-xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
       <div className="mb-6 flex items-center justify-between">
         <h3 className="text-lg font-semibold text-foreground">Produção por Mês (Unidades)</h3>
       </div>
@@ -75,7 +75,7 @@ export function PainelProductionChart() {
             <div
               className={cn(
                 "w-full rounded-t-lg transition-colors hover:bg-secondary",
-                height === 90 ? "bg-secondary" : "bg-muted/80",
+                height === 90 ? "bg-secondary" : "bg-muted",
               )}
               style={{ height: `${height}%` }}
             />

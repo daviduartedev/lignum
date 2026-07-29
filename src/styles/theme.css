@@ -10,44 +10,45 @@
  * O produto é tematizado 100% por tokens: trocar estas variáveis re-tematiza todas as telas.
  */
 :root {
-  /* Surfaces alinhadas ao Stitch (STITCH-DESIGN.md): fundo levemente azulado */
-  --background: #f9f9ff;
-  --foreground: #151c27; /* on-surface */
+  /* Superfícies (ref. Stripe/Linear): page tintado de azul → cards brancos flutuam */
+  --background: #eef1f8;
+  --foreground: #131a2b;
   --card: #ffffff;
-  --card-foreground: #151c27;
+  --card-foreground: #131a2b;
   --popover: #ffffff;
-  --popover-foreground: #151c27;
-  /* Azul Royal #0234C9 — ação principal da marca */
+  --popover-foreground: #131a2b;
+  /* Azul Royal #0234C9 — ação principal e identidade */
   --primary: #0234c9;
   --primary-foreground: #ffffff;
-  --secondary: #e7eefe; /* surface-container do Stitch */
+  --secondary: #e5ecfd;
   --secondary-foreground: #0234c9;
-  --muted: #f0f3ff; /* surface-container-low */
-  --muted-foreground: #444655; /* on-surface-variant */
-  /* Azul Claro #046CEB (hover/links/realces secundários) */
+  --muted: #e8ecf6;
+  --muted-foreground: #5a6274;
+  /* Azul Claro #046CEB — hover/links/realces */
   --accent: #046ceb;
   --accent-foreground: #ffffff;
-  --destructive: #ba1a1a; /* error do Stitch */
+  --destructive: #dc2626;
   --destructive-foreground: #ffffff;
-  --border: #c4c5d7; /* outline-variant */
+  --border: #d7deec;
   --input: transparent;
-  --input-background: #f0f3ff;
+  --input-background: #f4f6fc;
   --switch-background: #c4c5d7;
-  /* Foco/ring na cor de interação da marca */
   --ring: #046ceb;
-  /* Paleta de gráficos derivada da marca (azuis) + apoio semântico */
   --chart-1: #0234c9;
   --chart-2: #046ceb;
-  --chart-3: #0057c1;
+  --chart-3: #5b8def;
   --chart-4: #16a34a;
   --chart-5: #d97706;
   --radius: 0.75rem;
-  /* Sidebar escura (Preto #000000) com item ativo em Azul Royal */
-  --sidebar: #000000;
+  /* Sombras SaaS: cards elevados sobre o fundo tintado */
+  --shadow-card: 0 1px 2px rgba(19,26,43,0.06), 0 8px 24px -14px rgba(19,26,43,0.18);
+  --shadow-card-hover: 0 2px 4px rgba(19,26,43,0.08), 0 14px 32px -14px rgba(2,52,201,0.20);
+  /* Sidebar azul-noite (mais viva que preto puro) com ativo em azul royal */
+  --sidebar: #0a1a3d;
   --sidebar-foreground: #ffffff;
   --sidebar-primary: #0234c9;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #111827;
+  --sidebar-accent: #12244f;
   --sidebar-accent-foreground: #ffffff;
   --sidebar-border: rgba(255, 255, 255, 0.08);
   --sidebar-ring: #046ceb;

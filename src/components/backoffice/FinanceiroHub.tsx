@@ -224,7 +224,7 @@ function PayablesLista() {
           <h2 className="text-2xl font-semibold text-[#111827] mb-1">A Pagar</h2>
           <p className="text-sm text-[#6B7280]">Despesas e contas a pagar com vencimento</p>
         </div>
-        <Button className="bg-[#22C55E] hover:bg-[#16A34A] text-white" onClick={() => setDialogOpen(true)}>
+        <Button className="bg-primary hover:bg-accent text-primary-foreground" onClick={() => setDialogOpen(true)}>
           <Plus className="w-4 h-4 mr-2" />
           Nova despesa
         </Button>
@@ -450,7 +450,7 @@ function PayablesLista() {
             </Button>
             <Button
               type="button"
-              className="bg-[#22C55E] hover:bg-[#16A34A] text-white"
+              className="bg-primary hover:bg-accent text-primary-foreground"
               disabled={createPayable.isPending}
               onClick={() => void submit()}
             >
@@ -473,7 +473,7 @@ function PayablesLista() {
           <AlertDialogFooter>
             <AlertDialogCancel disabled={confirmPayment.isPending}>Cancelar</AlertDialogCancel>
             <AlertDialogAction
-              className="bg-[#22C55E] hover:bg-[#16A34A]"
+              className="bg-primary hover:bg-accent"
               disabled={confirmPayment.isPending}
               onClick={(e) => {
                 e.preventDefault();

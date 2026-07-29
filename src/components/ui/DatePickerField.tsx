@@ -185,7 +185,7 @@ export function DatePickerField({
                     "h-8 w-full rounded-md text-sm transition-colors",
                     !cell.inMonth && "text-[#9CA3AF]",
                     cell.inMonth && "text-[#111827]",
-                    selected && "bg-[#22C55E] text-white hover:bg-[#16A34A]",
+                    selected && "bg-primary text-primary-foreground hover:bg-accent",
                     !selected && isToday && "ring-1 ring-[#22C55E]",
                     !selected && "hover:bg-[#F3F4F6]",
                   )}

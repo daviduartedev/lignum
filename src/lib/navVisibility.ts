@@ -3,27 +3,31 @@ import type { Role } from "@prisma/client";
 export type NavItem = {
   path: string;
   label: string;
+  badge?: string;
+  /** Item visível no menu, mas ainda sem rota utilizável. */
+  disabled?: boolean;
 };
 
 /** Itens principais visíveis por papel (defesa em profundidade; API é autoritativa). */
 export function navItemsForRole(role: Role | undefined): NavItem[] {
+  // Nav curada: apenas módulos entregues e validados (cycles 0623–0720).
+  // Resíduos sem escopo Lignum (Documentos hub, Calendário, Leads). Rotas ainda existem por URL.
   const allMain: NavItem[] = [
     { path: "/", label: "Painel" },
     { path: "/orcamentos", label: "Orçamentos" },
+    { path: "/configurador-3d", label: "Configurador 3D", badge: "Em breve" },
     { path: "/carrocerias-usadas", label: "Carrocerias usadas" },
     { path: "/estoque/materiais", label: "Estoque de materiais" },
     { path: "/producao", label: "Produção" },
     { path: "/funcionarios", label: "Funcionários" },
     { path: "/clientes", label: "Clientes e fornecedores" },
-    { path: "/financeiro", label: "Financeiro" },
+    { path: "/financeiro", label: "Controle financeiro", badge: "Em breve", disabled: true },
+    { path: "/nota-fiscal", label: "Emissão de nota fiscal (NFS)", badge: "Em breve", disabled: true },
+    { path: "/relatorios", label: "Relatórios", badge: "Em breve", disabled: true },
   ];
 
   const allSecondary: NavItem[] = [
-    { path: "/documentos", label: "Documentos" },
-    { path: "/relatorios", label: "Relatórios" },
-    { path: "/calendario", label: "Calendário" },
     { path: "/notificacoes", label: "Notificações" },
-    { path: "/leads", label: "Leads" },
     { path: "/configuracoes", label: "Configurações" },
   ];
 
@@ -39,18 +43,19 @@ export function navItemsForRole(role: Role | undefined): NavItem[] {
       return [
         { path: "/", label: "Painel" },
         { path: "/clientes", label: "Clientes e fornecedores" },
-        { path: "/financeiro", label: "Financeiro" },
+        { path: "/financeiro", label: "Controle financeiro", badge: "Em breve", disabled: true },
+        { path: "/nota-fiscal", label: "Emissão de nota fiscal (NFS)", badge: "Em breve", disabled: true },
+        { path: "/relatorios", label: "Relatórios", badge: "Em breve", disabled: true },
         { path: "/notificacoes", label: "Notificações" },
-        { path: "/relatorios", label: "Relatórios" },
       ];
     case "producao":
       return [
         { path: "/", label: "Painel" },
         { path: "/producao", label: "Produção" },
+        { path: "/configurador-3d", label: "Configurador 3D", badge: "Em breve" },
         { path: "/funcionarios", label: "Funcionários" },
         { path: "/estoque/materiais", label: "Estoque de materiais" },
         { path: "/carrocerias-usadas", label: "Carrocerias usadas" },
-        { path: "/documentos", label: "Documentos" },
         { path: "/notificacoes", label: "Notificações" },
       ];
     case "read_only":
@@ -61,14 +66,7 @@ export function navItemsForRole(role: Role | undefined): NavItem[] {
 }
 
 export function splitNavForSidebar(items: NavItem[]): { main: NavItem[]; secondary: NavItem[] } {
-  const secondaryPaths = new Set([
-    "/documentos",
-    "/relatorios",
-    "/calendario",
-    "/notificacoes",
-    "/leads",
-    "/configuracoes",
-  ]);
+  const secondaryPaths = new Set(["/notificacoes", "/configuracoes"]);
   return {
     main: items.filter((i) => !secondaryPaths.has(i.path)),
     secondary: items.filter((i) => secondaryPaths.has(i.path)),

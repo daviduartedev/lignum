@@ -113,7 +113,7 @@ export function LeadsHub() {
                         <span className="font-medium text-[#111827] flex items-center gap-2">
                           {l.name}
                           {!l.readAt ? (
-                            <Badge className="bg-emerald-100 text-emerald-700 border-0">Novo</Badge>
+                            <Badge className="bg-emerald-100 text-primary border-0">Novo</Badge>
                           ) : null}
                         </span>
                         <a href={`mailto:${l.email}`} className="text-xs text-[#6B7280] hover:underline inline-flex items-center gap-1">
@@ -133,7 +133,7 @@ export function LeadsHub() {
                         type="button"
                         variant="ghost"
                         size="sm"
-                        className={l.readAt ? "text-[#9CA3AF]" : "text-emerald-600"}
+                        className={l.readAt ? "text-[#9CA3AF]" : "text-primary"}
                         disabled={markRead.isPending}
                         onClick={() => markRead.mutate({ id: l.id, read: !l.readAt })}
                       >

@@ -139,7 +139,7 @@ export function OrcamentosLista() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b bg-muted/30 text-left">
+                  <tr className="border-b bg-muted text-left">
                     <th className={listingThStat}>Nº</th>
                     <th className={listingThText}>Cliente</th>
                     <th className={listingThStat}>Total</th>
@@ -157,7 +157,7 @@ export function OrcamentosLista() {
                     </tr>
                   ) : (
                     rows.map((row) => (
-                      <tr key={row.routeId} className="hover:bg-muted/30 transition-colors">
+                      <tr key={row.routeId} className="hover:bg-muted transition-colors">
                         <td className={listingTdStat}>
                           <Link
                             href={`/orcamentos/${row.routeId}`}

@@ -1,5 +1,5 @@
-import { FinanceiroHub } from "@/components/backoffice/FinanceiroHub";
+import { EmBrevePlaceholder } from "@/components/EmBrevePlaceholder";
 
 export default function FinanceiroPage() {
-  return <FinanceiroHub />;
+  return <EmBrevePlaceholder title="Controle financeiro" />;
 }

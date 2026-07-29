@@ -93,14 +93,14 @@ export function NovoUsuarioForm() {
           <Checkbox id="nu-lgpd" checked={accepted} onCheckedChange={(c) => setAccepted(c === true)} />
           <Label htmlFor="nu-lgpd" className="text-sm font-normal leading-snug cursor-pointer">
             Li e aceito a{" "}
-            <Link href="/politica-privacidade" className="text-emerald-700 underline" target="_blank">
+            <Link href="/politica-privacidade" className="text-primary underline" target="_blank">
               política de privacidade
             </Link>{" "}
             (versão {POLICY_PRIVACY_VERSION}).
           </Label>
         </div>
         <div className="flex gap-2 pt-2">
-          <Button type="submit" disabled={submitting} className="bg-[#22C55E] hover:bg-[#16A34A] text-white">
+          <Button type="submit" disabled={submitting} className="bg-primary hover:bg-accent text-primary-foreground">
             {submitting ? "Criando…" : "Criar usuário"}
           </Button>
           <Button type="button" variant="outline" asChild>

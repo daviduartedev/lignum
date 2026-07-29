@@ -119,7 +119,7 @@ export function ProducaoDetalhe({ routeId }: { routeId: string }) {
               <Button
                 size="sm"
                 variant="default"
-                className="bg-emerald-600 hover:bg-emerald-700"
+                className="bg-primary hover:bg-accent"
                 onClick={() => completeMutation.mutate(routeId)}
                 disabled={completeMutation.isPending}
               >

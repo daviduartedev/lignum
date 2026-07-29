@@ -107,7 +107,7 @@ export function EditUsuarioForm({ user }: { user: UserRow }) {
             <Switch id="eu-active" checked={isActive} onCheckedChange={setIsActive} />
           </div>
           <div className="flex gap-2 pt-2">
-            <Button type="submit" disabled={submitting} className="bg-[#22C55E] hover:bg-[#16A34A] text-white">
+            <Button type="submit" disabled={submitting} className="bg-primary hover:bg-accent text-primary-foreground">
               {submitting ? "A guardar…" : "Guardar alterações"}
             </Button>
             <Button type="button" variant="outline" asChild>

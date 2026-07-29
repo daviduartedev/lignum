@@ -1,5 +1,5 @@
-import { RelatoriosHub } from "@/components/backoffice/RelatoriosHub";
+import { EmBrevePlaceholder } from "@/components/EmBrevePlaceholder";
 
 export default function RelatoriosPage() {
-  return <RelatoriosHub />;
+  return <EmBrevePlaceholder title="Relatórios" />;
 }

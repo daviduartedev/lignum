@@ -7,7 +7,7 @@
  */
 export const BRAND_NAME = "Lignum Gestão";
 export const BRAND_SHORT = "Lignum";
-export const BRAND_TAGLINE = "Gestão para fábricas de carrocerias de madeira";
+export const BRAND_TAGLINE = "ERP para fábricas de carrocerias";
 export const BRAND_LOGO_SRC = "/lignum-logo.png";
 
 /**

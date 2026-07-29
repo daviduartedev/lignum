@@ -11,6 +11,7 @@ import { quoteAttrs, type Quote } from "@/types/quotes";
 import { cn } from "@/components/ui/utils";
 
 type QuoteRow = {
+  id: string;
   initials: string;
   client: string;
   model: string;
@@ -39,6 +40,7 @@ function mapQuote(q: Quote): QuoteRow {
   const model = a.body_model?.data?.attributes.name ?? "Carroceria paramétrica";
   const routeId = q.documentId ?? String(q.id);
   return {
+    id: routeId,
     initials: initialsFromName(client),
     client,
     model,
@@ -56,11 +58,11 @@ export function PainelRecentQuotesTable() {
   const rows = useMemo<QuoteRow[]>(() => {
     const items = data?.items ?? [];
     if (items.length > 0) return items.slice(0, 4).map(mapQuote);
-    return PAINEL_MOCK_QUOTES.map((r) => ({ ...r }));
+    return PAINEL_MOCK_QUOTES.map((r, i) => ({ ...r, id: `mock-${i}` }));
   }, [data?.items]);
 
   return (
-    <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+    <div className="overflow-hidden rounded-xl border border-border bg-card shadow-[var(--shadow-card)]">
       <div className="flex items-center justify-between border-b border-border p-6">
         <h3 className="text-lg font-semibold text-foreground">Últimos Orçamentos</h3>
         <Link href="/orcamentos" className="text-sm font-medium text-secondary-foreground hover:underline">
@@ -76,7 +78,7 @@ export function PainelRecentQuotesTable() {
           </div>
         ) : (
           <table className="w-full min-w-[720px] text-left">
-            <thead className="bg-muted/40">
+            <thead className="bg-muted">
               <tr>
                 {["Cliente", "Modelo", "Valor", "Status", "Data", ""].map((h, i) => (
                   <th
@@ -93,10 +95,10 @@ export function PainelRecentQuotesTable() {
             </thead>
             <tbody className="divide-y divide-border">
               {rows.map((row) => (
-                <tr key={`${row.client}-${row.date}`} className="group transition-colors hover:bg-muted/20">
+                <tr key={row.id} className="group transition-colors hover:bg-muted">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-8 w-8 items-center justify-center rounded bg-secondary/30 text-xs font-bold text-secondary-foreground">
+                      <div className="flex h-8 w-8 items-center justify-center rounded bg-secondary text-xs font-bold text-secondary-foreground">
                         {row.initials}
                       </div>
                       {row.href ? (

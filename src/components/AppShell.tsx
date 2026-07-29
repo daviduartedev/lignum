@@ -8,7 +8,7 @@ import { Topbar } from "@/components/Topbar";
 
 export function AppShell({ children }: { children: ReactNode }) {
   return (
-    <div className="flex h-full min-h-0 w-full min-w-0 overflow-x-hidden overflow-y-hidden bg-muted/40">
+    <div className="flex h-full min-h-0 w-full min-w-0 overflow-x-hidden overflow-y-hidden bg-muted">
       <PostLoginNotificacoesGate />
       <CommitmentPreReminderHost />
       <Sidebar />

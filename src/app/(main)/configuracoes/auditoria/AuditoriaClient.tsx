@@ -77,7 +77,7 @@ export function AuditoriaClient() {
           <p className="p-6 text-sm text-muted-foreground">A carregar…</p>
         ) : (
           <table className="w-full text-sm">
-            <thead className="bg-muted/50 text-left text-xs uppercase tracking-wide text-muted-foreground">
+            <thead className="bg-muted text-left text-xs uppercase tracking-wide text-muted-foreground">
               <tr>
                 <th className="px-4 py-3 font-medium">Data</th>
                 <th className="px-4 py-3 font-medium">Acção</th>

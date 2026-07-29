@@ -114,7 +114,7 @@ export function PostLoginNotificacoesGate() {
         <div className="p-6 pb-4">
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2 text-left">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#22C55E]/12 text-[#15803d]">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-secondary text-[#15803d]">
                 <Bell className="h-5 w-5" aria-hidden />
               </span>
               Centro de alertas
@@ -141,10 +141,10 @@ export function PostLoginNotificacoesGate() {
             </AlertDialogDescription>
           </AlertDialogHeader>
         </div>
-        <AlertDialogFooter className="flex-col gap-2 border-t border-border/80 bg-muted/30 p-4 sm:flex-row sm:justify-between">
+        <AlertDialogFooter className="flex-col gap-2 border-t border-border/80 bg-muted p-4 sm:flex-row sm:justify-between">
           <Link
             href="/notificacoes"
-            className="text-sm font-medium text-emerald-700 hover:underline order-2 sm:order-1"
+            className="text-sm font-medium text-primary hover:underline order-2 sm:order-1"
             onClick={() => closeWith("fechar")}
           >
             Ver todas em Notificações

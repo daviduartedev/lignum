@@ -22,10 +22,10 @@ const SOLID_BG: Record<KpiTone, string> = {
 };
 
 const ICON_TINT: Record<KpiTone, string> = {
-  primary: "bg-primary/10 text-primary",
-  accent: "bg-[#046ceb]/10 text-[#046ceb]",
-  success: "bg-[#16a34a]/10 text-[#16a34a]",
-  warning: "bg-[#d97706]/10 text-[#d97706]",
+  primary: "bg-secondary text-primary",
+  accent: "bg-[#e2e8f8] text-[#046ceb]",
+  success: "bg-[#dcfce7] text-[#16a34a]",
+  warning: "bg-[#fef3c7] text-[#d97706]",
   neutral: "bg-muted text-muted-foreground",
 };
 
@@ -42,7 +42,7 @@ export function StitchKpiCard({
     return (
       <div
         className={cn(
-          "p-4 md:p-5 rounded-xl shadow-sm flex flex-col gap-1 min-h-[7rem] text-white",
+          "p-4 md:p-5 rounded-xl shadow-[var(--shadow-card)] flex flex-col gap-1 min-h-[7rem] text-white",
           SOLID_BG[tone],
         )}
       >
@@ -57,7 +57,7 @@ export function StitchKpiCard({
   }
 
   return (
-    <div className="bg-card p-4 md:p-5 rounded-xl border border-border shadow-sm flex flex-col gap-1 min-h-[7rem]">
+    <div className="bg-card p-4 md:p-5 rounded-xl border border-border shadow-[var(--shadow-card)] flex flex-col gap-1 min-h-[7rem]">
       <div className="flex justify-between items-start gap-2">
         <span className="text-xs font-medium text-muted-foreground">{label}</span>
         {Icon ? (

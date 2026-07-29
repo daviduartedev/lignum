@@ -10,8 +10,8 @@ export function entityInitials(name: string): string {
 }
 
 const VARIANTS = {
-  client: "bg-primary/10 text-primary",
-  supplier: "bg-accent/15 text-accent",
+  client: "bg-secondary text-primary",
+  supplier: "bg-[#e2e8f8] text-accent",
   neutral: "bg-muted text-muted-foreground",
 } as const;
 

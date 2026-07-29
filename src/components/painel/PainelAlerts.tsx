@@ -1,10 +1,10 @@
 import { AlertCircle } from "lucide-react";
-import { FACTORY_IMAGE_URL, PAINEL_ALERTS } from "@/components/painel/painelMockData";
+import { PAINEL_ALERTS } from "@/components/painel/painelMockData";
 import { cn } from "@/components/ui/utils";
 
 const ALERT_STYLES = {
   danger: {
-    wrap: "border-l-[#ba1a1a] bg-[#ffdad6]/30",
+    wrap: "border-l-[#ba1a1a] bg-[#ffdad6]",
     dot: "bg-[#ba1a1a] animate-pulse",
     title: "text-[#93000a]",
     action: "text-[#ba1a1a]",
@@ -16,13 +16,13 @@ const ALERT_STYLES = {
     action: "text-orange-800",
   },
   info: {
-    wrap: "border-l-secondary bg-secondary/20",
+    wrap: "border-l-secondary bg-secondary",
     dot: "bg-secondary",
     title: "text-secondary-foreground",
     action: "text-secondary-foreground",
   },
   neutral: {
-    wrap: "border-l-border bg-muted/40",
+    wrap: "border-l-border bg-muted",
     dot: "bg-muted-foreground/50",
     title: "text-muted-foreground",
     action: "text-muted-foreground",
@@ -31,7 +31,7 @@ const ALERT_STYLES = {
 
 export function PainelAlerts() {
   return (
-    <div className="h-full rounded-xl border border-border bg-card p-6 shadow-sm">
+    <div className="h-full rounded-xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
       <div className="mb-6 flex items-center gap-2">
         <AlertCircle className="h-5 w-5 text-[#ba1a1a]" aria-hidden />
         <h3 className="text-lg font-semibold text-foreground">Alertas do Sistema</h3>
@@ -57,20 +57,6 @@ export function PainelAlerts() {
             </div>
           );
         })}
-      </div>
-
-      <div className="group relative mt-8 overflow-hidden rounded-xl">
-        <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/80 to-transparent" aria-hidden />
-        <div
-          className="h-40 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
-          style={{ backgroundImage: `url('${FACTORY_IMAGE_URL}')` }}
-          role="img"
-          aria-label="Vista da fábrica em operação normal"
-        />
-        <div className="absolute bottom-3 left-3 z-20">
-          <span className="text-sm font-medium text-white">Vista da Fábrica</span>
-          <p className="text-xs text-white/70">Operação Normal</p>
-        </div>
       </div>
     </div>
   );

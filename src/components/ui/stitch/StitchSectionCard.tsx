@@ -22,9 +22,9 @@ export function StitchSectionCard({
   noPadding = false,
 }: StitchSectionCardProps) {
   return (
-    <div className={cn("bg-card rounded-xl border border-border shadow-sm overflow-hidden", className)}>
+    <div className={cn("bg-card rounded-xl border border-border shadow-[var(--shadow-card)] overflow-hidden", className)}>
       {(title || headerEnd) ? (
-        <div className="flex items-center justify-between gap-4 px-6 py-4 border-b border-border bg-secondary/50">
+        <div className="flex items-center justify-between gap-4 px-6 py-4 border-b border-border bg-secondary">
           {title ? (
             <div className="flex items-center gap-2.5 min-w-0">
               <span className="h-4 w-1 rounded-full bg-primary shrink-0" aria-hidden />
@@ -36,7 +36,7 @@ export function StitchSectionCard({
       ) : null}
       <div className={noPadding ? "" : "p-6"}>{children}</div>
       {footer ? (
-        <div className="px-6 py-4 bg-muted/40 border-t border-border flex justify-end gap-3">{footer}</div>
+        <div className="px-6 py-4 bg-muted border-t border-border flex justify-end gap-3">{footer}</div>
       ) : null}
     </div>
   );

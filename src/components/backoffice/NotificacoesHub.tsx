@@ -52,7 +52,7 @@ export function NotificacoesHub() {
       <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0 space-y-2">
           <h1 className="flex items-center gap-3 text-2xl font-semibold text-[#111827]">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#22C55E]/12 text-[#15803d]">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-secondary text-[#15803d]">
               <Bell className="h-6 w-6" aria-hidden />
             </span>
             Notificações
@@ -151,7 +151,7 @@ export function NotificacoesHub() {
           <>
             <ul className="divide-y divide-border/60">
               {list.map((n) => (
-                <li key={n.id} className="px-5 py-5 transition-colors hover:bg-muted/30">
+                <li key={n.id} className="px-5 py-5 transition-colors hover:bg-muted">
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                     <div className="min-w-0 flex-1 space-y-2">
                       <p className={`text-base font-medium ${n.read ? "text-muted-foreground" : "text-foreground"}`}>
@@ -168,7 +168,7 @@ export function NotificacoesHub() {
                             })
                           : null}
                         {n.remind_at ? (
-                          <span className="font-medium text-emerald-800">
+                          <span className="font-medium text-primary">
                             Calendário:{" "}
                             {new Date(n.remind_at).toLocaleString("pt-BR", {
                               dateStyle: "short",

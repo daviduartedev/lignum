@@ -21,7 +21,7 @@ export function FeatureComingSoon({ title }: Props) {
         Use o projeto Vite em <code className="text-xs">frontend/</code> se precisar desta área já, ou volte ao
         painel.
       </p>
-      <Link href="/" className="inline-flex text-sm font-medium text-emerald-600 hover:text-emerald-700 hover:underline">
+      <Link href="/" className="inline-flex text-sm font-medium text-primary hover:text-accent hover:underline">
         ← Voltar ao painel
       </Link>
     </div>

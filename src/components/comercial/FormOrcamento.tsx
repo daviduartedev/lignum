@@ -65,7 +65,7 @@ function QuoteFormSection({
   children: ReactNode;
 }) {
   return (
-    <section className="rounded-xl border border-border bg-card p-6 shadow-sm">
+    <section className="rounded-xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
       <h2 className="mb-6 flex items-center gap-2 text-lg font-semibold text-foreground">
         <Icon className="h-5 w-5 text-secondary" aria-hidden />
         {title}
@@ -362,8 +362,8 @@ export function FormOrcamento() {
                     <label
                       key={opt.value}
                       className={cn(
-                        "flex flex-1 cursor-pointer items-start gap-3 rounded-lg border p-3 transition-colors hover:bg-muted/40",
-                        selected ? "border-primary ring-1 ring-primary/20 bg-primary/5" : "border-border",
+                        "flex flex-1 cursor-pointer items-start gap-3 rounded-lg border p-3 transition-colors hover:bg-muted",
+                        selected ? "border-primary ring-1 ring-primary/20 bg-[#f0f3ff]" : "border-border",
                       )}
                     >
                       <input
@@ -403,7 +403,7 @@ export function FormOrcamento() {
             </div>
           </QuoteFormSection>
 
-          <section className="rounded-xl border border-dashed border-border bg-muted/20">
+          <section className="rounded-xl border border-dashed border-border bg-muted">
             <button
               type="button"
               className="flex w-full items-center justify-between px-6 py-4 text-left text-sm font-medium text-foreground"

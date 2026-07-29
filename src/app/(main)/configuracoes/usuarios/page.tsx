@@ -29,7 +29,7 @@ export default async function UsuariosPage() {
           <Button asChild variant="outline">
             <Link href="/configuracoes/auditoria">Auditoria</Link>
           </Button>
-          <Button asChild className="bg-[#22C55E] hover:bg-[#16A34A] text-white">
+          <Button asChild className="bg-primary hover:bg-accent text-primary-foreground">
             <Link href="/configuracoes/usuarios/novo">Novo usuário</Link>
           </Button>
         </div>
@@ -37,7 +37,7 @@ export default async function UsuariosPage() {
 
       <Card className="overflow-hidden border border-border/80 shadow-sm">
         <table className="w-full text-sm">
-          <thead className="bg-muted/50 text-left text-xs uppercase tracking-wide text-muted-foreground">
+          <thead className="bg-muted text-left text-xs uppercase tracking-wide text-muted-foreground">
             <tr>
               <th className="px-4 py-3 font-medium">E-mail</th>
               <th className="px-4 py-3 font-medium">Nome</th>

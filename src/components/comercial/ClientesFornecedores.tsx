@@ -234,7 +234,7 @@ export function ClientesFornecedores() {
                       "px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wide border transition-colors",
                       activeTab === "clientes"
                         ? "bg-muted border-border text-foreground"
-                        : "text-muted-foreground border-transparent hover:bg-muted/50",
+                        : "text-muted-foreground border-transparent hover:bg-muted",
                     )}
                     onClick={() => setActiveTab("clientes")}
                   >
@@ -242,7 +242,7 @@ export function ClientesFornecedores() {
                   </button>
                   <button
                     type="button"
-                    className="px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wide text-muted-foreground border border-transparent hover:bg-muted/50 transition-colors"
+                    className="px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wide text-muted-foreground border border-transparent hover:bg-muted transition-colors"
                     onClick={() => setActiveTab("fornecedores")}
                   >
                     Fornecedores
@@ -252,7 +252,7 @@ export function ClientesFornecedores() {
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
                     placeholder="Buscar por nome ou documento…"
-                    className="pl-9 bg-muted/50 border-border"
+                    className="pl-9 bg-muted border-border"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                   />
@@ -273,7 +273,7 @@ export function ClientesFornecedores() {
           >
             <table className="w-full min-w-[800px] text-left border-collapse">
               <thead>
-                <tr className="bg-muted/40 border-b border-border">
+                <tr className="bg-muted border-b border-border">
                   <th className={`${listingThText} text-xs uppercase tracking-wider text-muted-foreground`}>Nome / Razão social</th>
                   <th className={`${listingThText} text-xs uppercase tracking-wider text-muted-foreground`}>CPF / CNPJ</th>
                   <th className={`${listingThText} text-xs uppercase tracking-wider text-muted-foreground`}>Telefone</th>
@@ -292,7 +292,7 @@ export function ClientesFornecedores() {
                   </tr>
                 ) : (
                   normalizedClients.map((c) => (
-                    <tr key={c.routeId} className="hover:bg-muted/30 transition-colors">
+                    <tr key={c.routeId} className="hover:bg-muted transition-colors">
                       <td className={`${listingTdText} py-4`}>
                         <div className="flex items-center gap-3">
                           <EntityAvatar name={c.nome} variant="client" />

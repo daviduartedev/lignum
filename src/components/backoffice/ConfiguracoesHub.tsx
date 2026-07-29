@@ -106,8 +106,8 @@ export function ConfiguracoesHub() {
             className={cn(
               "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left text-sm font-medium transition-all border",
               settingsSection === "empresa"
-                ? "bg-card border-border text-primary shadow-sm"
-                : "border-transparent text-muted-foreground hover:bg-muted/50",
+                ? "bg-card border-border text-primary shadow-[var(--shadow-card)]"
+                : "border-transparent text-muted-foreground hover:bg-muted",
             )}
           >
             <Building2 className="w-4 h-4 shrink-0" />
@@ -116,7 +116,7 @@ export function ConfiguracoesHub() {
           {isAdmin ? (
             <Link
               href="/configuracoes/usuarios"
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left text-sm font-medium text-muted-foreground hover:bg-muted/50 transition-all"
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left text-sm font-medium text-muted-foreground hover:bg-muted transition-all"
             >
               <Users className="w-4 h-4 shrink-0" />
               Usuários e Permissões
@@ -128,8 +128,8 @@ export function ConfiguracoesHub() {
             className={cn(
               "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left text-sm font-medium transition-all border",
               settingsSection === "orcamentos"
-                ? "bg-card border-border text-primary shadow-sm"
-                : "border-transparent text-muted-foreground hover:bg-muted/50",
+                ? "bg-card border-border text-primary shadow-[var(--shadow-card)]"
+                : "border-transparent text-muted-foreground hover:bg-muted",
             )}
           >
             <Calculator className="w-4 h-4 shrink-0" />
@@ -141,8 +141,8 @@ export function ConfiguracoesHub() {
             className={cn(
               "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left text-sm font-medium transition-all border",
               settingsSection === "alertas"
-                ? "bg-card border-border text-primary shadow-sm"
-                : "border-transparent text-muted-foreground hover:bg-muted/50",
+                ? "bg-card border-border text-primary shadow-[var(--shadow-card)]"
+                : "border-transparent text-muted-foreground hover:bg-muted",
             )}
           >
             <Bell className="w-4 h-4 shrink-0" />
@@ -154,7 +154,7 @@ export function ConfiguracoesHub() {
           {settingsSection === "empresa" ? (
             <StitchSectionCard title="Informações corporativas">
               <div className="max-w-2xl space-y-6">
-                <Card className="p-4 border border-border bg-muted/30">
+                <Card className="p-4 border border-border bg-muted">
                   <p className="text-xs text-muted-foreground mb-1">Sessão atual</p>
                   <p className="text-sm font-medium text-foreground">{session?.user?.name ?? "-"}</p>
                   <p className="text-xs text-muted-foreground mt-1">{session?.user?.email ?? ""}</p>
@@ -314,7 +314,7 @@ export function ConfiguracoesHub() {
           ) : (
             <StitchSectionCard title="Alertas do sistema">
               <div className="max-w-2xl space-y-6">
-              <div className="flex items-center justify-between p-4 bg-muted/40 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
                 <div>
                   <div className="text-sm font-medium text-foreground">Alertas de Documentação</div>
                   <div className="text-xs text-muted-foreground">Notificar sobre documentos pendentes</div>
@@ -325,7 +325,7 @@ export function ConfiguracoesHub() {
                 />
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-muted/40 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
                 <div>
                   <div className="text-sm font-medium text-foreground">Notificações por E-mail</div>
                   <div className="text-xs text-muted-foreground">Receber resumo diário por e-mail</div>

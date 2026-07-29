@@ -140,7 +140,7 @@ function ReportTable({ title, rows }: { title: string; rows: CsvRow[] }) {
 
   return (
     <Card className={`overflow-hidden border border-border/80 border-t-4 ${theme.topBorder} shadow-sm ${theme.cardTint}`}>
-      <div className="flex items-center justify-between gap-3 border-b border-border/60 bg-card/80 px-4 py-3 sm:px-5 sm:py-4">
+      <div className="flex items-center justify-between gap-3 border-b border-border/60 bg-card px-4 py-3 sm:px-5 sm:py-4">
         <div className="flex min-w-0 items-center gap-3">
           <div className={`shrink-0 rounded-lg p-2 ring-1 ${theme.iconBg}`}>
             <Icon className={`h-5 w-5 ${theme.iconColor}`} aria-hidden />
@@ -151,7 +151,7 @@ function ReportTable({ title, rows }: { title: string; rows: CsvRow[] }) {
           type="button"
           variant="outline"
           size="sm"
-          className="shrink-0 border-border/80 bg-white/80"
+          className="shrink-0 border-border/80 bg-white"
           onClick={() => downloadCsv(`${title.toLowerCase().replace(/\s+/g, "-")}.csv`, rows)}
           disabled={rows.length === 0}
         >
@@ -161,13 +161,13 @@ function ReportTable({ title, rows }: { title: string; rows: CsvRow[] }) {
       </div>
       <div className="p-4 pt-3 sm:p-5 sm:pt-4">
         {rows.length === 0 ? (
-          <p className="rounded-lg border border-dashed border-border/80 bg-muted/20 px-3 py-6 text-center text-sm text-muted-foreground">
+          <p className="rounded-lg border border-dashed border-border/80 bg-muted px-3 py-6 text-center text-sm text-muted-foreground">
             Nenhum dado encontrado para o periodo.
           </p>
         ) : (
           <div className="max-h-[360px] overflow-y-auto overflow-x-hidden rounded-lg border border-border/60 bg-card">
             <table className="w-full table-fixed text-sm">
-              <thead className="sticky top-0 z-10 bg-muted/60 backdrop-blur-sm">
+              <thead className="sticky top-0 z-10 bg-muted backdrop-blur-sm">
                 <tr className={`border-b border-border/70 ${theme.topBorder.replace("border-t-", "border-b-")}`}>
                   {columns.map((column) => (
                     <th
@@ -345,7 +345,7 @@ export function RelatoriosHub() {
             <Printer className="mr-2 h-4 w-4" />
             Visualizar/PDF
           </Button>
-          <Button type="button" className="bg-emerald-600 text-white hover:bg-emerald-700" onClick={downloadComplete}>
+          <Button type="button" className="bg-primary text-white hover:bg-accent" onClick={downloadComplete}>
             <Download className="mr-2 h-4 w-4" />
             Baixar completo
           </Button>

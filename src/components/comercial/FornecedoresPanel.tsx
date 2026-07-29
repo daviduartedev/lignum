@@ -194,7 +194,7 @@ export function FornecedoresPanel() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 placeholder="Buscar fornecedor…"
-                className="pl-9 bg-muted/50 border-border"
+                className="pl-9 bg-muted border-border"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
@@ -219,7 +219,7 @@ export function FornecedoresPanel() {
       >
         <table className="w-full min-w-[640px] text-left border-collapse">
           <thead>
-            <tr className="bg-muted/40 border-b border-border">
+            <tr className="bg-muted border-b border-border">
               <th className={`${listingThText} text-xs uppercase tracking-wider text-muted-foreground`}>Fornecedor</th>
               <th className={`${listingThText} text-xs uppercase tracking-wider text-muted-foreground`}>CNPJ / documento</th>
               <th className={`${listingThText} text-xs uppercase tracking-wider text-muted-foreground`}>Contato</th>
@@ -235,7 +235,7 @@ export function FornecedoresPanel() {
               </tr>
             ) : (
               rows.map((r) => (
-                <tr key={r.id} className="hover:bg-muted/30 transition-colors">
+                <tr key={r.id} className="hover:bg-muted transition-colors">
                   <td className={`${listingTdText} py-4`}>
                     <div className="flex items-center gap-3">
                       <EntityAvatar name={r.nome} variant="supplier" />
@@ -312,7 +312,7 @@ export function FornecedoresPanel() {
             {registrationStatus ? (
               <div>
                 <Label htmlFor="sup-reg">Situação cadastral</Label>
-                <Input id="sup-reg" value={registrationStatus} readOnly className="mt-1 bg-muted/40" />
+                <Input id="sup-reg" value={registrationStatus} readOnly className="mt-1 bg-muted" />
               </div>
             ) : null}
             <div className="grid grid-cols-2 gap-3">

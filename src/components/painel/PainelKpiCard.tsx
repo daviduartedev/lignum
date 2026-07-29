@@ -31,10 +31,10 @@ export function PainelKpiCard({ label, value, trend, trendLabel, trendTone, icon
   const TrendIcon = trendTone === "info" ? RefreshCw : trendTone === "danger" ? AlertTriangle : TrendingUp;
 
   return (
-    <div className="flex flex-col justify-between rounded-xl border border-border bg-card p-5 shadow-sm">
+    <div className="flex flex-col justify-between rounded-xl border border-border bg-card p-5 shadow-[var(--shadow-card)]">
       <div className="flex items-start justify-between">
         <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{label}</span>
-        <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary/10 text-secondary-foreground">
+        <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary text-secondary-foreground">
           <Icon className="h-5 w-5" aria-hidden />
         </span>
       </div>

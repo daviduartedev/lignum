@@ -87,7 +87,7 @@ export function CarroceriasUsadasLista() {
         <StitchKpiCard label="Vendidas" value={String(kpis.vendida)} tone="accent" solid />
       </div>
 
-      <div className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-card px-4 py-3 shadow-sm">
+      <div className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-card px-4 py-3 shadow-[var(--shadow-card)]">
         <div className="flex flex-wrap gap-2">
           {STATUS_FILTERS.map((f) => (
             <button
@@ -97,7 +97,7 @@ export function CarroceriasUsadasLista() {
               className={cn(
                 "rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
                 statusFilter === f.value
-                  ? "border-primary bg-primary/10 text-primary"
+                  ? "border-primary bg-secondary text-primary"
                   : "border-border text-muted-foreground hover:bg-muted",
               )}
             >
@@ -141,7 +141,7 @@ export function CarroceriasUsadasLista() {
             return (
               <article
                 key={item.id}
-                className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-shadow hover:shadow-md"
+                className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-[var(--shadow-card)] transition-shadow hover:shadow-md"
               >
                 <div className="relative h-44 w-full overflow-hidden bg-muted">
                   {item.mainPhotoUrl ? (

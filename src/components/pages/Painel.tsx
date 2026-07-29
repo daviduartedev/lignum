@@ -23,7 +23,7 @@ export function Painel() {
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
-            className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-2 text-sm font-medium text-secondary-foreground transition-colors hover:bg-muted/50"
+            className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-2 text-sm font-medium text-secondary-foreground transition-colors hover:bg-muted"
             onClick={() => toast.info("Exportação disponível após cycle 0727.")}
           >
             <Download className="h-[18px] w-[18px]" aria-hidden />

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 
 export function PlatformShell({ children }: { children: ReactNode }) {
   return (
-    <div className="flex min-h-full flex-col bg-muted/40">
+    <div className="flex min-h-full flex-col bg-muted">
       <header className="flex shrink-0 items-center justify-between border-b border-border/80 bg-background px-6 py-4">
         <div className="flex items-center gap-4">
           <BrandLogo className="relative h-10 w-28 shrink-0" />

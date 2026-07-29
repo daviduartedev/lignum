@@ -39,7 +39,7 @@ export default function PoliticaPrivacidadePage() {
           </Link>
           <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
             <div className="flex gap-4">
-              <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl border border-border bg-muted/50 text-primary shadow-sm">
+              <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl border border-border bg-muted text-primary shadow-[var(--shadow-card)]">
                 <Shield className="size-6" aria-hidden />
               </div>
               <div>

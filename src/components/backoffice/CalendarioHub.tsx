@@ -237,7 +237,7 @@ export function CalendarioHub() {
                           type="button"
                           variant="ghost"
                           size="sm"
-                          className="h-6 shrink-0 px-1.5 text-[10px] font-medium text-emerald-700 hover:bg-emerald-50 hover:text-emerald-800"
+                          className="h-6 shrink-0 px-1.5 text-[10px] font-medium text-primary hover:bg-secondary hover:text-accent"
                           title="Criar lembrete neste dia (notificações)"
                           aria-label={`Novo lembrete no dia ${dia}`}
                           onClick={() => openNovoLembreteNoDia(dia)}
@@ -253,7 +253,7 @@ export function CalendarioHub() {
                             className={`block truncate rounded p-1 text-[10px] ${
                               evento.tipo === "pagar"
                                 ? "bg-amber-50 text-amber-800 hover:bg-amber-100"
-                                : "bg-emerald-50 text-emerald-900 hover:bg-emerald-100"
+                                : "bg-emerald-50 text-emerald-900 hover:bg-secondary"
                             }`}
                           >
                             {evento.titulo.length > 22 ? `${evento.titulo.slice(0, 22)}…` : evento.titulo}
@@ -275,7 +275,7 @@ export function CalendarioHub() {
               <Button
                 type="button"
                 size="sm"
-                className="h-9 shrink-0 gap-2 bg-[#22C55E] text-white hover:bg-[#16a34a]"
+                className="h-9 shrink-0 gap-2 bg-primary text-primary-foreground hover:bg-accent"
                 onClick={openNovoLembrete}
               >
                 <Bell className="h-3.5 w-3.5" aria-hidden />
@@ -293,7 +293,7 @@ export function CalendarioHub() {
                     <div className="mb-2 flex items-start gap-2">
                       <div
                         className={`mt-1 h-2 w-2 shrink-0 rounded-full ${
-                          evento.tipo === "pagar" ? "bg-amber-500" : "bg-emerald-500"
+                          evento.tipo === "pagar" ? "bg-amber-500" : "bg-primary"
                         }`}
                       />
                       <div className="min-w-0 flex-1">
@@ -360,7 +360,7 @@ export function CalendarioHub() {
             <DialogTitle>Novo lembrete</DialogTitle>
             <DialogDescription className="text-left leading-relaxed">
               Pode ser qualquer assunto (reunião, ligação, tarefa). Ao confirmar, o registro vai para{" "}
-              <Link href="/notificacoes" className="font-medium text-emerald-800 underline underline-offset-2">
+              <Link href="/notificacoes" className="font-medium text-primary underline underline-offset-2">
                 Notificações
               </Link>{" "}
               e para este calendário na data e hora definidas.
@@ -405,7 +405,7 @@ export function CalendarioHub() {
             </Button>
             <Button
               type="button"
-              className="h-10 min-w-[8rem] bg-[#22C55E] hover:bg-[#16a34a]"
+              className="h-10 min-w-[8rem] bg-primary hover:bg-accent"
               disabled={!tituloLembrete.trim() || createReminder.isPending}
               onClick={() => void handleSalvarLembrete()}
             >

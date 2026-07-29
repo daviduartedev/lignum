@@ -31,7 +31,7 @@ export function QuoteFormSummary({
   const groups = pricing ? groupItems(pricing) : null;
 
   return (
-    <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+    <div className="overflow-hidden rounded-xl border border-border bg-card shadow-[var(--shadow-card)]">
       <div className="bg-primary px-6 py-5 text-primary-foreground">
         <p className="text-xs font-semibold uppercase tracking-wider opacity-80">Resumo da Configuração</p>
         <h3 className="mt-1 text-xl font-bold leading-tight">{modelName}</h3>
@@ -98,7 +98,7 @@ export function QuoteFormSummary({
 
               <div
                 className={cn(
-                  "flex flex-col items-end gap-1 rounded-lg border border-primary/10 bg-secondary/30 p-4 transition-transform duration-300",
+                  "flex flex-col items-end gap-1 rounded-lg border border-primary/10 bg-secondary p-4 transition-transform duration-300",
                   isCalculating && "opacity-80",
                 )}
               >
@@ -112,7 +112,7 @@ export function QuoteFormSummary({
               </div>
             </div>
 
-            <div className="mt-2 flex gap-3 rounded-r-lg border-l-4 border-secondary bg-secondary/15 p-4">
+            <div className="mt-2 flex gap-3 rounded-r-lg border-l-4 border-secondary bg-secondary p-4">
               <Info className="mt-0.5 h-5 w-5 shrink-0 text-secondary" aria-hidden />
               <p className="text-xs leading-relaxed text-muted-foreground">
                 Prazo de produção estimado em{" "}

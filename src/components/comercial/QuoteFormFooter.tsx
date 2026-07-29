@@ -13,10 +13,10 @@ type QuoteFormFooterProps = {
 };
 
 const discardBtn =
-  "inline-flex items-center gap-2 rounded-lg border border-transparent px-4 py-2 text-sm font-medium text-muted-foreground transition-all hover:border-border hover:bg-muted/30 hover:text-foreground disabled:pointer-events-none disabled:opacity-50";
+  "inline-flex items-center gap-2 rounded-lg border border-transparent px-4 py-2 text-sm font-medium text-muted-foreground transition-all hover:border-border hover:bg-muted hover:text-foreground disabled:pointer-events-none disabled:opacity-50";
 
 const outlineBtn =
-  "inline-flex items-center gap-2 rounded-lg border border-border bg-background px-5 py-2.5 text-sm font-medium text-secondary-foreground transition-all hover:bg-muted/50 disabled:pointer-events-none disabled:opacity-50";
+  "inline-flex items-center gap-2 rounded-lg border border-border bg-background px-5 py-2.5 text-sm font-medium text-secondary-foreground transition-all hover:bg-muted disabled:pointer-events-none disabled:opacity-50";
 
 const primaryBtn =
   "inline-flex items-center gap-2 rounded-lg bg-primary px-8 py-2.5 text-sm font-medium text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:opacity-90 disabled:pointer-events-none disabled:opacity-50";
