@@ -1,6 +1,6 @@
 "use client";
 
-import { signIn } from "next-auth/react";
+import { signInCredentials } from "@/lib/authClientSignIn";
 import { Eye, EyeOff, Loader2, Lock, Mail, ShieldCheck, UserCircle } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -54,13 +54,12 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const result = await signIn("credentials", {
-        redirect: false,
+      const result = await signInCredentials({
         email: identifier.trim(),
         password,
       });
 
-      if (result?.error) {
+      if (!result.ok || result.error) {
         const userMsg =
           result.code === "rate_limited"
             ? "Muitas tentativas de login. Aguarde alguns minutos e tente novamente."
@@ -68,7 +67,11 @@ export default function LoginPage() {
               ? "E-mail ou senha inválidos. Verifique e tente novamente."
               : result.error === "Configuration"
                 ? "Login indisponível: AUTH_SECRET ou AUTH_URL incorretos no servidor. Contacte o suporte."
-                : `Não foi possível conectar (${result.error}). Tente de novo ou contacte o suporte.`;
+                : result.error === "InvalidCallbackUrl" || result.error === "InvalidResponse"
+                  ? "Resposta inválida do servidor de login. Confira AUTH_URL na Vercel (URL pública com https)."
+                  : result.error
+                    ? `Não foi possível entrar (${result.error}). Tente de novo.`
+                    : "Não foi possível entrar. Tente de novo.";
         setError(userMsg);
         toast.error(userMsg);
         return;
