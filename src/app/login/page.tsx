@@ -66,7 +66,9 @@ export default function LoginPage() {
             ? "Muitas tentativas de login. Aguarde alguns minutos e tente novamente."
             : result.error === "CredentialsSignin"
               ? "E-mail ou senha inválidos. Verifique e tente novamente."
-              : "Não foi possível conectar. Verifique sua internet e tente novamente.";
+              : result.error === "Configuration"
+                ? "Login indisponível: AUTH_SECRET ou AUTH_URL incorretos no servidor. Contacte o suporte."
+                : `Não foi possível conectar (${result.error}). Tente de novo ou contacte o suporte.`;
         setError(userMsg);
         toast.error(userMsg);
         return;

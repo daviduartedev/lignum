@@ -7,6 +7,11 @@ import type { Role } from "@prisma/client";
  */
 export const authConfig = {
   secret: process.env.AUTH_SECRET,
+  /** Vercel/proxy: host confiável (ou defina AUTH_TRUST_HOST=true na Vercel). */
+  trustHost:
+    process.env.AUTH_TRUST_HOST === "true" ||
+    process.env.VERCEL === "1" ||
+    process.env.NODE_ENV !== "production",
   session: { strategy: "jwt", maxAge: 60 * 60 * 24 * 7 },
   pages: {
     signIn: "/login",

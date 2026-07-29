@@ -38,8 +38,8 @@ export default edgeAuth(async (req) => {
 
   if (pathname.startsWith("/api/auth")) {
     const cors = corsHeaders(req);
-    if (!cors) return forbiddenCorsOrigin();
     if (method === "OPTIONS") {
+      if (!cors) return forbiddenCorsOrigin();
       return withSecurityHeaders(new NextResponse(null, { status: 204, headers: cors }));
     }
     if (pathname === "/api/auth/register" && method === "POST") {
