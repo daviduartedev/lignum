@@ -13,12 +13,16 @@ export async function checkLoginFailuresAllowed(key: string): Promise<{ allowed:
   if (!redis) {
     return checkLoginRateLimit(key, LIMIT, WINDOW_MS);
   }
-  const now = Date.now();
-  const min = now - WINDOW_MS;
-  const rk = `lf:${key}`;
-  await redis.zremrangebyscore(rk, 0, min);
-  const c = await redis.zcard(rk);
-  return { allowed: c < LIMIT };
+  try {
+    const now = Date.now();
+    const min = now - WINDOW_MS;
+    const rk = `lf:${key}`;
+    await redis.zremrangebyscore(rk, 0, min);
+    const c = await redis.zcard(rk);
+    return { allowed: c < LIMIT };
+  } catch {
+    return checkLoginRateLimit(key, LIMIT, WINDOW_MS);
+  }
 }
 
 export async function recordLoginFailureRemote(key: string): Promise<void> {
@@ -27,12 +31,16 @@ export async function recordLoginFailureRemote(key: string): Promise<void> {
     recordLoginFailure(key, WINDOW_MS);
     return;
   }
-  const now = Date.now();
-  const min = now - WINDOW_MS;
-  const rk = `lf:${key}`;
-  await redis.zremrangebyscore(rk, 0, min);
-  await redis.zadd(rk, { score: now, member: `${now}:${Math.random().toString(36).slice(2)}` });
-  await redis.expire(rk, Math.ceil(WINDOW_MS / 1000) + 60);
+  try {
+    const now = Date.now();
+    const min = now - WINDOW_MS;
+    const rk = `lf:${key}`;
+    await redis.zremrangebyscore(rk, 0, min);
+    await redis.zadd(rk, { score: now, member: `${now}:${Math.random().toString(36).slice(2)}` });
+    await redis.expire(rk, Math.ceil(WINDOW_MS / 1000) + 60);
+  } catch {
+    recordLoginFailure(key, WINDOW_MS);
+  }
 }
 
 export async function clearLoginFailuresRemote(key: string): Promise<void> {
@@ -41,5 +49,9 @@ export async function clearLoginFailuresRemote(key: string): Promise<void> {
     clearLoginFailures(key);
     return;
   }
-  await redis.del(`lf:${key}`);
+  try {
+    await redis.del(`lf:${key}`);
+  } catch {
+    clearLoginFailures(key);
+  }
 }

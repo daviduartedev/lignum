@@ -1,17 +1,20 @@
 import type { NextAuthConfig } from "next-auth";
 import type { Role } from "@prisma/client";
 
+function resolveAuthSecret(): string | undefined {
+  const raw = process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET;
+  const trimmed = raw?.trim();
+  return trimmed || undefined;
+}
+
 /**
  * Config partilhada e compatível com Edge (middleware).
  * Credenciais e Prisma ficam apenas em `auth.ts`.
  */
 export const authConfig = {
-  secret: process.env.AUTH_SECRET,
-  /** Vercel/proxy: host confiável (ou defina AUTH_TRUST_HOST=true na Vercel). */
-  trustHost:
-    process.env.AUTH_TRUST_HOST === "true" ||
-    process.env.VERCEL === "1" ||
-    process.env.NODE_ENV !== "production",
+  secret: resolveAuthSecret(),
+  /** Proxy Vercel — evita UntrustedHost (Auth.js mapeia para error=Configuration). */
+  trustHost: true,
   session: { strategy: "jwt", maxAge: 60 * 60 * 24 * 7 },
   pages: {
     signIn: "/login",

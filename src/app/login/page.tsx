@@ -66,7 +66,7 @@ export default function LoginPage() {
             : result.error === "CredentialsSignin"
               ? "E-mail ou senha inválidos. Verifique e tente novamente."
               : result.error === "Configuration"
-                ? "Login indisponível: AUTH_SECRET ou AUTH_URL incorretos no servidor. Contacte o suporte."
+                ? "Falha no servidor ao autenticar. Na Vercel confira AUTH_SECRET (Production), DATABASE_URL (Neon pooler) e logs em Runtime; remova Upstash errado ou corrija o token."
                 : result.error === "InvalidCallbackUrl" || result.error === "InvalidResponse"
                   ? "Resposta inválida do servidor de login. Confira AUTH_URL na Vercel (URL pública com https)."
                   : result.error
